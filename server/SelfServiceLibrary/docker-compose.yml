@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  selfservicelibrary.api:
+    image: ${DOCKER_REGISTRY-}selfservicelibraryapi
+    build:
+      context: .
+      dockerfile: SelfServiceLibrary.API/Dockerfile
