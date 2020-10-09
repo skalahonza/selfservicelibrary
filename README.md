@@ -1,5 +1,6 @@
 # Self Service Library
 Katederní knihovna s případnou možností samoobslužného provozu.
+
 Self service library for university departments.
 
 ## Integrated APIs
