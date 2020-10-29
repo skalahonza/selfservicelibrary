@@ -31,11 +31,18 @@ namespace SelfServiceLibrary.API.Handlers
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var token = await _tokenService.CheckToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last() ?? string.Empty);
+            var token = await _tokenService.CheckToken(Request
+                .Headers["Authorization"]
+                .FirstOrDefault()?
+                .Split(" ")
+                .Last() ?? string.Empty);
             if (!token.IsValid)
                 return AuthenticateResult.Fail($"{token.Error} {token.ErrorDescription}.");
-            var context = await _userContextService.GetInfo(token.UserName ?? string.Empty);
 
+            if (string.IsNullOrEmpty(token.UserName))
+                return AuthenticateResult.Fail("Not a user access.");
+
+            var context = await _userContextService.GetInfo(token.UserName);
             var claims = context
                 .Roles
                 .Concat(context.TechnicalRoles)

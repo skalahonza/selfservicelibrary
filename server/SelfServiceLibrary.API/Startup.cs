@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
@@ -47,6 +48,15 @@ namespace SelfServiceLibrary.API
         {
             ConfigureSwagger(services);
             services.AddControllers().AddNewtonsoftJson();
+
+            services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CvutAuthOptions.DefaultScheme;
+                options.DefaultChallengeScheme = CvutAuthOptions.DefaultScheme;
+            })
+            .AddCVUT(_ => { });
+
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpContextAccessor();
             services.AddHttpClient();
@@ -59,16 +69,12 @@ namespace SelfServiceLibrary.API
         {
             ConfigureSwagger(app);
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
         public void ConfigureSwagger(IApplicationBuilder app)
