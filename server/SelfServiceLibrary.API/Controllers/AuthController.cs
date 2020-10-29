@@ -12,7 +12,7 @@ namespace SelfServiceLibrary.API.Controllers
     {
         private readonly ITokenService _service;
 
-        public AuthController(ITokenService service) => 
+        public AuthController(ITokenService service) =>
             _service = service;
 
         // sign in with code
