@@ -7,7 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Options;
+using SelfServiceLibrary.API.Services;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.API
 {
@@ -43,8 +46,12 @@ namespace SelfServiceLibrary.API
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureSwagger(services);
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient();
+            services.AddTransient<IUserContextService, UsermapCVUT>();
+            services.AddSingleton<ITokenService, AuthCVUT>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
