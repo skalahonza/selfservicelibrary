@@ -11,11 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
     <PackageReference Include="Pathoschild.Http.FluentClient" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

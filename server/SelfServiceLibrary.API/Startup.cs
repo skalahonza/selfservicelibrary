@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 
+using AutoMapper;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +16,7 @@ using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Mapping;
 
 namespace SelfServiceLibrary.API
 {
@@ -73,6 +76,7 @@ namespace SelfServiceLibrary.API
             services.AddHttpClient();
             services.AddTransient<IUserContextService, UsermapCVUT>();
             services.AddSingleton<ITokenService, AuthCVUT>();
+            services.AddAutoMapper(typeof(BookProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
