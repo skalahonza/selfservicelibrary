@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.API", "SelfServiceLibrary.API\SelfServiceLibrary.API.csproj", "{66D32E9C-9A91-4CFF-9DAE-BAFD0BEA28F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.API", "SelfServiceLibrary.API\SelfServiceLibrary.API.csproj", "{66D32E9C-9A91-4CFF-9DAE-BAFD0BEA28F9}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BC444DD5-A742-445C-B06A-081656CAE24F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.BL", "SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj", "{74399BBF-BCB8-4339-9F66-030368AA60B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.BL", "SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj", "{74399BBF-BCB8-4339-9F66-030368AA60B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

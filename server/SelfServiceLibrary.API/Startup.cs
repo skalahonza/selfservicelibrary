@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +43,15 @@ namespace SelfServiceLibrary.API
                         Url = new Uri("https://janskala.cz"),
                     },
                 });
+
+                var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(IUserContextService).Assembly };
+                foreach (var assembly in assemblies)
+                {
+                    // Set the comments path for the Swagger JSON and UI.
+                    var xmlFile = $"{assembly.GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    c.IncludeXmlComments(xmlPath);
+                }
             });
         }
 
