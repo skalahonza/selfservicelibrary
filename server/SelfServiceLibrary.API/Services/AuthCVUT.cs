@@ -30,6 +30,16 @@ namespace SelfServiceLibrary.API.Services
                 .WithOptions(true)
                 .As<TokenResponse>());
 
+        public Task<SignInResponse> Refresh(string refreshToken) =>
+            _client.PostAsync("oauth/token")
+                .WithBasicAuthentication(_options.Value.ClientId!, _options.Value.ClientSecret!)
+                .WithBody(p => p.FormUrlEncoded(new
+                {
+                    grant_type = "refresh_token",
+                    refresh_token = refreshToken
+                }))
+                .As<SignInResponse>();
+
         public Task<SignInResponse> GetToken(string code) =>
             _client.PostAsync("oauth/token")
                 .WithBasicAuthentication(_options.Value.ClientId!, _options.Value.ClientSecret!)

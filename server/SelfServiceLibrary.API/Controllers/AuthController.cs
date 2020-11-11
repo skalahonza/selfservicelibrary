@@ -20,10 +20,15 @@ namespace SelfServiceLibrary.API.Controllers
             _userContextService = userContextService;
         }
 
-        [HttpPost]
+        [HttpPost("sign-in")]
         [AllowAnonymous]
-        public Task<SignInResponse> Login([FromBody] SignIn dto) =>
+        public Task<SignInResponse> SignIn([FromBody] SignIn dto) =>
             _tokenService.GetToken(dto.Code ?? string.Empty);
+
+        [HttpPost("refresh")]
+        [AllowAnonymous]
+        public Task<SignInResponse> Refresh(Refresh dto) =>
+            _tokenService.Refresh(dto.RefreshToken);
 
         [HttpGet]
         public Task<BL.Model.UserContext> GetContext() =>

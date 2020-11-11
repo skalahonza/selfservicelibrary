@@ -50,6 +50,27 @@ namespace SelfServiceLibrary.API
                     },
                 });
 
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "Please enter your JWT token into field without Bearer prefix, e.g. 4b8afda3-e6d9-4109-aef5-d7d9993e1821",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "GUID",
+                    In = ParameterLocation.Header,
+                    Scheme = "bearer",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+                c.AddSecurityDefinition("Bearer", securitySchema);
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    { securitySchema, new[] { "Bearer" } }
+                };
+                c.AddSecurityRequirement(securityRequirement);
+
+
                 var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(IUserContextService).Assembly };
                 foreach (var assembly in assemblies)
                 {
