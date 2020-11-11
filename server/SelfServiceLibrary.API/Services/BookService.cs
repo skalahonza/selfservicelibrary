@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 using Microsoft.Extensions.Options;
 
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.Entities;
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -34,6 +33,26 @@ namespace SelfServiceLibrary.API.Services
                 .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookListDTO>(x)))
                 .ToListAsync();
 
-       
+        public async Task<BookDetailDTO?> GetDetail(Guid id) =>
+            _mapper.Map<BookDetailDTO>(await _books
+                .Find(x => x.Id == id)
+                .FirstOrDefaultAsync());
+
+        public async Task<BookDetailDTO> Add(BookAddDTO book)
+        {
+            var entity = new Book { Id = Guid.NewGuid() };
+            entity = _mapper.Map(book, entity);
+            await _books.InsertOneAsync(entity);
+            return _mapper.Map<BookDetailDTO>(entity);
+        }
+
+        public async Task<BookDetailDTO?> Path(Guid id, BookEditDTO book)
+        {
+            var update = Builders<Book>
+                .Update
+                .SetIfNotNull(x => x.Name, book.Name);
+            await _books.UpdateOneAsync(x => x.Id == id, update);
+            return await GetDetail(id);
+        }
     }
 }

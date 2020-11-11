@@ -9,5 +9,6 @@ namespace SelfServiceLibrary.BL.Entities
     {
         [BsonId(IdGenerator = typeof(GuidGenerator))]
         public Guid Id { get; set; }
+        public string? Name { get; set; }
     }
 }

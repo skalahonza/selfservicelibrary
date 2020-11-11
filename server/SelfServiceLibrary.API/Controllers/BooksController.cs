@@ -10,6 +10,9 @@ using SelfServiceLibrary.BL.DTO.Book;
 
 namespace SelfServiceLibrary.API.Controllers
 {
+#if DEBUG
+    [AllowAnonymous]
+#endif
     public class BooksController : BaseController
     {
         private readonly BookService _service;
@@ -34,10 +37,12 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public Task<ActionResult<BookDetailDTO>> BookDetail(string id)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<ActionResult<BookDetailDTO>> BookDetail(Guid id) =>
+            await _service.GetDetail(id) switch
+            {
+                null => NotFound(),
+                BookDetailDTO x => Ok(x)
+            };
 
         /// <summary>
         /// Add a new book to the library
@@ -47,10 +52,8 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public Task<ActionResult<BookDetailDTO>> AddBook(BookAddDTO book)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<BookDetailDTO> AddBook(BookAddDTO book) =>
+            _service.Add(book);
 
         /// <summary>
         /// Edit existing book.
@@ -62,9 +65,11 @@ namespace SelfServiceLibrary.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public Task<ActionResult<BookDetailDTO>> EditBook(string id, BookEditDTO book)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<ActionResult<BookDetailDTO>> PatchBook(Guid id, BookEditDTO book) =>
+            await _service.Path(id, book) switch
+            {
+                null => NotFound(),
+                BookDetailDTO x => Ok(x)
+            };
     }
 }

@@ -2,6 +2,6 @@
 {
     public class BookEditDTO
     {
-
+        public string? Name { get; set; }
     }
 }
