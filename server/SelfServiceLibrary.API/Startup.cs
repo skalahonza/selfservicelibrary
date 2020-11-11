@@ -9,7 +9,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+
+using MongoDB.Driver;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Interfaces;
@@ -77,6 +80,16 @@ namespace SelfServiceLibrary.API
             services.AddTransient<IUserContextService, UsermapCVUT>();
             services.AddSingleton<ITokenService, AuthCVUT>();
             services.AddAutoMapper(typeof(BookProfile));
+            services
+                .AddOptions<MongoDbOptions>()
+                .Bind(Configuration.GetSection("MongoDb"))
+                .ValidateDataAnnotations();
+            services.AddSingleton<IMongoClient, MongoClient>(x =>
+            {
+                var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
+                return new MongoClient(options.Value.ConnectionString);
+            });
+            services.AddTransient<BookService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

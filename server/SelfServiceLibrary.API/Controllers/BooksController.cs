@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.DTO.Book;
 
 namespace SelfServiceLibrary.API.Controllers
 {
     public class BooksController : BaseController
     {
+        private readonly BookService _service;
+
+        public BooksController(BookService service) =>
+            _service = service;
+
         /// <summary>
         /// Get list of all books from the library
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public Task<ActionResult<BookListDTO>> ListBooks()
-        {
-            throw new NotImplementedException();
-        }
+        [AllowAnonymous]
+        public Task<List<BookListDTO>> ListBooks() =>
+            _service.GetAll();
 
         /// <summary>
         /// Get book detail

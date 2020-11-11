@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿
+using Microsoft.AspNetCore.Authentication;
 
 using SelfServiceLibrary.API.Handlers;
 using SelfServiceLibrary.API.Options;
