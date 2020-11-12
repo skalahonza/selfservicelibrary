@@ -71,5 +71,18 @@ namespace SelfServiceLibrary.API.Controllers
                 null => NotFound(),
                 BookDetailDTO x => Ok(x)
             };
+
+        /// <summary>
+        /// Deletes existing book
+        /// </summary>
+        /// <param name="id">Book id</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> BookDelete(Guid id) =>
+            await _service.Delete(id)
+                ? Ok() as IActionResult
+                : NotFound();
     }
 }

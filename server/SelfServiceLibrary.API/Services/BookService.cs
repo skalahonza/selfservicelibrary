@@ -54,5 +54,11 @@ namespace SelfServiceLibrary.API.Services
             await _books.UpdateOneAsync(x => x.Id == id, update);
             return await GetDetail(id);
         }
+
+        public async Task<bool> Delete(Guid id)
+        {
+            var result = await _books.DeleteOneAsync(x => x.Id == id);
+            return result.DeletedCount != 0;
+        }
     }
 }
