@@ -5,7 +5,6 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SelfServiceLibrary.BL.Entities
 {
-
     public class User
     {
         [BsonId]

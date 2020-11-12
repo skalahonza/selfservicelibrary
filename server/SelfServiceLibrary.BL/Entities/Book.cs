@@ -9,6 +9,7 @@ namespace SelfServiceLibrary.BL.Entities
 {
     public class Book
     {
+        public const string COLLECTION_NAME = "books";
         [BsonId(IdGenerator = typeof(GuidGenerator))]
         public Guid Id { get; set; }
         /// <summary>
@@ -30,6 +31,6 @@ namespace SelfServiceLibrary.BL.Entities
         public string? ISBN { get; set; }
         public string? ISSN { get; set; }
 
-        public List<ObjectId> Issues { get; set; } = new List<ObjectId>();
+        public List<Guid> Issues { get; set; } = new List<Guid>();
     }
 }

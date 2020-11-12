@@ -21,10 +21,8 @@ namespace SelfServiceLibrary.API.Controllers
         /// <param name="issue">Issue data</param>
         /// <returns></returns>
         [HttpPost("borrow")]
-        public Task<IssueDetailDTO> Borrow(IssueCreateDTO issue)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IssueDetailDTO> Borrow(IssueCreateDTO issue) =>
+            _service.Borrow(issue, User.Identity.Name ?? string.Empty);
 
         /// <summary>
         /// Return a current issue
@@ -32,9 +30,7 @@ namespace SelfServiceLibrary.API.Controllers
         /// <param name="id">Issue id</param>
         /// <returns></returns>
         [HttpPost("{id}/return")]
-        public Task<IssueDetailDTO> Return(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IssueDetailDTO> Return(Guid id) =>
+            _service.Return(id);
     }
 }

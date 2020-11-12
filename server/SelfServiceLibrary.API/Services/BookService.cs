@@ -23,7 +23,7 @@ namespace SelfServiceLibrary.API.Services
         public BookService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper)
         {
             var database = client.GetDatabase(options.Value.DatabaseName);
-            _books = database.GetCollection<Book>("books");
+            _books = database.GetCollection<Book>(Book.COLLECTION_NAME);
             _mapper = mapper;
         }
 

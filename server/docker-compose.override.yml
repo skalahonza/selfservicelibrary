@@ -1,6 +1,9 @@
 version: '3.4'
 
 services:
+  books.db:
+    ports:
+      - "27017:27017"
   selfservicelibrary.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

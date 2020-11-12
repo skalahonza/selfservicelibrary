@@ -16,6 +16,8 @@ namespace SelfServiceLibrary.BL.DTO.Issue
 
     public class IssueCreateDTO
     {
-
+        public Guid BookId { get; set; }
+        public DateTime? IssueDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
     }
 }

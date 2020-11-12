@@ -9,8 +9,8 @@ namespace SelfServiceLibrary.BL.Mapping
     {
         public BookProfile()
         {
-            CreateMap<BookAddDTO, Book>();
-            CreateMap<BookEditDTO, Book>();
+            CreateMap<BookAddDTO, Book>().ForMember(x => x.Issues, x => x.Ignore());
+            CreateMap<BookEditDTO, Book>().ForMember(x => x.Issues, x => x.Ignore());
             CreateMap<Book, BookListDTO>();
             CreateMap<Book, BookDetailDTO>();
         }

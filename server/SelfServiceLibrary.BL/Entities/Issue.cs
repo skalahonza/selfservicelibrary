@@ -7,6 +7,7 @@ namespace SelfServiceLibrary.BL.Entities
 {
     public class Issue
     {
+        public const string COLLECTION_NAME = "issues";
         [BsonId(IdGenerator = typeof(GuidGenerator))]
         public Guid Id { get; set; }
         public Guid BookId { get; set; }
