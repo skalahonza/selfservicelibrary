@@ -111,6 +111,7 @@ namespace SelfServiceLibrary.API
                 return new MongoClient(options.Value.ConnectionString);
             });
             services.AddTransient<BookService>();
+            services.AddTransient<IssueService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

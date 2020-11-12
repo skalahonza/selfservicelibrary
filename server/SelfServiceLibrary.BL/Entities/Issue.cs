@@ -9,5 +9,9 @@ namespace SelfServiceLibrary.BL.Entities
     {
         [BsonId(IdGenerator = typeof(GuidGenerator))]
         public Guid Id { get; set; }
+        public Guid BookId { get; set; }
+        public DateTime? IssueDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
     }
 }

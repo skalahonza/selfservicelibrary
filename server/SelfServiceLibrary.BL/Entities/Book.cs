@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
@@ -28,5 +29,7 @@ namespace SelfServiceLibrary.BL.Entities
         public string? SystemNumber { get; set; }
         public string? ISBN { get; set; }
         public string? ISSN { get; set; }
+
+        public List<ObjectId> Issues { get; set; } = new List<ObjectId>();
     }
 }
