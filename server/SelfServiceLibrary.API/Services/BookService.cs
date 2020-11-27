@@ -50,7 +50,8 @@ namespace SelfServiceLibrary.API.Services
         {
             var update = Builders<Book>
                 .Update
-                .SetIfNotNull(x => x.Name, book.Name);
+                .SetIfNotNull(x => x.Name, book.Name)
+                .SetIfNotNull(x => x.Quantity, book.Quantity);
             await _books.UpdateOneAsync(x => x.Id == id, update);
             return await GetDetail(id);
         }

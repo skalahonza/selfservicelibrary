@@ -6,5 +6,8 @@ namespace SelfServiceLibrary.BL.DTO.Book
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
+        public string? ISBN { get; set; }
+        public int Quantity { get; set; }
+        public int Issued { get; set; }
     }
 }

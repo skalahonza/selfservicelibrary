@@ -10,15 +10,12 @@ using SelfServiceLibrary.BL.DTO.Book;
 
 namespace SelfServiceLibrary.API.Controllers
 {
-#if DEBUG
-    [AllowAnonymous]
-#endif
     public class BooksController : BaseController
     {
-        private readonly BookService _service;
+        private readonly BookService _bookService;
 
-        public BooksController(BookService service) =>
-            _service = service;
+        public BooksController(BookService bookService) =>
+            _bookService = bookService;
 
         /// <summary>
         /// Get list of all books from the library
@@ -27,7 +24,7 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpGet]
         [AllowAnonymous]
         public Task<List<BookListDTO>> ListBooks() =>
-            _service.GetAll();
+            _bookService.GetAll();
 
         /// <summary>
         /// Get book detail
@@ -38,7 +35,7 @@ namespace SelfServiceLibrary.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<BookDetailDTO>> BookDetail(Guid id) =>
-            await _service.GetDetail(id) switch
+            await _bookService.GetDetail(id) switch
             {
                 null => NotFound(),
                 BookDetailDTO x => Ok(x)
@@ -53,7 +50,7 @@ namespace SelfServiceLibrary.API.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public Task<BookDetailDTO> AddBook(BookAddDTO book) =>
-            _service.Add(book);
+            _bookService.Add(book);
 
         /// <summary>
         /// Edit existing book.
@@ -66,7 +63,7 @@ namespace SelfServiceLibrary.API.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<BookDetailDTO>> PatchBook(Guid id, BookEditDTO book) =>
-            await _service.Path(id, book) switch
+            await _bookService.Path(id, book) switch
             {
                 null => NotFound(),
                 BookDetailDTO x => Ok(x)
@@ -81,7 +78,7 @@ namespace SelfServiceLibrary.API.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> BookDelete(Guid id) =>
-            await _service.Delete(id)
+            await _bookService.Delete(id)
                 ? Ok() as IActionResult
                 : NotFound();
     }

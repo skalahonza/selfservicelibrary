@@ -9,9 +9,14 @@ namespace SelfServiceLibrary.BL.Mapping
     {
         public IssueProfile()
         {
-            CreateMap<IssueCreateDTO, Issue>();
+            CreateMap<IssueCreateDTO, Issue>().ForAllOtherMembers(X => X.Ignore());
             CreateMap<Issue, IssueDetailDTO>();
             CreateMap<Issue, IssueListlDTO>();
+            CreateMap<Book, Issue>()
+                .ForMember(x => x.BookId, x => x.MapFrom(y => y.Id))
+                .ForMember(x => x.BookName, x => x.MapFrom(y => y.Name))
+                .ForMember(x => x.ISBN, x => x.MapFrom(y => y.ISBN))
+                .ForAllOtherMembers(X => X.Ignore());
         }
     }
 }

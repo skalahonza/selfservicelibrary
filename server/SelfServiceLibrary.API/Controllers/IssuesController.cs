@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,29 @@ namespace SelfServiceLibrary.API.Controllers
             _service = service;
 
         /// <summary>
+        /// Get all issues
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public Task<List<IssueListlDTO>> GetAll() =>
+            _service.GetAll();
+
+        /// <summary>
         /// Borrow a book from a library
         /// </summary>
-        /// <param name="issue">Issue data</param>
+        /// <param name="bookId">Id of the book to be borrowed.</param>
+        /// <param name="issue">Issue details.</param>
         /// <returns></returns>
-        [HttpPost("borrow")]
-        public Task<IssueDetailDTO> Borrow(IssueCreateDTO issue) =>
-            _service.Borrow(issue, User.Identity.Name ?? string.Empty);
+        [HttpPost("{bookId}/borrow")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> BorrowAnExistingBookd(Guid bookId, IssueCreateDTO issue) =>
+            await _service.Borrow(User.Identity.Name ?? string.Empty, bookId, issue) switch
+            {
+                (false, _) => BadRequest("All books were already issued to someone."),
+                (true, IssueDetailDTO detail) => Ok(detail),
+                _ => NotFound("Book does not exist."),
+            };
 
         /// <summary>
         /// Return a current issue
@@ -30,7 +47,11 @@ namespace SelfServiceLibrary.API.Controllers
         /// <param name="id">Issue id</param>
         /// <returns></returns>
         [HttpPost("{id}/return")]
-        public Task<IssueDetailDTO> Return(Guid id) =>
-            _service.Return(id);
+        public async Task<ActionResult<IssueDetailDTO>> Return(Guid id) =>
+            await _service.Return(id) switch
+            {
+                null => NotFound(),
+                IssueDetailDTO dto => Ok(dto)
+            };
     }
 }
