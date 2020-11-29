@@ -33,7 +33,7 @@ namespace SelfServiceLibrary.API.Controllers
             };
 
         /// <summary>
-        /// Return a current issue
+        /// Return a book for given issue
         /// </summary>
         /// <param name="id">Issue id</param>
         /// <returns></returns>

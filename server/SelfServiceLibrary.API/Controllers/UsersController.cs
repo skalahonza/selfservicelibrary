@@ -20,10 +20,18 @@ namespace SelfServiceLibrary.API.Controllers
             _issueService = issueService;
         }
 
+        /// <summary>
+        /// View current user context
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("me")]
         public Task<BL.Model.UserContext> GetContext() =>
            _userContextService.GetInfo(User.Identity.Name!);
 
+        /// <summary>
+        /// View current user's issues
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("me/issues")]
         public Task<List<IssueListlDTO>> GetMyIssues() =>
             _issueService.GetAll(User.Identity.Name!);
