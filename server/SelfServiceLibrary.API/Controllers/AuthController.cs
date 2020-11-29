@@ -5,20 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 
 using SelfServiceLibrary.API.DTO;
 using SelfServiceLibrary.API.Interfaces;
-using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.API.Controllers
 {
     public class AuthController : BaseController
     {
         private readonly ITokenService _tokenService;
-        private readonly IUserContextService _userContextService;
 
-        public AuthController(ITokenService tokenService, IUserContextService userContextService)
-        {
+        public AuthController(ITokenService tokenService) => 
             _tokenService = tokenService;
-            _userContextService = userContextService;
-        }
 
         [HttpPost("sign-in")]
         [AllowAnonymous]
@@ -28,10 +23,6 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpPost("refresh")]
         [AllowAnonymous]
         public Task<SignInResponse> Refresh(Refresh dto) =>
-            _tokenService.Refresh(dto.RefreshToken);
-
-        [HttpGet]
-        public Task<BL.Model.UserContext> GetContext() =>
-            _userContextService.GetInfo(User.Identity.Name);
+            _tokenService.Refresh(dto.RefreshToken ?? string.Empty);
     }
 }

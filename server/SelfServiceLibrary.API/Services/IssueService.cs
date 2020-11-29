@@ -29,8 +29,8 @@ namespace SelfServiceLibrary.API.Services
             _mapper = mapper;
         }
 
-        public Task<List<IssueListlDTO>> GetAll() =>
-            _issues.Find(Builders<Issue>.Filter.Empty)
+        public Task<List<IssueListlDTO>> GetAll(string username) =>
+            _issues.Find(Builders<Issue>.Filter.Where(x => x.IssuedTo == username))
                 .Project(Builders<Issue>.Projection.Expression(x => _mapper.Map<IssueListlDTO>(x)))
                 .ToListAsync();
 
