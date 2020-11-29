@@ -1,4 +1,4 @@
-# selfservicelibrary
+# self-service-library
 
 ## Project setup
 ```
