@@ -17,12 +17,13 @@ VueJS
 
 ## Integrated APIs
 ### Custom API, library management
-* Code Grant SignIn
-* Code Grant Refresh
-* Add book
-* Edit book
-* View books
-* Borrow a book
+* Code Grant SignIn :white_check_mark:
+* Code Grant Refresh :white_check_mark:
+* Add book :white_check_mark:
+* Edit book :white_check_mark:
+* View books :white_check_mark:
+* Borrow a book :white_check_mark:
+* Return a book :white_check_mark:
 ### CVUT Authorization server
 https://rozvoj.fit.cvut.cz/Main/oauth2
 * Authorization Code Grant
