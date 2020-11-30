@@ -1,16 +1,21 @@
 <template>
   <div>
     <div>Code: {{ code }}</div>
-    <b-form @submit="onSubmit" v-if="!code">
+    <b-form @submit="onSubmit" v-if="!code || hasExpired">
       <b-button type="submit" variant="primary">Login with CVUT</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
+import { signIn, isExpired } from "@/services/auth.js";
+
 export default {
   computed: {
-    code: function() {
+    hasExpired: function () {
+      return isExpired();
+    },
+    code: function () {
       // HACK parse query parameter even from github pages
       const regex = /(?<=code=)(\w*)(?=(&|#)?)/gm;
       const found = window.location.href.match(regex);
@@ -28,12 +33,14 @@ export default {
       window.location.href = `https://auth.fit.cvut.cz/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect}`;
     },
   },
-  mounted: function() {
-    alert(this.code());
-    if (this.code()) {
-      // TODO Get Token from API
-      alert(this.code());
-    }
+  mounted: function () {
+    this.$nextTick(async function () {
+      if (this.code && this.hasExpired) {
+        await signIn(this.code);
+        const regex = /code=(\w*)(?=(&|#)?)/gm;
+        window.location.href = window.location.href.replace(regex, "");
+      }
+    });
   },
 };
 </script>

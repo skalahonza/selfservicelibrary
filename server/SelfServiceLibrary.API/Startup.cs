@@ -16,6 +16,7 @@ using MongoDB.Driver;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Interfaces;
+using SelfServiceLibrary.API.Middlewares;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.Interfaces;
@@ -43,11 +44,6 @@ namespace SelfServiceLibrary.API
                     Version = "v1",
                     Title = "Self Service Library API",
                     Description = "Self service library for university departments.",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Jan Skála",
-                        Url = new Uri("https://janskala.cz"),
-                    },
                 });
 
                 var securitySchema = new OpenApiSecurityScheme
@@ -117,11 +113,12 @@ namespace SelfServiceLibrary.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseErrorHandlingMiddleware();
             ConfigureSwagger(app);
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
 
             app.UseRouting();
+            if (env.IsDevelopment())
+                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
