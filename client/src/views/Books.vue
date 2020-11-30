@@ -23,39 +23,41 @@
 </template>
 
 <script>
+import {getAll} from "@/services/books"
+
 export default {
   name: "Books",
+  async created() {
+    this.isBusy = true;
+    this.items = await getAll();
+    this.isBusy = false;
+  },
+
   data() {
     return {
       fields: [
         {
           key: "name",
           label: "Book Name",
-          sortable: true
+          sortable: true,
         },
         {
           key: "isbn",
           label: "ISBN",
-          sortable: true
+          sortable: true,
         },
         {
           key: "quantity",
           label: "Quantity",
-          sortable: true
+          sortable: true,
         },
         {
           key: "issued",
           label: "Issued",
-          sortable: true
-        }
+          sortable: true,
+        },
       ],
       items: [
-        {
-          name: "My first Book",
-          isbn: "978-3-16-148410-0",
-          quantity: 20,
-          issued: 10
-        }
       ],
       currentPage: 0,
       perPage: 100,
@@ -64,8 +66,8 @@ export default {
       sortBy: "",
       isBusy: false,
       search: "",
-      selectMode: "single"
+      selectMode: "single",
     };
-  }
+  },
 };
 </script>
