@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Axios 401 retry
+https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token
