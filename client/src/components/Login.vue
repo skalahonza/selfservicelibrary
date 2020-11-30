@@ -1,19 +1,28 @@
 <template>
   <div>
-    <div>Code: {{ code }}</div>
-    <b-form @submit="onSubmit" v-if="!code && hasExpired" >
+    <div v-if="authorized">
+      Signed in as {{user.fullName}}
+    </div>
+    <b-form @submit="onSubmit" v-else>
+      <!-- v-if="!code && hasExpired" -->
       <b-button type="submit" variant="primary">Login with CVUT</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
-import { signIn, isExpired } from "@/services/auth.js";
+import { signIn, isAuthorized } from "@/services/auth.js";
 
 export default {
   computed: {
-    hasExpired: function () {
-      return isExpired();
+    authorized: function () {
+      return isAuthorized();
+    },
+    user: function() {
+      return {
+        preferredEmail: localStorage.getItem("preferredEmail"),
+        fullName: localStorage.getItem("fullName")
+      }
     },
     code: function () {
       // HACK parse query parameter even from github pages
@@ -35,8 +44,8 @@ export default {
   },
   mounted: function () {
     this.$nextTick(async function () {
-      if (this.code && this.hasExpired) {
-        await signIn(this.code);        
+      if (this.code) {
+        await signIn(this.code);
       }
       // HACK remove code query parameter that is misplaced due to non history mode of router
       const regex = /\??code=(\w*)(?=(&|#)?)/gm;

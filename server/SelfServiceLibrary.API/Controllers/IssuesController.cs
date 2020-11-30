@@ -39,7 +39,7 @@ namespace SelfServiceLibrary.API.Controllers
         /// <returns></returns>
         [HttpPost("{id}/return")]
         public async Task<ActionResult<IssueDetailDTO>> Return(Guid id) =>
-            await _service.Return(id) switch
+            await _service.Return(id, User.Identity.Name!) switch
             {
                 null => NotFound(),
                 IssueDetailDTO dto => Ok(dto)

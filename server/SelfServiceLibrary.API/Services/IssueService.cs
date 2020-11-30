@@ -57,11 +57,16 @@ namespace SelfServiceLibrary.API.Services
             return (true, _mapper.Map<IssueDetailDTO>(entity));
         }
 
-        public async Task<IssueDetailDTO?> Return(Guid id)
+        public async Task<IssueDetailDTO?> Return(Guid id, string username)
         {
-            var update = Builders<Issue>.Update.Set(x => x.ReturnDate, DateTime.UtcNow);
-            var result = await _issues.UpdateOneAsync(x => x.Id == id, update);
-            if (!result.IsAcknowledged) return null;
+            var update = Builders<Issue>.Update
+                .Set(x => x.ReturnDate, DateTime.UtcNow)
+                .Set(x => x.IsReturned, true);
+            var result = await _issues.UpdateOneAsync(x => x.Id == id
+                    && x.IssuedTo == username
+                    && !x.IsReturned,
+                update);
+            if (result.ModifiedCount == 0) return null;
             var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
             await _books.UpdateOneAsync(x => x.Id == issue.BookId, Builders<Book>.Update.Inc(x => x.Issued, -1));
             return _mapper.Map<IssueDetailDTO>(issue);

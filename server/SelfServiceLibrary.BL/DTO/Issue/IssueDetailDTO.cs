@@ -12,5 +12,6 @@ namespace SelfServiceLibrary.BL.DTO.Issue
         public DateTime? IssueDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public DateTime? ReturnDate { get; set; }
+        public bool IsReturned { get; set; }
     }
 }

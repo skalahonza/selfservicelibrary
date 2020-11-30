@@ -15,60 +15,68 @@
         <b-spinner class="align-middle"></b-spinner>
         <strong>Loading...</strong>
       </div>
-      <template slot="action" slot-scope="data">
-        <b-button v-on:click="shouldRemove(data.item.email)">Remove</b-button>
+      <template #cell(isReturned)="row">
+        <b-check v-model="row.isReturned" disabled />
       </template>
     </b-table>
   </div>
 </template>
 
 <script>
+import { getMine } from "@/services/issues";
 export default {
   name: "MyIssues",
+  async created() {
+    this.isBusy = true;
+    this.items = await getMine();
+    this.isBusy = false;
+  },
+  methods: {
+    formatDateAssigned(value) {
+      if (value) {
+        return value.toLocaleString();
+      }
+      return value;
+    },
+  },
   data() {
     return {
       fields: [
         {
-          key: "book",
+          key: "bookName",
           label: "Book Name",
-          sortable: true
+          sortable: true,
         },
         {
           key: "isbn",
           label: "ISBN",
-          sortable: true
+          sortable: true,
         },
         {
           key: "issueDate",
           label: "Issue date",
-          sortable: true
+          sortable: true,
+          formatter: "formatDateAssigned",
         },
         {
           key: "expiryDate",
           label: "Expiry Date",
-          sortable: true
+          sortable: true,
+          formatter: "formatDateAssigned",
         },
         {
           key: "returnDate",
           label: "Return Date",
-          sortable: true
+          sortable: true,
+          formatter: "formatDateAssigned",
         },
         {
-          key: "status",
-          label: "Status",
-          sortable: true
-        }
+          key: "isReturned",
+          label: "Reutrned",
+          sortable: true,
+        },
       ],
-      items: [
-        {
-          book: "My first Book",
-          isbn: "978-3-16-148410-0",
-          issueDate: "2019-06-06",
-          expiryDate: "2020-06-06",
-          returnDate: "2020-05-05",
-          status: "Returned"
-        }
-      ],
+      items: [],
       currentPage: 0,
       perPage: 100,
       pageSizes: [100],
@@ -76,8 +84,8 @@ export default {
       sortBy: "",
       isBusy: false,
       search: "",
-      selectMode: "single"
+      selectMode: "single",
     };
-  }
+  },
 };
 </script>
