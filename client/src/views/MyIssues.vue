@@ -36,7 +36,6 @@ export default {
     formatDateAssigned(value) {
       if (value) {
         return moment(value).format('LL');
-        // return Date.parse(value).toLocaleDateString();
       }
       return value;
     },
