@@ -24,6 +24,7 @@
 
 <script>
 import { getMine } from "@/services/issues";
+import moment from 'moment';
 export default {
   name: "MyIssues",
   async created() {
@@ -34,7 +35,8 @@ export default {
   methods: {
     formatDateAssigned(value) {
       if (value) {
-        return value.toLocaleString();
+        return moment(value).format('LL');
+        // return Date.parse(value).toLocaleDateString();
       }
       return value;
     },

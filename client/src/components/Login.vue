@@ -4,7 +4,6 @@
       Signed in as {{user.fullName}}
     </div>
     <b-form @submit="onSubmit" v-else>
-      <!-- v-if="!code && hasExpired" -->
       <b-button type="submit" variant="primary">Login with CVUT</b-button>
     </b-form>
   </div>
