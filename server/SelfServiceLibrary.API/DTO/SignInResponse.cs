@@ -13,6 +13,9 @@ namespace SelfServiceLibrary.API.DTO
         [JsonProperty("refresh_token")]
         public string? RefreshToken { get; set; }
 
+        /// <summary>
+        /// Seconds to expire
+        /// </summary>
         [JsonProperty("expires_in")]
         public int? ExpiresIn { get; set; }
 
