@@ -12,7 +12,11 @@ VueJS
 :eyes: [Check it out](https://skalahonza.github.io/self-service-library/)
 
 ## Server
-.NET Core Web API
+* .NET Core Web API
+* Building with DockerHub [![Docker](https://img.shields.io/docker/cloud/build/skalahonza/self-service-library?label=Docker&style=flat)](https://hub.docker.com/r/skalahonza/self-service-library/builds)
+* Hosted on ![Microsoft Azure](https://img.shields.io/badge/Microsoft%20Azure-232F7E?style=flat-square&logo=microsoft-azure)
+:eyes: [Check it out](https://via-library.azurewebsites.net/index.html)
+* Database ![MongoDB](https://img.shields.io/badge/-MongoDB-black?style=flat-square&logo=mongodb) on MongoDB Atlas
 
 
 ## Integrated APIs
