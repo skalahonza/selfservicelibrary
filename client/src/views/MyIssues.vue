@@ -16,7 +16,7 @@
         <strong>Loading...</strong>
       </div>
       <template #cell(isReturned)="row">
-        <b-check v-model="row.isReturned" disabled />
+        <b-check v-model="row.item.isReturned" disabled />
       </template>
     </b-table>
   </div>

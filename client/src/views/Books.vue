@@ -15,24 +15,51 @@
         <b-spinner class="align-middle"></b-spinner>
         <strong>Loading...</strong>
       </div>
-      <template slot="action" slot-scope="data">
-        <b-button v-on:click="shouldRemove(data.item.email)">Remove</b-button>
+      <template #cell(isAvailable)="row">
+        <b-check v-model="row.item.isAvailable" disabled />
+      </template>
+      <template #cell(action)="row">
+        <b-button variant="success" v-on:click="borrow(row.item)"
+          >Borrow</b-button
+        >
       </template>
     </b-table>
   </div>
 </template>
 
 <script>
-import {getAll} from "@/services/books"
+import { getAll, borrowBook } from "@/services/books";
 
 export default {
   name: "Books",
-  async created() {
-    this.isBusy = true;
-    this.items = await getAll();
-    this.isBusy = false;
+  created() {
+    this.reload();
   },
-
+  methods: {
+    async reload() {
+      this.isBusy = true;
+      this.items = await getAll();
+      this.isBusy = false;
+    },
+    borrow(item) {
+      borrowBook(item.id)
+        .then(() => {
+          this.$bvToast.toast("Book successfully borrowed.", {
+            title: "Success",
+            variant: "success",
+            solid: true,
+          });
+          this.reload();
+        })
+        .catch((error) => {
+          this.$bvToast.toast(error.response.data.title, {
+            title: "Chyba",
+            variant: "danger",
+            solid: true,
+          });
+        });
+    },
+  },
   data() {
     return {
       fields: [
@@ -56,9 +83,14 @@ export default {
           label: "Issued",
           sortable: true,
         },
+        {
+          key: "isAvailable",
+          label: "Is Available",
+          sortable: true,
+        },
+        { key: "action" },
       ],
-      items: [
-      ],
+      items: [],
       currentPage: 0,
       perPage: 100,
       pageSizes: [100],

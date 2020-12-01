@@ -19,13 +19,16 @@ namespace SelfServiceLibrary.API.Controllers
         /// Borrow a book from a library
         /// </summary>
         /// <param name="bookId">Id of the book to be borrowed.</param>
-        /// <param name="issue">Issue details.</param>
         /// <returns></returns>
         [HttpPost("{bookId}/borrow")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> BorrowAnExistingBookd(Guid bookId, IssueCreateDTO issue) =>
-            await _service.Borrow(User.Identity.Name!, bookId, issue) switch
+        public async Task<IActionResult> BorrowAnExistingBookd(Guid bookId) =>
+            await _service.Borrow(User.Identity.Name!, bookId, new IssueCreateDTO
+            {
+                IssueDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddDays(30)
+            }) switch
             {
                 (false, _) => BadRequest("All books were already issued to someone."),
                 (true, IssueDetailDTO detail) => Ok(detail),
