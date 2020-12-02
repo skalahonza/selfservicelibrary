@@ -3,7 +3,11 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/books">Books</router-link> |
-      <router-link to="/my-issues">My issues</router-link>
+      <router-link to="/my-issues">My issues</router-link
+      ><span v-if="authorized"> | </span>
+      <b-button v-if="authorized" @click="logOut()" variant="danger"
+        >Logout</b-button
+      >
     </div>
     <router-view />
   </div>
@@ -31,3 +35,20 @@
   }
 }
 </style>
+
+<script>
+import { signOut, isAuthorized } from "@/services/auth.js";
+export default {
+  computed: {
+    authorized: function () {
+      return isAuthorized();
+    },
+  },
+  methods: {
+    logOut() {
+      signOut();
+      this.$router.go("/");
+    },
+  },
+};
+</script>

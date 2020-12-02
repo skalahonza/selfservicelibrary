@@ -27,6 +27,14 @@ export async function signIn(code) {
     localStorage.setItem("fullName", fullName);
 }
 
+export function signOut(){
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("expires_in");
+    localStorage.removeItem("preferredEmail");
+    localStorage.removeItem("fullName");
+}
+
 export async function refresh() {
     try {
         // creating another instance to prevent axios interceptor infinite loops
