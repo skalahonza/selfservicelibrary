@@ -4,6 +4,8 @@ using System.Reflection;
 
 using AutoMapper;
 
+using FluentValidation.AspNetCore;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,7 @@ using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Mapping;
+using SelfServiceLibrary.BL.Validation;
 
 namespace SelfServiceLibrary.API
 {
@@ -83,7 +86,10 @@ namespace SelfServiceLibrary.API
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureSwagger(services);
-            services.AddControllers().AddNewtonsoftJson();
+            services
+                .AddControllers()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>())
+                .AddNewtonsoftJson();
 
             services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
             services.AddAuthentication(options =>
