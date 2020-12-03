@@ -37,13 +37,21 @@
         <b-check v-model="row.item.isAvailable" disabled />
       </template>
       <template #cell(action)="row">
-        <b-button variant="success" v-on:click="borrow(row.item)"
-          >Borrow</b-button
-        >
+        <b-button-group>
+          <b-button variant="success" v-on:click="borrow(row.item)"
+            >Borrow</b-button
+          >
+          <b-button variant="light" v-on:click="edit(row.item)"
+            >Edit</b-button
+          >
+        </b-button-group>
       </template>
     </b-table>
-    <b-modal id="book-modal" hide-footer size="xl" title="Add Book">
+    <b-modal id="addbook-modal" hide-footer size="xl" title="Add Book">
       <AddBook v-bind:book="book" v-bind:onSuccess="added" />
+    </b-modal>
+    <b-modal id="editbook-modal" hide-footer size="xl" title="Edit Book">
+      <EditBook v-bind:book="book" v-bind:onSuccess="edited" />
     </b-modal>
   </b-container>
 </template>
@@ -51,11 +59,13 @@
 <script>
 import { getAll, borrowBook } from "@/services/books";
 import AddBook from "@/components/AddBook.vue";
+import EditBook from "@/components/EditBook.vue";
 
 export default {
   name: "Books",
   components: {
     AddBook,
+    EditBook
   },
   created() {
     this.reload();
@@ -63,10 +73,19 @@ export default {
   methods: {
     add() {
       this.book = {};
-      this.$bvModal.show("book-modal");
-    },
+      this.$bvModal.show("addbook-modal");
+    },    
     added() {
-      this.$bvModal.hide("book-modal");
+      this.$bvModal.hide("addbook-modal");
+      this.book = {};
+      this.reload();
+    },
+    edit(item){
+      this.book = { ...item };
+      this.$bvModal.show("editbook-modal");
+    },
+    edited(){
+      this.$bvModal.hide("editbook-modal");
       this.book = {};
       this.reload();
     },
@@ -111,6 +130,11 @@ export default {
   data() {
     return {
       fields: [
+        {
+          key: "id",
+          label: "#ID",
+          sortable: false,
+        },
         {
           key: "name",
           label: "Book Name",

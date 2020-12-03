@@ -14,9 +14,8 @@ export function addBook(book){
     return api.post("/api/Books", book);
 }
 
-export async function editBook(id, book){
-    const response = await api.patch(`/api/Books/${id}`, book);
-    return response.data;
+export function editBook(book){
+    return api.patch(`/api/Books/${book.id}`, book);
 }
 
 export function borrowBook(bookId){
