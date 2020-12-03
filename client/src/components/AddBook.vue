@@ -28,6 +28,13 @@
         ></b-form-input>
       </b-form-group>
 
+      <b-form-group label="Quantity:">
+        <b-form-input
+          type="number"          
+          v-model="book.quantity"
+        ></b-form-input>
+      </b-form-group>
+
       <b-button type="submit" block variant="success">Submit</b-button>
     </b-form>
   </div>
