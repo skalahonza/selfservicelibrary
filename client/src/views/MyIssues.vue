@@ -1,6 +1,15 @@
 <template>
-  <div>
+  <div class="overflow-auto">
+      <b-pagination
+        align="center"
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="books-table"
+      ></b-pagination>
+    
     <b-table
+      id="books-table"
       hover
       selectable
       :current-page="currentPage"
@@ -41,9 +50,9 @@ export default {
   methods: {
     async reload() {
       this.isBusy = true;
-      const items = await getMine(); 
-      items.sort((a,b) =>{
-        return (a.isReturned - b.isReturned) || (a.expiryDate - b.expiryDate);
+      const items = await getMine();
+      items.sort((a, b) => {
+        return a.isReturned - b.isReturned || a.expiryDate - b.expiryDate;
       });
       this.items = items;
       this.isBusy = false;
@@ -56,7 +65,8 @@ export default {
             variant: "success",
             solid: true,
           });
-          this.reload();
+          item.isReturned = true;
+          item.returnDate = new Date();
         })
         .catch((error) => {
           this.$bvToast.toast(error.response.data.title, {
@@ -71,6 +81,11 @@ export default {
         return moment(value).format("LL");
       }
       return value;
+    },
+  },
+  computed: {
+    rows() {
+      return this.items.length;
     },
   },
   data() {
@@ -112,9 +127,9 @@ export default {
         { key: "action" },
       ],
       items: [],
-      currentPage: 0,
-      perPage: 100,
-      pageSizes: [100],
+      currentPage: 1,
+      perPage: 10,
+      pageSizes: [10],
       emptyText: "No data",
       sortBy: "",
       isBusy: false,
