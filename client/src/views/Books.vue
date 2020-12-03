@@ -1,5 +1,23 @@
 <template>
-  <div>
+  <b-container>
+    <form @submit.prevent="reload">
+      <b-input-group>
+        <b-button variant="outline-success" v-on:click="add()"
+          >Add Book
+        </b-button>
+        <b-form-input
+          type="text"
+          class="form-control"
+          v-model="search"
+          placeholder="Search..."
+        />
+        <b-button variant="outline-primary" type="submit"> Search </b-button>
+        <b-button variant="outline-danger" v-on:click="clear()">
+          Clear
+        </b-button>
+      </b-input-group>
+    </form>
+
     <b-table
       hover
       selectable
@@ -24,22 +42,49 @@
         >
       </template>
     </b-table>
-  </div>
+    <b-modal id="book-modal" hide-footer size="xl" title="Add Book">
+      <AddBook v-bind:book="book" v-bind:onSuccess="added" />
+    </b-modal>
+  </b-container>
 </template>
 
 <script>
 import { getAll, borrowBook } from "@/services/books";
+import AddBook from "@/components/AddBook.vue";
 
 export default {
   name: "Books",
+  components: {
+    AddBook,
+  },
   created() {
     this.reload();
   },
   methods: {
+    add() {
+      this.book = {};
+      this.$bvModal.show("book-modal");
+    },
+    added() {
+      this.$bvModal.hide("book-modal");
+      this.book = {};
+      this.reload();
+    },
     async reload() {
       this.isBusy = true;
-      this.items = await getAll();
+      const items = await getAll();
+      const search = this.search.toLowerCase();
+      this.items = items.filter(
+        (x) =>
+          x.name.toLowerCase().includes(search) ||
+          x.isbn.toLowerCase().includes(search)
+      );
       this.isBusy = false;
+    },
+    clear() {
+      this.search = "";
+      this.sortBy = "";
+      this.reload();
     },
     borrow(item) {
       borrowBook(item.id)
@@ -52,11 +97,14 @@ export default {
           this.reload();
         })
         .catch((error) => {
-          this.$bvToast.toast(error.response.data.title, {
-            title: "Chyba",
-            variant: "danger",
-            solid: true,
-          });
+          this.$bvToast.toast(
+            error.response.data.title || error.response.data,
+            {
+              title: "Error",
+              variant: "danger",
+              solid: true,
+            }
+          );
         });
     },
   },
@@ -85,12 +133,13 @@ export default {
         },
         {
           key: "isAvailable",
-          label: "Is Available",
+          label: "Available",
           sortable: true,
         },
         { key: "action" },
       ],
       items: [],
+      book: {},
       currentPage: 0,
       perPage: 100,
       pageSizes: [100],

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form @submit="onSubmit">
+    <b-form @submit.prevent="onSubmit">
       <b-form-group label="Book name:">
         <b-form-input
           v-model="book.name"
@@ -27,11 +27,14 @@
           invalid-feedback="ISBN is required"
         ></b-form-input>
       </b-form-group>
+
+      <b-button type="submit" block variant="success">Submit</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
+import { addBook } from "@/services/books";
 export default {
   props: {
     book: Object,
@@ -39,8 +42,25 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log(this.book);
-      if (this.onSuccess) this.onSuccess();
+      addBook(this.book)
+        .then(() => {
+          this.$bvToast.toast("Book successfully added.", {
+            title: "Success",
+            variant: "success",
+            solid: true,
+          });
+          if (this.onSuccess) this.onSuccess();
+        })
+        .catch((error) => {
+          this.$bvToast.toast(
+            error.response.data.title || error.response.data,
+            {
+              title: "Error",
+              variant: "danger",
+              solid: true,
+            }
+          );
+        });
     },
   },
   data() {
