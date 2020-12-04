@@ -11,8 +11,12 @@
 
       <div v-if="authorized">
         <p>Signed in as {{ user.fullName }}</p>
-        <b-button @click="$router.push('books')" pill variant="primary">View books</b-button>
-        <b-button @click="$router.push('my-issues')" pill variant="success">View issues</b-button>
+        <b-button @click="$router.push('books')" pill variant="primary"
+          >View books</b-button
+        >
+        <b-button @click="$router.push('my-issues')" pill variant="success"
+          >View issues</b-button
+        >
       </div>
 
       <b-form @submit="onSubmit" v-else>
@@ -24,7 +28,7 @@
           >. We do not store your password or user info anywhere.
         </p>
         <b-overlay
-          :show="code"
+          :show="has_code && !authorized"
           rounded="sm"
           bg-color="#e9ecef"
           spinner-variant="primary"
@@ -42,6 +46,7 @@
 
 <script>
 import { signIn, isAuthorized } from "@/services/auth.js";
+import { parseCode, removeCode } from "@/services/utils.js";
 
 export default {
   computed: {
@@ -56,12 +61,14 @@ export default {
     },
     code: function () {
       // HACK parse query parameter even from github pages
-      const regex = /(?<=code=)(\w*)(?=(&|#)?)/gm;
-      const found = window.location.href.match(regex);
-      if (found && found.length == 1) {
-        return found[0];
-      }
-      return this.$route.query.code;
+      return parseCode() || this.$route.query.code;
+    },
+    has_code: function () {
+      // HACK parse query parameter even from github pages
+      const code = this.code;
+      // string to bool
+      if (code) return true;
+      else return false;
     },
   },
   methods: {
@@ -74,12 +81,11 @@ export default {
   },
   mounted: function () {
     this.$nextTick(async function () {
-      if (this.code) {
+      if (this.has_code && !this.authorized) {
         await signIn(this.code);
       }
       // HACK remove code query parameter that is misplaced due to non history mode of router
-      const regex = /\??code=(\w*)(?=(&|#)?)/gm;
-      window.location.href = window.location.href.replace(regex, "");
+      removeCode();
     });
   },
 };

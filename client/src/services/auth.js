@@ -10,7 +10,16 @@ function store(access_token, refresh_token, expires_in) {
 }
 
 export async function signIn(code) {
-    const response = await api.post("/api/Auth/sign-in", {
+    signOut();
+    // creating another instance to prevent axios interceptor infinite loops
+    const instance = axios.create({
+        baseURL: process.env.VUE_APP_API_URL,
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    });
+    const response = await instance.post("/api/Auth/sign-in", {
         code: code
     });
     const {
