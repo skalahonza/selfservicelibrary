@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto">
+<b-container class="overflow-auto">
       <b-pagination
         align="center"
         v-model="currentPage"
@@ -36,7 +36,7 @@
         >
       </template>
     </b-table>
-  </div>
+  </b-container>
 </template>
 
 <script>
