@@ -16,8 +16,8 @@ services:
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
       - MongoDb__DatabaseName=BooksDb
-      - oAuth2__ClientId=2dd22f7a-8e07-4915-8ee1-23876bb85f02
-      - oAuth2__ClientSecret=m3T4JuKNPtKWwoiPQr6DhqYnGJbPayTq
+      - oAuth2__ClientId=${CLIENTID}
+      - oAuth2__ClientSecret=${CLIENTSECRET}
       - oAuth2__RedirectUri=http://localhost:8080
     build:
       context: server
