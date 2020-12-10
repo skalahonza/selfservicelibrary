@@ -21,6 +21,7 @@ using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Middlewares;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
+using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Mapping;
 using SelfServiceLibrary.BL.Validation;
@@ -129,6 +130,51 @@ namespace SelfServiceLibrary.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+            SeedDatabase(app);
+        }
+
+        private void SeedDatabase(IApplicationBuilder app)
+        {
+            var service = app.ApplicationServices.GetRequiredService<BookService>();
+            if (service.GetAll().Result.Count == 0)
+            {
+                var random = new Random();
+                service.Add(new BookAddDTO
+                {
+                    ISBN = "9781522634188",
+                    Author = "H. Rider Haggard",
+                    Name = "She: A History of Adventure",
+                    Quantity = random.Next(5, 20)
+                }).Wait();
+                service.Add(new BookAddDTO
+                {
+                    ISBN = "9780060276362",
+                    Author = "C. S. Lewis",
+                    Name = "The Lion, The Witch, and the Wardrobe",
+                    Quantity = random.Next(5, 20)
+                }).Wait();
+                service.Add(new BookAddDTO
+                {
+                    ISBN = "9780786112142",
+                    Author = "Lewis Carroll",
+                    Name = "Alice's Adventures in Wonderland",
+                    Quantity = random.Next(5, 20)
+                }).Wait();
+                service.Add(new BookAddDTO
+                {
+                    ISBN = "9780563528807",
+                    Author = "J. R. R. Tolkien",
+                    Name = "The Hobbit",
+                    Quantity = random.Next(5, 20)
+                }).Wait();
+                service.Add(new BookAddDTO
+                {
+                    ISBN = "0062073478",
+                    Author = "Agatha Christie",
+                    Name = "And Then There Were None",
+                    Quantity = random.Next(5, 20)
+                }).Wait();
+            }
         }
 
         public void ConfigureSwagger(IApplicationBuilder app)
