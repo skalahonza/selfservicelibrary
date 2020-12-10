@@ -125,8 +125,7 @@ namespace SelfServiceLibrary.API
             ConfigureSwagger(app);
 
             app.UseRouting();
-            if (env.IsDevelopment())
-                app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());

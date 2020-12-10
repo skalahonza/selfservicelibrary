@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  books.db:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: BooksDb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    expose:
+      - "27017"
+    volumes:
+      - mongodb_data_container:/data/db
+
+  selfservicelibrary.api:
+    environment:
+      - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
+      - oAuth2__ClientId=2dd22f7a-8e07-4915-8ee1-23876bb85f02
+      - oAuth2__ClientSecret=m3T4JuKNPtKWwoiPQr6DhqYnGJbPayTq
+      - oAuth2__RedirectUri=http://localhost:8080
+    build:
+      context: server
+      dockerfile: SelfServiceLibrary.API/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - books.db
+
+  selfservicelibrary.app:
+    build:
+      context: client
+      dockerfile: Dockerfile
+    depends_on:
+      - selfservicelibrary.api
+    ports:
+      - "8080:80"
+
+volumes:
+  mongodb_data_container:
+
