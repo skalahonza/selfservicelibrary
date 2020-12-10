@@ -18,6 +18,24 @@ VueJS
 :eyes: [Check it out](https://via-library.azurewebsites.net/index.html)
 * Database ![MongoDB](https://img.shields.io/badge/-MongoDB-black?style=flat-square&logo=mongodb) on MongoDB Atlas
 
+# Local development
+## Registering an app (optional)
+1. Go to https://auth.fit.cvut.cz/manager/index.xhtml
+2. Create a new project
+3. Click on Services
+4. Enable scopes for Usermap API
+    * urn:ctu:oauth:umapi.read
+    * cvut:umapi:read
+5. Create application (type: Web Application)
+6. Set Redirect URI to `http://localhost:8080`
+7. Get your Client ID and Client Secret
+8. Set VUE_APP_CLIENT_ID in a file **client/.env.docker**
+9. Set CLIENTID and CLIENTSECRET in **.env** file
+
+## Running Docker Compose
+1. `docker-compose up`
+2. Navigate to http://localhost:8080/
+
 
 ## Integrated APIs
 ### Custom API, library management
