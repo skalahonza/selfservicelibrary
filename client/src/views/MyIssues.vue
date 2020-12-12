@@ -1,13 +1,13 @@
 <template>
-<b-container class="overflow-auto">
-      <b-pagination
-        align="center"
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        aria-controls="books-table"
-      ></b-pagination>
-    
+  <b-container class="overflow-auto">
+    <b-pagination
+      align="center"
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      aria-controls="books-table"
+    ></b-pagination>
+
     <b-table
       id="books-table"
       hover
@@ -36,14 +36,21 @@
         >
       </template>
     </b-table>
+    <b-modal id="qr-modal" hide-footer size="sm" title="Scan QR code">
+      <ScanQR />
+    </b-modal>
   </b-container>
 </template>
 
 <script>
+import ScanQR from "@/components/ScanQR.vue";
 import { getMine, returnIssue } from "@/services/issues";
 import moment from "moment";
 export default {
   name: "MyIssues",
+    components: {
+    ScanQR
+  },
   created() {
     this.reload();
   },
@@ -57,7 +64,11 @@ export default {
       this.items = items;
       this.isBusy = false;
     },
-    returnIssue(item) {
+    async returnIssue(item) {
+      this.$bvModal.show("qr-modal");
+      await new Promise(r => setTimeout(r, 4000));
+      this.$bvModal.hide("qr-modal");
+
       returnIssue(item.id)
         .then(() => {
           this.$bvToast.toast("Book successfully returned.", {

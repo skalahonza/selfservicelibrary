@@ -41,9 +41,7 @@
           <b-button variant="success" v-on:click="borrow(row.item)"
             >Borrow</b-button
           >
-          <b-button variant="light" v-on:click="edit(row.item)"
-            >Edit</b-button
-          >
+          <b-button variant="light" v-on:click="edit(row.item)">Edit</b-button>
         </b-button-group>
       </template>
     </b-table>
@@ -53,6 +51,9 @@
     <b-modal id="editbook-modal" hide-footer size="xl" title="Edit Book">
       <EditBook v-bind:book="book" v-bind:onSuccess="edited" />
     </b-modal>
+    <b-modal id="qr-modal" hide-footer size="sm" title="Scan QR code">
+      <ScanQR />
+    </b-modal>
   </b-container>
 </template>
 
@@ -60,12 +61,14 @@
 import { getAll, borrowBook } from "@/services/books";
 import AddBook from "@/components/AddBook.vue";
 import EditBook from "@/components/EditBook.vue";
+import ScanQR from "@/components/ScanQR.vue";
 
 export default {
   name: "Books",
   components: {
     AddBook,
-    EditBook
+    EditBook,
+    ScanQR
   },
   created() {
     this.reload();
@@ -74,17 +77,17 @@ export default {
     add() {
       this.book = {};
       this.$bvModal.show("addbook-modal");
-    },    
+    },
     added() {
       this.$bvModal.hide("addbook-modal");
       this.book = {};
       this.reload();
     },
-    edit(item){
+    edit(item) {
       this.book = { ...item };
       this.$bvModal.show("editbook-modal");
     },
-    edited(){
+    edited() {
       this.$bvModal.hide("editbook-modal");
       this.book = {};
       this.reload();
@@ -105,7 +108,11 @@ export default {
       this.sortBy = "";
       this.reload();
     },
-    borrow(item) {
+    async borrow(item) {
+      this.$bvModal.show("qr-modal");
+      await new Promise(r => setTimeout(r, 4000));
+      this.$bvModal.hide("qr-modal");
+
       borrowBook(item.id)
         .then(() => {
           this.$bvToast.toast("Book successfully borrowed.", {
