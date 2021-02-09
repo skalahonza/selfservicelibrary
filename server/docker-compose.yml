@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  books.db:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_DATABASE: BooksDb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    expose:
+      - "27017"
+    volumes:
+      - mongodb_data_container:/data/db
+
+  selfservicelibrary.api:
+    image: ${DOCKER_REGISTRY-}selfservicelibraryapi
+    environment:
+      - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
+    build:
+      context: .
+      dockerfile: SelfServiceLibrary.API/Dockerfile
+
+volumes:
+  mongodb_data_container:
+
