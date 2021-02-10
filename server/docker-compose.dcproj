@@ -6,7 +6,7 @@
     <ProjectGuid>bc444dd5-a742-445c-b06a-081656cae24f</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>selfservicelibrary.api</DockerServiceName>
+    <DockerServiceName>selfservicelibrary.web</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

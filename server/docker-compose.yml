@@ -21,6 +21,13 @@ services:
       context: .
       dockerfile: SelfServiceLibrary.API/Dockerfile
 
+  selfservicelibrary.web:
+    image: ${DOCKER_REGISTRY-}selfservicelibraryweb
+    build:
+      context: .
+      dockerfile: SelfServiceLibrary.Web/Dockerfile
+
 volumes:
   mongodb_data_container:
+
 
