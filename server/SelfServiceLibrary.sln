@@ -9,6 +9,10 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.BL", "SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj", "{74399BBF-BCB8-4339-9F66-030368AA60B4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{3FA47278-D4A0-4897-9D18-6B2A6A03E88D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Web", "SelfServiceLibrary.Web\SelfServiceLibrary.Web.csproj", "{637E9D17-1776-438F-AC73-9005C7B4E978}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{74399BBF-BCB8-4339-9F66-030368AA60B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74399BBF-BCB8-4339-9F66-030368AA60B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74399BBF-BCB8-4339-9F66-030368AA60B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{637E9D17-1776-438F-AC73-9005C7B4E978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{637E9D17-1776-438F-AC73-9005C7B4E978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{637E9D17-1776-438F-AC73-9005C7B4E978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{637E9D17-1776-438F-AC73-9005C7B4E978}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{637E9D17-1776-438F-AC73-9005C7B4E978} = {3FA47278-D4A0-4897-9D18-6B2A6A03E88D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BFEF83D8-9393-445C-9E66-0821FD211DB1}
