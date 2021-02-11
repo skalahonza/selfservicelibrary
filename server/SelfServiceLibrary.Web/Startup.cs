@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 using AutoMapper;
 
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
+
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +50,12 @@ namespace SelfServiceLibrary.Web
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
+            // Blazorise
+            services
+                .AddBlazorise(options => options.ChangeTextOnKeyPress = true)
+                .AddBootstrapProviders()
+                .AddFontAwesomeIcons();
+
             // Business logic
             services.AddScoped<BookService>();
             services.AddScoped<IssueService>();
@@ -80,6 +90,13 @@ namespace SelfServiceLibrary.Web
 
             app.UseStaticFiles();
             app.UseRouting();
+
+            // Blazorise
+            app
+                .ApplicationServices
+                .UseBootstrapProviders()
+                .UseFontAwesomeIcons();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

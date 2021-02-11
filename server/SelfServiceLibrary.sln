@@ -17,15 +17,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{0EF7C10D-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{75F64DE0-3BE1-4164-913D-DA5B09743B5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.Domain", "SelfServiceLibrary.Domain\SelfServiceLibrary.Domain.csproj", "{DCFADAEB-B827-464B-80D9-161348E5912D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Domain", "SelfServiceLibrary.Domain\SelfServiceLibrary.Domain.csproj", "{DCFADAEB-B827-464B-80D9-161348E5912D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8453474E-6A5C-4B79-9C81-49FA794A73E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.Persistence", "SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj", "{630F2062-5E72-4D6A-B692-7343092C845C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Persistence", "SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj", "{630F2062-5E72-4D6A-B692-7343092C845C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.Service", "SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj", "{810CF947-F831-47D7-9F5F-17333F7A7B03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Service", "SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj", "{810CF947-F831-47D7-9F5F-17333F7A7B03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.Mapping", "SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj", "{CCCB78AF-7FEF-4325-9D2A-6177DE2E1A5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Mapping", "SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj", "{CCCB78AF-7FEF-4325-9D2A-6177DE2E1A5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

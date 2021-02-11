@@ -11,23 +11,23 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Book Name</th>
-                <th>Available</th>
-            </tr>
-        </thead>
-        <tbody>
+    <Table>
+        <TableHeader>
+            <TableRow>
+                <TableHeaderCell>Book Name</TableHeaderCell>
+                <TableHeaderCell>Available</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
             @foreach (var book in books)
             {
-                <tr>
-                    <td>@book.Name</td>
-                    <td>@book.IsAvailable</td>
-                </tr>
+                <TableRow>
+                    <TableRowCell>@book.Name</TableRowCell>
+                    <TableRowCell>@book.IsAvailable</TableRowCell>
+                </TableRow>
             }
-        </tbody>
-    </table>
+        </TableBody>
+    </Table>
 }
 
 @code {
