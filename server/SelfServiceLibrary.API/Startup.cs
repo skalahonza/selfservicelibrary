@@ -92,6 +92,7 @@ namespace SelfServiceLibrary.API
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>())
                 .AddNewtonsoftJson();
 
+            // Auth
             services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
             services.AddAuthentication(options =>
             {
@@ -105,7 +106,11 @@ namespace SelfServiceLibrary.API
             services.AddHttpClient();
             services.AddTransient<IUserContextService, UsermapCVUT>();
             services.AddSingleton<ITokenService, AuthCVUT>();
+
+            // Mapping
             services.AddAutoMapper(typeof(BookProfile));
+
+            // MongoDB
             services
                 .AddOptions<MongoDbOptions>()
                 .Bind(Configuration.GetSection("MongoDb"))
@@ -115,6 +120,8 @@ namespace SelfServiceLibrary.API
                 var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
                 return new MongoClient(options.Value.ConnectionString);
             });
+
+            // Business Logic
             services.AddTransient<BookService>();
             services.AddTransient<IssueService>();
         }

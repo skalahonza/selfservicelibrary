@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SelfServiceLibrary.Domain\SelfServiceLibrary.Domain.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />
+  </ItemGroup>
+
+</Project>

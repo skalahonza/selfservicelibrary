@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/SelfServiceLibrary.Domain/bin/Debug/netstandard2.1
+/SelfServiceLibrary.Domain/obj
+/SelfServiceLibrary.Mapping/bin/Debug/netstandard2.1
+/SelfServiceLibrary.Mapping/obj
+/SelfServiceLibrary.Persistence/bin/Debug/netstandard2.1
+/SelfServiceLibrary.Persistence/obj
+/SelfServiceLibrary.Service/obj
+/SelfServiceLibrary.Service/bin/Debug/netstandard2.1

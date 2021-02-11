@@ -23,6 +23,9 @@ services:
 
   selfservicelibrary.web:
     image: ${DOCKER_REGISTRY-}selfservicelibraryweb
+    environment:
+      - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
     build:
       context: .
       dockerfile: SelfServiceLibrary.Web/Dockerfile

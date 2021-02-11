@@ -1,0 +1,40 @@
+﻿@page "/books"
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Domain.DTO.Book
+@inject BookService Service
+
+<h1>Books</h1>
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book Name</th>
+                <th>Available</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <td>@book.Name</td>
+                    <td>@book.IsAvailable</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BookListDTO> books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await Service.GetAll();
+    }
+}
