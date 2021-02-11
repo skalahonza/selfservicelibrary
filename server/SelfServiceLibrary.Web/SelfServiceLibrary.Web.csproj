@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
-    <ProjectReference Include="..\..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />
   </ItemGroup>
 
 </Project>
