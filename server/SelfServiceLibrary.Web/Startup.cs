@@ -23,11 +23,13 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 using SelfServiceLibrary.API.Services;
-using SelfServiceLibrary.Domain.Validation;
+using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
 using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;
+using SelfServiceLibrary.Service.Validation;
 using SelfServiceLibrary.Web.Data;
 
 namespace SelfServiceLibrary.Web
@@ -74,6 +76,9 @@ namespace SelfServiceLibrary.Web
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));
             services.AddScoped<Service.Interfaces.IMapper, AutoMapperAdapter>();
+
+            // CSV
+            services.AddScoped<ICsvImporter, CsvImporter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

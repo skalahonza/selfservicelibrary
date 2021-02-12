@@ -1,9 +1,12 @@
 ﻿@page "/books"
 @using SelfServiceLibrary.Service.Services
-@using SelfServiceLibrary.Domain.DTO.Book
+@using SelfServiceLibrary.Service.DTO.Book
+@using System.IO
 @inject BookService Service
 
 <h1>Books</h1>
+<Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+<FileEdit Changed="@OnChanged" Filter=".csv, .txt" />
 
 @if (books == null)
 {
@@ -35,6 +38,30 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        books = await Service.GetAll();
+    }
+
+    private async Task DeleteAll()
+    {
+        await Service.DeleteAll();
+        books = await Service.GetAll();
+    }
+
+    private async Task OnChanged(FileChangedEventArgs e)
+    {
+        foreach (var file in e.Files)
+        {
+            // A stream is going to be the destination stream we're writing to.
+            using var stream = new MemoryStream();
+            // Here we're telling the FileEdit where to write the upload result
+            await file.WriteToStreamAsync(stream);
+            // Once we reach this line it means the file is fully uploaded.
+            // In this case we're going to offset to the beginning of file
+            // so we can read it.
+            stream.Seek(0, SeekOrigin.Begin);
+            await Service.ImportCsv(stream);
+        }
+
         books = await Service.GetAll();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.Domain.DTO.Book
+﻿namespace SelfServiceLibrary.Service.DTO.Book
 {
     public class BookEditDTO
     {

@@ -2,14 +2,15 @@
 
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Domain.DTO.Book;
 using SelfServiceLibrary.Domain.Entities;
 using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SelfServiceLibrary.Service.Services
@@ -18,12 +19,14 @@ namespace SelfServiceLibrary.Service.Services
     {
         private readonly IMongoCollection<Book> _books;
         private readonly IMapper _mapper;
+        private readonly ICsvImporter _csv;
 
-        public BookService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper)
+        public BookService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper, ICsvImporter csv)
         {
             var database = client.GetDatabase(options.Value.DatabaseName);
             _books = database.GetCollection<Book>(Book.COLLECTION_NAME);
             _mapper = mapper;
+            _csv = csv;
         }
 
         public Task<List<BookListDTO>> GetAll() =>
@@ -45,7 +48,15 @@ namespace SelfServiceLibrary.Service.Services
             return _mapper.Map<BookDetailDTO>(entity);
         }
 
-        public async Task<BookDetailDTO?> Path(Guid id, BookEditDTO book)
+        public async Task ImportCsv(Stream csv)
+        {
+            await foreach (var book in _csv.ImportBooks(csv))
+            {
+                await Add(book);
+            }
+        }
+
+        public async Task<BookDetailDTO?> Patch(Guid id, BookEditDTO book)
         {
             var update = Builders<Book>
                 .Update
@@ -60,5 +71,8 @@ namespace SelfServiceLibrary.Service.Services
             var result = await _books.DeleteOneAsync(x => x.Id == id);
             return result.DeletedCount != 0;
         }
+
+        public Task DeleteAll() =>
+            _books.DeleteManyAsync(Builders<Book>.Filter.Empty);
     }
 }

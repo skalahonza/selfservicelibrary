@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
-using SelfServiceLibrary.Domain.DTO.Book;
 using SelfServiceLibrary.Domain.Entities;
+using SelfServiceLibrary.Service.DTO.Book;
 
 namespace SelfServiceLibrary.Mapping.Profiles
 {

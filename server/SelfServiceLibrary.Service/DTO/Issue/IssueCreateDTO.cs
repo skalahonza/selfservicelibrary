@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SelfServiceLibrary.Domain.DTO.Issue
+namespace SelfServiceLibrary.Service.DTO.Issue
 {
     public class IssueCreateDTO
     {

@@ -4,9 +4,9 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Domain.DTO.Issue;
 using SelfServiceLibrary.Domain.Entities;
 using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;
