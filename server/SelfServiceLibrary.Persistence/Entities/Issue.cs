@@ -3,7 +3,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace SelfServiceLibrary.Domain.Entities
+namespace SelfServiceLibrary.Persistence.Entities
 {
     public class Issue
     {

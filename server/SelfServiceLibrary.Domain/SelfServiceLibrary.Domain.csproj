@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -9,9 +9,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>

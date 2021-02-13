@@ -2,7 +2,7 @@
 
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Domain.Entities;
+using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Extensions;

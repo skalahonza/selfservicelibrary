@@ -22,7 +22,7 @@ services:
       dockerfile: SelfServiceLibrary.API/Dockerfile
 
   selfservicelibrary.web:
-    image: ${DOCKER_REGISTRY-}selfservicelibraryweb
+    image: skalahonza/self-service-library-web:latest
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
       - MongoDb__DatabaseName=BooksDb

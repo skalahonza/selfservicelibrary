@@ -3,7 +3,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace SelfServiceLibrary.Domain.Entities
+namespace SelfServiceLibrary.Persistence.Entities
 {
     public class User
     {

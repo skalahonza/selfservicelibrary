@@ -16,7 +16,7 @@ namespace SelfServiceLibrary.CSV
     {
         private readonly ILogger<CsvImporter> _log;
 
-        public CsvImporter(ILogger<CsvImporter> log) => 
+        public CsvImporter(ILogger<CsvImporter> log) =>
             _log = log;
 
         public async IAsyncEnumerable<BookAddDTO> ImportBooks(Stream stream)

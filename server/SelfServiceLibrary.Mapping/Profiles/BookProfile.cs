@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using SelfServiceLibrary.Domain.Entities;
+using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Service.DTO.Book;
 
 namespace SelfServiceLibrary.Mapping.Profiles
