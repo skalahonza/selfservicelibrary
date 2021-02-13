@@ -31,7 +31,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// <summary>
         /// Druh-Publikace – Typ publikace podle knihovny (GL, CMP, …)
         /// </summary>
-        public string? PulicationType { get; set; }
+        public string? PublicationType { get; set; }
 
         /// <summary>
         /// Deponováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
@@ -77,6 +77,11 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// Země-Vydání – Stát kde byla publikace vydána (asi pouze pro hledání, moc se nepoužívá)
         /// </summary>
         public string? CountryOfPublication { get; set; }
+
+        /// <summary>
+        /// ISBNorISSN – Podle toho co publikace obsahuje (pokud jej obsahuje)
+        /// </summary>
+        public string? ISBNorISSN { get; set; }
 
         public string? ISBN { get; set; }
 

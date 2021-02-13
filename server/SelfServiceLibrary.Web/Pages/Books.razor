@@ -17,6 +17,7 @@ else
     <Table>
         <TableHeader>
             <TableRow>
+                <TableHeaderCell>#</TableHeaderCell>
                 <TableHeaderCell>Book Name</TableHeaderCell>
                 <TableHeaderCell>Author</TableHeaderCell>
             </TableRow>
@@ -25,6 +26,7 @@ else
             @foreach (var book in books)
             {
                 <TableRow>
+                    <TableRowCell>@book.DepartmentNumber</TableRowCell>
                     <TableRowCell>@book.Name</TableRowCell>
                     <TableRowCell>@book.Author</TableRowCell>
                 </TableRow>

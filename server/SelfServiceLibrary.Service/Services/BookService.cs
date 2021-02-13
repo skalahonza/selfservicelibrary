@@ -52,7 +52,7 @@ namespace SelfServiceLibrary.Service.Services
         {
             await foreach (var book in _csv.ImportBooks(csv))
             {
-                await Add(book);
+                await _books.InsertOneAsync(book);
             }
         }
 

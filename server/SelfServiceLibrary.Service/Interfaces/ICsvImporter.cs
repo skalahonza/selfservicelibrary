@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
+using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Service.DTO.Book;
 
 namespace SelfServiceLibrary.Service.Interfaces
@@ -12,6 +13,6 @@ namespace SelfServiceLibrary.Service.Interfaces
         /// </summary>
         /// <param name="stream">Stream of CSV data, with first line as a header</param>
         /// <returns></returns>
-        IAsyncEnumerable<BookAddDTO> ImportBooks(Stream stream);
+        IAsyncEnumerable<Book> ImportBooks(Stream stream);
     }
 }
