@@ -5,48 +5,48 @@
 @inject BookService Service
 
 <h1>Books</h1>
-<Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
-<FileEdit Changed="@OnChanged" Filter=".csv, .txt" />
 
-@if (books == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <Table>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>#</TableHeaderCell>
-                <TableHeaderCell>Book Name</TableHeaderCell>
-                <TableHeaderCell>Author</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            @foreach (var book in books)
-            {
-                <TableRow>
-                    <TableRowCell>@book.DepartmentNumber</TableRowCell>
-                    <TableRowCell>@book.Name</TableRowCell>
-                    <TableRowCell>@book.Author</TableRowCell>
-                </TableRow>
-            }
-        </TableBody>
-    </Table>
-}
+<Inline>
+    <Field>
+        <FileEdit Changed="@OnChanged" Filter=".csv, .txt" />
+    </Field>
+    <Field>
+        <Button Color="Color.Success" Clicked="@DeleteAll">Import</Button>
+    </Field>
+    <Field>
+        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+    </Field>
+</Inline>
+
+<DataGrid TItem="BookListDTO"
+          Data="@books"
+          ReadData="@OnReadData"
+          TotalItems="@totalBooks"
+          ShowPager="true"
+          PageSize="15">
+    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Book Name" Sortable="true" />
+    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+</DataGrid>
 
 @code {
     private List<BookListDTO> books;
+    private int? totalBooks;
 
     protected override async Task OnInitializedAsync()
     {
-        books = await Service.GetAll();
+        totalBooks = (int)await Service.GetTotalCount();
     }
 
     private async Task DeleteAll()
     {
         await Service.DeleteAll();
-        books = await Service.GetAll();
+    }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
+    {
+        books = await Service.GetAll(e.Page, e.PageSize);
+        StateHasChanged();
     }
 
     private async Task OnChanged(FileChangedEventArgs e)
@@ -64,6 +64,6 @@ else
             await Service.ImportCsv(stream);
         }
 
-        books = await Service.GetAll();
+        StateHasChanged();
     }
 }

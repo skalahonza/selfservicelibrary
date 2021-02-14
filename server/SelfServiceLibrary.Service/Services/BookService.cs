@@ -29,11 +29,16 @@ namespace SelfServiceLibrary.Service.Services
             _csv = csv;
         }
 
-        public Task<List<BookListDTO>> GetAll() =>
+        public Task<List<BookListDTO>> GetAll(int page, int pageSize) =>
             _books
                 .Find(Builders<Book>.Filter.Empty)
+                .Skip((page - 1) * pageSize)
+                .Limit(pageSize)
                 .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookListDTO>(x)))
                 .ToListAsync();
+
+        public Task<long> GetTotalCount() =>
+            _books.EstimatedDocumentCountAsync();
 
         public async Task<BookDetailDTO?> GetDetail(Guid id) =>
             _mapper.Map<BookDetailDTO>(await _books
