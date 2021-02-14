@@ -45,6 +45,11 @@ namespace SelfServiceLibrary.CSV
                 HasHeaderRecord = true,
                 BadDataFound = context => _log.LogWarning("Bad CSV data found. {Row}", context.ToString()),
             });
+
+            // process header
+            await csv.ReadAsync();
+            csv.ReadHeader();
+
             while (await csv.ReadAsync())
             {
                 yield return new Book
