@@ -7,11 +7,8 @@
 <h1>Books</h1>
 
 <Inline>
-    <Field>
-        <FileEdit Changed="@OnChanged" Filter=".csv, .txt" />
-    </Field>
-    <Field>
-        <Button Color="Color.Success" Clicked="@DeleteAll">Import</Button>
+    <Field >
+        <FileEdit Changed="@OnChanged" Multiple="false" Filter=".csv, .txt" >Import CSV</FileEdit>
     </Field>
     <Field>
         <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
@@ -41,6 +38,9 @@
     private async Task DeleteAll()
     {
         await Service.DeleteAll();
+        totalBooks = 0;
+        books.Clear();
+        StateHasChanged();
     }
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
@@ -51,19 +51,19 @@
 
     private async Task OnChanged(FileChangedEventArgs e)
     {
-        foreach (var file in e.Files)
-        {
-            // A stream is going to be the destination stream we're writing to.
-            using var stream = new MemoryStream();
-            // Here we're telling the FileEdit where to write the upload result
-            await file.WriteToStreamAsync(stream);
-            // Once we reach this line it means the file is fully uploaded.
-            // In this case we're going to offset to the beginning of file
-            // so we can read it.
-            stream.Seek(0, SeekOrigin.Begin);
-            await Service.ImportCsv(stream);
-        }
+        var file = e.Files.Single();
+        // A stream is going to be the destination stream we're writing to.
+        using var stream = new MemoryStream();
+        // Here we're telling the FileEdit where to write the upload result
+        await file.WriteToStreamAsync(stream);
+        // Once we reach this line it means the file is fully uploaded.
+        // In this case we're going to offset to the beginning of file
+        // so we can read it.
+        stream.Seek(0, SeekOrigin.Begin);
+        await Service.ImportCsv(stream);
 
+        totalBooks = (int)await Service.GetTotalCount();
+        books = await Service.GetAll(1, 15);
         StateHasChanged();
     }
 }
