@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 using AutoMapper;
 
@@ -12,9 +8,7 @@ using Blazorise.Icons.FontAwesome;
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,16 +24,13 @@ using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;
 using SelfServiceLibrary.Service.Validation;
-using SelfServiceLibrary.Web.Data;
 
 namespace SelfServiceLibrary.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
+        public Startup(IConfiguration configuration) => 
             Configuration = configuration;
-        }
 
         public IConfiguration Configuration { get; }
 
@@ -50,7 +41,6 @@ namespace SelfServiceLibrary.Web
             services.AddRazorPages()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>());
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
 
             // Blazorise
             services

@@ -27,7 +27,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Service"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Mapping", "SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj", "{CCCB78AF-7FEF-4325-9D2A-6177DE2E1A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.CSV", "SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj", "{067C02D3-3F15-4017-B6B1-0D656656DC98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.CSV", "SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj", "{067C02D3-3F15-4017-B6B1-0D656656DC98}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{58C573EA-15E6-4B4E-827C-6784A8ACFBAD}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
