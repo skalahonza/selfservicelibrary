@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 
 using System.Collections.Generic;
 
-namespace SelfServiceLibrary.API.DTO
+namespace CVUT.Auth.Model
 {
     public class TokenResponse
     {

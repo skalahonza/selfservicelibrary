@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using CVUT.Auth;
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.Service.Interfaces;
 
@@ -16,7 +17,7 @@ namespace SelfServiceLibrary.API.Handlers
 {
     public class CvutAuthHandler : AuthenticationHandler<CvutAuthOptions>
     {
-        private readonly ITokenService _tokenService;
+        private readonly ZuulClient _zuul;
         private readonly IUserProvider _userProvider;
 
         public CvutAuthHandler(
@@ -24,17 +25,17 @@ namespace SelfServiceLibrary.API.Handlers
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            ITokenService tokenService,
+            ZuulClient zuul,
             IUserProvider userProvider)
             : base(options, logger, encoder, clock)
         {
-            _tokenService = tokenService;
+            _zuul = zuul;
             _userProvider = userProvider;
         }
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var token = await _tokenService.CheckToken(Request
+            var token = await _zuul.CheckToken(Request
                 .Headers["Authorization"]
                 .FirstOrDefault()?
                 .Split(" ")

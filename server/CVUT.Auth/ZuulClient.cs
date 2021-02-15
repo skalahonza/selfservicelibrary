@@ -1,26 +1,25 @@
-﻿using Microsoft.Extensions.Options;
+﻿using CVUT.Auth.Model;
+using CVUT.Auth.Options;
+
+using Microsoft.Extensions.Options;
 
 using Pathoschild.Http.Client;
-
-using SelfServiceLibrary.API.DTO;
-using SelfServiceLibrary.API.Interfaces;
-using SelfServiceLibrary.API.Options;
 
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SelfServiceLibrary.API.Services
+namespace CVUT.Auth
 {
-    public class AuthCVUT : ITokenService
+    public class ZuulClient
     {
         private readonly IClient _client;
         private readonly IOptions<oAuth2Options> _options;
 
-        public AuthCVUT(IOptions<oAuth2Options> options, IHttpClientFactory factory)
+        public ZuulClient(IOptions<oAuth2Options> options, HttpClient client)
         {
             _options = options;
-            _client = new FluentClient(new Uri("https://auth.fit.cvut.cz"), factory.CreateClient());
+            _client = new FluentClient(new Uri("https://auth.fit.cvut.cz"), client);
         }
 
         public ValueTask<TokenResponse> CheckToken(string token) =>
@@ -32,7 +31,7 @@ namespace SelfServiceLibrary.API.Services
 
         public Task<SignInResponse> Refresh(string refreshToken) =>
             _client.PostAsync("oauth/token")
-                .WithBasicAuthentication(_options.Value.ClientId!, _options.Value.ClientSecret!)
+                .WithBasicAuthentication(_options.Value.ClientId, _options.Value.ClientSecret)
                 .WithBody(p => p.FormUrlEncoded(new
                 {
                     grant_type = "refresh_token",
@@ -42,7 +41,7 @@ namespace SelfServiceLibrary.API.Services
 
         public Task<SignInResponse> GetToken(string code) =>
             _client.PostAsync("oauth/token")
-                .WithBasicAuthentication(_options.Value.ClientId!, _options.Value.ClientSecret!)
+                .WithBasicAuthentication(_options.Value.ClientId, _options.Value.ClientSecret)
                 .WithBody(p => p.FormUrlEncoded(new
                 {
                     grant_type = "authorization_code",

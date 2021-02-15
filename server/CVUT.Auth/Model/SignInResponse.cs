@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 
-namespace SelfServiceLibrary.API.DTO
+namespace CVUT.Auth.Model
 {
     public class SignInResponse
     {

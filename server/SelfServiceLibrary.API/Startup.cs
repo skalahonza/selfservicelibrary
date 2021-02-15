@@ -4,6 +4,8 @@ using System.Reflection;
 
 using AutoMapper;
 
+using CVUT.Auth;
+using CVUT.Auth.Options;
 using CVUT.Usermap;
 
 using FluentValidation.AspNetCore;
@@ -15,10 +17,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 using SelfServiceLibrary.API.Extensions;
-using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Middlewares;
 using SelfServiceLibrary.API.Options;
-using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.Mapping.Profiles;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
@@ -102,8 +102,8 @@ namespace SelfServiceLibrary.API
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpContextAccessor();
             services.AddHttpClient();
-            services.AddTransient<IUserProvider, UsermapClient>();
-            services.AddSingleton<ITokenService, AuthCVUT>();
+            services.AddHttpClient<IUserProvider, UsermapClient>();
+            services.AddHttpClient<ZuulClient>();
 
             // Mapping
             services.AddAutoMapper(typeof(IssueProfile));

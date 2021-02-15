@@ -1,19 +1,19 @@
 ﻿using System.Threading.Tasks;
 
+using CVUT.Auth;
+using CVUT.Auth.Model;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using SelfServiceLibrary.API.DTO;
-using SelfServiceLibrary.API.Interfaces;
 
 namespace SelfServiceLibrary.API.Controllers
 {
     public class AuthController : BaseController
     {
-        private readonly ITokenService _tokenService;
+        private readonly ZuulClient _zuul;
 
-        public AuthController(ITokenService tokenService) =>
-            _tokenService = tokenService;
+        public AuthController(ZuulClient zuul) =>
+            _zuul = zuul;
 
         /// <summary>
         /// oAuth2 sign in using code grant.
@@ -23,7 +23,7 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpPost("sign-in")]
         [AllowAnonymous]
         public Task<SignInResponse> SignIn([FromBody] SignIn dto) =>
-            _tokenService.GetToken(dto.Code ?? string.Empty);
+            _zuul.GetToken(dto.Code ?? string.Empty);
 
         /// <summary>
         /// oAuth2 token refresh
@@ -33,6 +33,6 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpPost("refresh")]
         [AllowAnonymous]
         public Task<SignInResponse> Refresh(Refresh dto) =>
-            _tokenService.Refresh(dto.RefreshToken ?? string.Empty);
+            _zuul.Refresh(dto.RefreshToken ?? string.Empty);
     }
 }

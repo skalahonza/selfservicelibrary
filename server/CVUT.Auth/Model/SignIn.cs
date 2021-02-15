@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.API.DTO
+﻿namespace CVUT.Auth.Model
 {
     public class SignIn
     {
