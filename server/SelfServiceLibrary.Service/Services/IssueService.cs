@@ -39,14 +39,14 @@ namespace SelfServiceLibrary.API.Services
         /// </summary>
         /// <param name="issue">Issue details.</param>
         /// <param name="username">To whom will the book be issued.</param>
-        /// <param name="bookId">Id of the book to borrow.</param>
+        /// <param name="bookdepartmentNumber">Id of the book to borrow.</param>
         /// <returns>Null if book not found, true if borrowed, false if out of capacity</returns>
-        public async Task<(bool?, IssueDetailDTO?)> Borrow(string username, Guid bookId, IssueCreateDTO issue)
+        public async Task<(bool?, IssueDetailDTO?)> Borrow(string username, string bookdepartmentNumber, IssueCreateDTO issue)
         {
-            var book = await _books.Find(x => x.Id == bookId).FirstOrDefaultAsync();
+            var book = await _books.Find(x => x.DepartmentNumber == bookdepartmentNumber).FirstOrDefaultAsync();
             if (book == null) return (null, null);
-            var update = Builders<Book>.Update.Inc(x => x.Issued, 1);
-            var result = await _books.UpdateOneAsync(x => x.Id == bookId && x.Issued < book.Quantity, update);
+            var update = Builders<Book>.Update.Set(x => x.IsAvailable, false);
+            var result = await _books.UpdateOneAsync(x => x.DepartmentNumber == bookdepartmentNumber && x.IsAvailable, update);
             if (result.ModifiedCount == 0) return (false, null);
 
             var entity = new Issue { Id = Guid.NewGuid(), IssuedTo = username };
@@ -68,7 +68,7 @@ namespace SelfServiceLibrary.API.Services
                 update);
             if (result.ModifiedCount == 0) return null;
             var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
-            await _books.UpdateOneAsync(x => x.Id == issue.BookId, Builders<Book>.Update.Inc(x => x.Issued, -1));
+            await _books.UpdateOneAsync(x => x.DepartmentNumber == issue.BookDepartmentNumber, Builders<Book>.Update.Set(x => x.IsAvailable, true));
             return _mapper.Map<IssueDetailDTO>(issue);
         }
     }
