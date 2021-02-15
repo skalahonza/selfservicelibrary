@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using System;
 using System.Linq.Expressions;
 
-namespace SelfServiceLibrary.Service.Extensions
+namespace SelfServiceLibrary.Persistence.Extensions
 {
     public static class MongoDbExtensions
     {

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Options;
-using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.Service.Interfaces;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +17,19 @@ namespace SelfServiceLibrary.API.Handlers
     public class CvutAuthHandler : AuthenticationHandler<CvutAuthOptions>
     {
         private readonly ITokenService _tokenService;
-        private readonly IUserContextService _userContextService;
+        private readonly IUserProvider _userProvider;
 
         public CvutAuthHandler(
             IOptionsMonitor<CvutAuthOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock, ITokenService tokenService, IUserContextService userContextService) : base(options, logger, encoder, clock)
+            ISystemClock clock,
+            ITokenService tokenService,
+            IUserProvider userProvider)
+            : base(options, logger, encoder, clock)
         {
             _tokenService = tokenService;
-            _userContextService = userContextService;
+            _userProvider = userProvider;
         }
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -42,14 +45,14 @@ namespace SelfServiceLibrary.API.Handlers
             if (string.IsNullOrEmpty(token.UserName))
                 return AuthenticateResult.Fail("Not a user access.");
 
-            var context = await _userContextService.GetInfo(token.UserName);
-            var claims = context
+            var user = await _userProvider.Get(token.UserName);
+            var claims = user
                 .Roles
-                .Concat(context.TechnicalRoles)
+                .Concat(user.TechnicalRoles)
                 .Select(role => new Claim(ClaimTypes.Role, role))
-                .Append(new Claim(ClaimTypes.Name, context.Username))
-                .Append(new Claim(ClaimTypes.GivenName, context.FirstName))
-                .Append(new Claim(ClaimTypes.Surname, context.LastName));
+                .Append(new Claim(ClaimTypes.Name, user.Username))
+                .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
+                .Append(new Claim(ClaimTypes.Surname, user.LastName));
 
             var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
             var identities = new List<ClaimsIdentity> { identity };

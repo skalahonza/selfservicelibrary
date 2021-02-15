@@ -4,27 +4,25 @@ using System.Reflection;
 
 using AutoMapper;
 
+using CVUT.Usermap;
+
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-
-using MongoDB.Driver;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Interfaces;
 using SelfServiceLibrary.API.Middlewares;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
-using SelfServiceLibrary.BL.DTO.Book;
-using SelfServiceLibrary.BL.Interfaces;
-using SelfServiceLibrary.BL.Mapping;
-using SelfServiceLibrary.BL.Validation;
+using SelfServiceLibrary.Mapping.Profiles;
+using SelfServiceLibrary.Service.DTO.Book;
+using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.Service.Validation;
 
 namespace SelfServiceLibrary.API
 {
@@ -73,7 +71,7 @@ namespace SelfServiceLibrary.API
                 c.AddSecurityRequirement(securityRequirement);
 
 
-                var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(IUserContextService).Assembly };
+                var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(BookListDTO).Assembly };
                 foreach (var assembly in assemblies)
                 {
                     // Set the comments path for the Swagger JSON and UI.
@@ -104,26 +102,11 @@ namespace SelfServiceLibrary.API
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpContextAccessor();
             services.AddHttpClient();
-            services.AddTransient<IUserContextService, UsermapCVUT>();
+            services.AddTransient<IUserProvider, UsermapClient>();
             services.AddSingleton<ITokenService, AuthCVUT>();
 
             // Mapping
-            services.AddAutoMapper(typeof(BookProfile));
-
-            // MongoDB
-            services
-                .AddOptions<MongoDbOptions>()
-                .Bind(Configuration.GetSection("MongoDb"))
-                .ValidateDataAnnotations();
-            services.AddSingleton<IMongoClient, MongoClient>(x =>
-            {
-                var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
-                return new MongoClient(options.Value.ConnectionString);
-            });
-
-            // Business Logic
-            services.AddTransient<BookService>();
-            services.AddTransient<IssueService>();
+            services.AddAutoMapper(typeof(IssueProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

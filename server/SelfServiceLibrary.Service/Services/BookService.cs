@@ -5,7 +5,6 @@ using MongoDB.Driver;
 using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
-using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;
@@ -53,7 +52,6 @@ namespace SelfServiceLibrary.Service.Services
             await _books.InsertOneAsync(entity);
             return _mapper.Map<BookDetailDTO>(entity);
         }
-
 
         public async Task ImportCsv(Stream csv)
         {
