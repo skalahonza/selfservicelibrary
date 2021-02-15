@@ -39,11 +39,11 @@ namespace SelfServiceLibrary.API.Services
         /// </summary>
         /// <param name="issue">Issue details.</param>
         /// <param name="username">To whom will the book be issued.</param>
-        /// <param name="bookId">Id of the book to borrow.</param>
+        /// <param name="bookdepartmentNumber">Id of the book to borrow.</param>
         /// <returns>Null if book not found, true if borrowed, false if out of capacity</returns>
-        public async Task<(bool?, IssueDetailDTO?)> Borrow(string username, Guid bookId, IssueCreateDTO issue)
+        public async Task<(bool?, IssueDetailDTO?)> Borrow(string username, string bookdepartmentNumber, IssueCreateDTO issue)
         {
-            var book = await _books.Find(x => x.Id == bookId).FirstOrDefaultAsync();
+            var book = await _books.Find(x => x.DepartmentNumber == bookdepartmentNumber).FirstOrDefaultAsync();
             if (book == null) return (null, null);
             var update = Builders<Book>.Update.Set(x => x.IsAvailable, false);
             var result = await _books.UpdateOneAsync(x => x.Id == bookId && x.IsAvailable, update);

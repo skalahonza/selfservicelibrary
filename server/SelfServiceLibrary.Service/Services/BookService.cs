@@ -40,15 +40,15 @@ namespace SelfServiceLibrary.Service.Services
         public Task<long> GetTotalCount() =>
             _books.EstimatedDocumentCountAsync();
 
-        public async Task<BookDetailDTO?> GetDetail(Guid id) =>
+        public async Task<BookDetailDTO?> GetDetail(string departmentNumber) =>
             _mapper.Map<BookDetailDTO>(await _books
-                .Find(x => x.Id == id)
+                .Find(x => x.DepartmentNumber == departmentNumber)
                 .FirstOrDefaultAsync());
 
         public async Task<BookDetailDTO> Add(BookAddDTO book)
         {
-            var entity = new Book { Id = Guid.NewGuid() };
-            entity = _mapper.Map(book, entity);
+            var entity = _mapper.Map<Book>(book);
+            entity.Entered = DateTime.UtcNow;
             await _books.InsertOneAsync(entity);
             return _mapper.Map<BookDetailDTO>(entity);
         }
@@ -57,7 +57,7 @@ namespace SelfServiceLibrary.Service.Services
         {
             await foreach (var book in _csv.ImportBooks(csv))
             {
-                await _books.InsertOneAsync(book);
+                await _books.ReplaceOneAsync(x => x.DepartmentNumber == book.DepartmentNumber, book, new ReplaceOptions { IsUpsert = true });
             }
         }
 

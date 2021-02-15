@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace SelfServiceLibrary.Persistence.Entities
 {
     public class Book
     {
         public const string COLLECTION_NAME = "books";
-
-        [BsonId(IdGenerator = typeof(GuidGenerator))]
-        public Guid Id { get; set; }
 
         /// <summary>
         /// Název knihy
@@ -49,9 +45,12 @@ namespace SelfServiceLibrary.Persistence.Entities
         public string? FelNumber { get; set; }
 
         /// <summary>
-        /// Číslo přiřazené katedrou (v současnosti GL-XXXXX, CMP-XXXXX)
+        /// Evidenční-Číslo-Oddělení – Číslo přiřazené naší katedrou (v současnosti GL-XXXXX, CMP-XXXXX)
         /// </summary>
-        public string? DepartmentNumber { get; set; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        [BsonId]
+        public string DepartmentNumber { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
         /// Čárový-Kód – Číslo z čárového kódu nalepeného na začátku knihy
