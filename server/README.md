@@ -10,6 +10,9 @@ Závisí na **Domain**. Poskytuje služby, které dokáží se systémovými ent
 # Infrastructure
 Aby jádro aplikace **core** potřebuje ke správnému fungování několik externích závislostí. Například CSV parser, mapování z DTO na databázovou entitu a zpět. Konkrétní implementace by však neměla zásadním způsobem ovlivnit fungování aplikace (když na pozadí vyměníme knihovnu na parsování CSV nemělo by být zapotřebí měnit kod jádra) a proto je vhodné držet kód infrastruktury mimo.
 
+## SelfServiceLibrary.Persistence
+Tato vrstva přímo komunikuje s databází. Databáze často umí jen operace CRUD (create, read, update, delete). Relační databáze umí navíc i transakce. Převádí operace servisní vrstvy (půjčit si knihu) na operace pro databázový stroj (najdi knihu podle id, zjisti zda je k dispozici, zamkni ji, založ výpůjčku, při chybě obnov stav).
+
 ## SelfServiceLibrary.CSV
 Implementuje rozhraní **ICsvImporter**, které poskytuje **core** pomocí knihovny [CsvHelper](https://joshclose.github.io/CsvHelper/)
 
