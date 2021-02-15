@@ -61,16 +61,6 @@ namespace SelfServiceLibrary.Service.Services
             }
         }
 
-        public async Task<BookDetailDTO?> Patch(Guid id, BookEditDTO book)
-        {
-            var update = Builders<Book>
-                .Update
-                .SetIfNotNull(x => x.Name, book.Name)
-                .SetIfNotNull(x => x.Quantity, book.Quantity);
-            await _books.UpdateOneAsync(x => x.Id == id, update);
-            return await GetDetail(id);
-        }
-
         public async Task<bool> Delete(Guid id)
         {
             var result = await _books.DeleteOneAsync(x => x.Id == id);

@@ -127,8 +127,9 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// </summary>
         public DateTime? Entered { get; set; }
 
-        public int Quantity { get; set; }
-
-        public int Issued { get; set; }
+        /// <summary>
+        /// Určuje zda je kniha k zapůjčení
+        /// </summary>
+        public bool IsAvailable { get; set; }
     }
 }
