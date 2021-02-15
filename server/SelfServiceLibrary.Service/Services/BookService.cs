@@ -61,9 +61,9 @@ namespace SelfServiceLibrary.Service.Services
             }
         }
 
-        public async Task<bool> Delete(string departmentNumber)
+        public async Task<bool> Delete(Guid id)
         {
-            var result = await _books.DeleteOneAsync(x => x.DepartmentNumber == departmentNumber);
+            var result = await _books.DeleteOneAsync(x => x.Id == id);
             return result.DeletedCount != 0;
         }
 

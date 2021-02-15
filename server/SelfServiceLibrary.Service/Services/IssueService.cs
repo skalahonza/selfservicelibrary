@@ -46,7 +46,7 @@ namespace SelfServiceLibrary.API.Services
             var book = await _books.Find(x => x.DepartmentNumber == bookdepartmentNumber).FirstOrDefaultAsync();
             if (book == null) return (null, null);
             var update = Builders<Book>.Update.Set(x => x.IsAvailable, false);
-            var result = await _books.UpdateOneAsync(x => x.DepartmentNumber == bookdepartmentNumber && x.IsAvailable, update);
+            var result = await _books.UpdateOneAsync(x => x.Id == bookId && x.IsAvailable, update);
             if (result.ModifiedCount == 0) return (false, null);
 
             var entity = new Issue { Id = Guid.NewGuid(), IssuedTo = username };
@@ -68,7 +68,7 @@ namespace SelfServiceLibrary.API.Services
                 update);
             if (result.ModifiedCount == 0) return null;
             var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
-            await _books.UpdateOneAsync(x => x.DepartmentNumber == issue.BookDepartmentNumber, Builders<Book>.Update.Set(x => x.IsAvailable, true));
+            await _books.UpdateOneAsync(x => x.Id == issue.BookId, Builders<Book>.Update.Set(x => x.IsAvailable, false));
             return _mapper.Map<IssueDetailDTO>(issue);
         }
     }
