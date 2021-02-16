@@ -1,5 +1,19 @@
 @page "/"
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<Jumbotron Margin="Margin.Is4.FromBottom">
+    <JumbotronTitle Size="JumbotronTitleSize.Is4">
+        Self Service Library
+    </JumbotronTitle>
+    <JumbotronSubtitle>
+        Online Self service library for university departments.
+    </JumbotronSubtitle>
+    <Divider></Divider>
+    <Paragraph>
+        <p>
+            You can begin by logging in with your university credentials. We use
+            official <a href="https://auth.fit.cvut.cz/" target="_blank">CVUT authorization server</a>. 
+            We do not store your password or user info anywhere.
+        </p>
+        <Button Color="Color.Primary">Login with CVUT</Button>
+    </Paragraph>
+</Jumbotron>
