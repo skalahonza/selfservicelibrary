@@ -5,11 +5,13 @@ using MongoDB.Driver;
 using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
+using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SelfServiceLibrary.Service.Services
@@ -30,10 +32,10 @@ namespace SelfServiceLibrary.Service.Services
 
         public Task<List<BookListDTO>> GetAll(int page, int pageSize) =>
             _books
-                .Find(Builders<Book>.Filter.Empty)
+                .AsQueryable()
                 .Skip((page - 1) * pageSize)
-                .Limit(pageSize)
-                .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookListDTO>(x)))
+                .Take(pageSize)
+                .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
 
         public Task<long> GetTotalCount() =>
@@ -43,7 +45,6 @@ namespace SelfServiceLibrary.Service.Services
             _mapper.Map<BookDetailDTO>(await _books
                 .Find(x => x.Id == id)
                 .FirstOrDefaultAsync());
-
 
         public async Task<BookDetailDTO> Add(BookAddDTO book)
         {

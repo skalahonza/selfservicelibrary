@@ -1,4 +1,8 @@
-﻿namespace SelfServiceLibrary.Service.Interfaces
+﻿using System.Linq;
+
+using MongoDB.Driver.Linq;
+
+namespace SelfServiceLibrary.Service.Interfaces
 {
     public interface IMapper
     {
@@ -57,5 +61,14 @@
         // Returns:
         //     The mapped destination object, same instance as the destination object
         TDestination Map<TSource, TDestination>(TSource source, TDestination destination);
+
+        /// <summary>
+        /// Server side projection
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IMongoQueryable<TDestination> ProjectTo<TSource, TDestination>(IQueryable<TSource> query);
     }
 }
