@@ -14,10 +14,17 @@
     <BarMenu>
         <BarStart>
             <BarItem>
-                <FileEdit Changed="@OnChanged" Multiple="false" Filter=".csv, .txt">Import CSV</FileEdit>
-            </BarItem>
-            <BarItem>
-                <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+                <Inline>
+                    <Field>
+                        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+                    </Field>
+                    <Field Margin="Margin.Is3.OnX.OnTablet">
+                        <Label>Import CSV</Label>
+                    </Field>
+                    <Field>
+                        <InputFile OnChange="@OnInputFileChange" accept=".csv, .txt" single>Import CSV</InputFile>
+                    </Field>
+                </Inline>
             </BarItem>
         </BarStart>
     </BarMenu>
@@ -59,18 +66,10 @@
         StateHasChanged();
     }
 
-    private async Task OnChanged(FileChangedEventArgs e)
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        var file = e.Files.Single();
-        // A stream is going to be the destination stream we're writing to.
-        using var stream = new MemoryStream();
-        // Here we're telling the FileEdit where to write the upload result
-        await file.WriteToStreamAsync(stream);
-        // Once we reach this line it means the file is fully uploaded.
-        // In this case we're going to offset to the beginning of file
-        // so we can read it.
-        stream.Seek(0, SeekOrigin.Begin);
-        await Service.ImportCsv(stream);
+        // 5 Megabytes = 5242880 Bytes
+        await Service.ImportCsv(e.File.OpenReadStream(5242880));
 
         totalBooks = (int)await Service.GetTotalCount();
         books = await Service.GetAll(1, 15);
