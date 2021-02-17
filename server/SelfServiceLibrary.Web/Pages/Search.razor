@@ -1,0 +1,24 @@
+﻿@page "/search"
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        Search
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <Inline>
+                    <Field Margin="Margin.Is3.OnX.OnTablet">
+                        <TextEdit Placeholder="Algebra..." />
+                    </Field>
+                    <Field>
+                        <Button Color="Color.Primary">Search</Button>
+                    </Field>
+                </Inline>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
