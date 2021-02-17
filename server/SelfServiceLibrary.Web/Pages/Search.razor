@@ -22,3 +22,21 @@
         </BarStart>
     </BarMenu>
 </Bar>
+
+<Tabs SelectedTab="@selectedTab" 
+      SelectedTabChanged="@OnSelectedTabChanged">
+    <Items>
+        <Tab Name="books">Books <Badge Color="Color.Primary">50</Badge></Tab>
+        <Tab Name="magazines">Magazines <Badge Color="Color.Primary">10</Badge></Tab>
+        <Tab Name="anthologies">Anthologies <Badge Color="Color.Primary">5</Badge></Tab>
+        <Tab Name="theses">Theses <Badge Color="Color.Primary">2</Badge></Tab>
+    </Items>
+</Tabs>
+@code{
+    string selectedTab = "profile";
+
+    private void OnSelectedTabChanged(string name)
+    {
+        selectedTab = name;
+    }
+}
