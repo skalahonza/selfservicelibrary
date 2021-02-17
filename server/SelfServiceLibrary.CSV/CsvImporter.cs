@@ -43,7 +43,10 @@ namespace SelfServiceLibrary.CSV
                 TrimOptions = TrimOptions.Trim,
                 Delimiter = ";",
                 HasHeaderRecord = true,
-                BadDataFound = context => _log.LogWarning("Bad CSV data found. {Row}", context.ToString()),
+                BadDataFound = context => _log.LogWarning(
+                    "Bad CSV data found. {RowNumber} {RowData}",
+                    context.Parser.RawRow,
+                    context.Parser.RawRow),
             });
 
             // process header
