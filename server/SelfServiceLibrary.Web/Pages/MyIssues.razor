@@ -1,0 +1,63 @@
+﻿@page "/my-issues"
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Service.DTO.Issue
+@using System.IO
+@inject IssueService Service
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        My Issues
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <Inline>
+                    <Field Margin="Margin.Is3.OnX.OnTablet">
+                        <TextEdit Placeholder="Algebra..." />
+                    </Field>
+                    <Field>
+                        <Button Color="Color.Primary">Search</Button>
+                    </Field>
+                </Inline>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+<DataGrid Margin="Margin.Is4.OnX"
+          TItem="IssueListlDTO"
+          Data="@issues"
+          ShowPager="true"
+          PagerPosition="DataGridPagerPosition.Bottom"
+          PageSize="15">
+    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Book Name" Sortable="true" />
+    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+    <DataGridCheckColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IsReturned)" Caption="Reutrned" Sortable="true">
+        <DisplayTemplate>
+            <Check TValue="bool" Checked="context.IsReturned" Disabled="true" ReadOnly="true" />
+        </DisplayTemplate>
+    </DataGridCheckColumn>
+</DataGrid>
+
+@code {
+    private List<IssueListlDTO> issues;
+
+    protected override async Task OnInitializedAsync()
+    {
+        issues = Enumerable.Range(1, 30)
+            .Select(i => new IssueListlDTO
+            {
+                BookName = "Book",
+                IssueDate = DateTime.Now.AddDays(-i),
+                ExpiryDate = DateTime.Now.AddDays(i + 2),
+                ReturnDate = i % 2 == 0 ? DateTime.Now : null,
+                IsReturned = i % 2 == 0
+            })
+            .ToList();
+    }
+}

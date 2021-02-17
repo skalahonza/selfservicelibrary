@@ -88,10 +88,6 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// </summary>
         public string? ISBNorISSN { get; set; }
 
-        public string? ISBN { get; set; }
-
-        public string? ISSN { get; set; }
-
         /// <summary>
         /// Počet-Stran – Počet stran (ne u časopisů)
         /// </summary>
@@ -136,5 +132,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// Určuje zda je kniha k zapůjčení
         /// </summary>
         public bool IsAvailable { get; set; }
+
+        public List<Guid> Issues { get; set; } = new List<Guid>();
     }
 }

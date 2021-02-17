@@ -7,13 +7,15 @@ using MongoDB.Driver.Linq;
 using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Issue;
+using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace SelfServiceLibrary.API.Services
+namespace SelfServiceLibrary.Service.Services
 {
     public class IssueService
     {
@@ -32,6 +34,13 @@ namespace SelfServiceLibrary.API.Services
         public Task<List<IssueListlDTO>> GetAll(string username) =>
             _issues.Find(Builders<Issue>.Filter.Where(x => x.IssuedTo == username))
                 .Project(Builders<Issue>.Projection.Expression(x => _mapper.Map<IssueListlDTO>(x)))
+                .ToListAsync();
+
+        public Task<List<IssueListlDTO>> GetByIds(IEnumerable<Guid> ids) =>
+            _issues
+                .AsQueryable()
+                .Where(x => ids.Contains(x.Id))
+                .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
         /// <summary>

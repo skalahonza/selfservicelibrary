@@ -18,7 +18,6 @@ namespace SelfServiceLibrary.Mapping.Profiles
             CreateMap<Book, Issue>()
                 .ForMember(x => x.BookId, x => x.MapFrom(y => y.Id))
                 .ForMember(x => x.BookName, x => x.MapFrom(y => y.Name))
-                .ForMember(x => x.ISBN, x => x.MapFrom(y => y.ISBN))
                 .ForAllOtherMembers(X => X.Ignore());
         }
     }

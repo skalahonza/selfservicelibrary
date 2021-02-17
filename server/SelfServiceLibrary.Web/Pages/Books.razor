@@ -4,8 +4,6 @@
 @using System.IO
 @inject BookService Service
 
-<h1>Books</h1>
-
 <Inline>
     <Field >
         <FileEdit Changed="@OnChanged" Multiple="false" Filter=".csv, .txt" >Import CSV</FileEdit>
@@ -15,11 +13,13 @@
     </Field>
 </Inline>
 
-<DataGrid TItem="BookListDTO"
+<DataGrid Margin="Margin.Is4.OnX"
+          TItem="BookListDTO"
           Data="@books"
           ReadData="@OnReadData"
           TotalItems="@totalBooks"
           ShowPager="true"
+          PagerPosition="DataGridPagerPosition.Top"
           PageSize="15">
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Book Name" Sortable="true" />

@@ -16,7 +16,6 @@ using Microsoft.Extensions.Options;
 
 using MongoDB.Driver;
 
-using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
