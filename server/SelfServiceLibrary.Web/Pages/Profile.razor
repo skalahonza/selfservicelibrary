@@ -1,0 +1,45 @@
+﻿@page "/profile"
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        Profile
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+<Container Fluid="true">
+    <h2>ID Cards</h2>
+    <CardDeck>
+        <Card>
+            <CardBody>
+                <CardTitle Size="5">ISIC</CardTitle>
+                <CardText>
+                    123456789
+                </CardText>
+                <Button Color="Color.Primary">Edit</Button>
+                <Button Color="Color.Danger">Remove</Button>
+            </CardBody>
+        </Card>
+        <Card>
+            <CardBody>
+                <CardTitle Size="5">CVUT</CardTitle>
+                <CardText>
+                    123456789
+                </CardText>
+                <Button Color="Color.Primary">Edit</Button>
+                <Button Color="Color.Danger">Remove</Button>
+            </CardBody>
+        </Card>
+        <Card>
+            <CardBody>
+                <Button Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
+            </CardBody>
+        </Card>
+    </CardDeck>
+</Container>
