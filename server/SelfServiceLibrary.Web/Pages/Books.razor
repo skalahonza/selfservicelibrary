@@ -30,7 +30,8 @@
     </BarMenu>
 </Bar>
 
-<DataGrid Margin="Margin.Is4.OnX"
+<DataGrid RowSelectable=@(_ => false)
+          Margin="Margin.Is4.OnX"
           TItem="BookListDTO"
           Data="@books"
           ReadData="@OnReadData"
@@ -41,6 +42,11 @@
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Book Name" Sortable="true" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+    <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+        <DisplayTemplate>
+            <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+        </DisplayTemplate>
+    </DataGridCheckColumn>
 </DataGrid>
 
 @code {

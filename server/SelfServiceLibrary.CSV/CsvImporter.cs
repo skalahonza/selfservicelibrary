@@ -78,7 +78,8 @@ namespace SelfServiceLibrary.CSV
                     Price = TryParseDouble(csv.GetField(18)),
                     Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).ToList(),
                     Note = csv.GetField(20),
-                    Entered = DateTime.UtcNow
+                    Entered = DateTime.UtcNow,
+                    IsAvailable = true
                 };
             }
         }
