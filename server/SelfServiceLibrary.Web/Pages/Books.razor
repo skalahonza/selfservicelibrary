@@ -4,14 +4,24 @@
 @using System.IO
 @inject BookService Service
 
-<Inline>
-    <Field >
-        <FileEdit Changed="@OnChanged" Multiple="false" Filter=".csv, .txt" >Import CSV</FileEdit>
-    </Field>
-    <Field>
-        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
-    </Field>
-</Inline>
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        Books
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <FileEdit Changed="@OnChanged" Multiple="false" Filter=".csv, .txt">Import CSV</FileEdit>
+            </BarItem>
+            <BarItem>
+                <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
 
 <DataGrid Margin="Margin.Is4.OnX"
           TItem="BookListDTO"
@@ -19,7 +29,7 @@
           ReadData="@OnReadData"
           TotalItems="@totalBooks"
           ShowPager="true"
-          PagerPosition="DataGridPagerPosition.Top"
+          PagerPosition="DataGridPagerPosition.Bottom"
           PageSize="15">
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Book Name" Sortable="true" />
