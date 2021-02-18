@@ -37,6 +37,8 @@ using System.Text;
 using System;
 using CVUT.Usermap;
 using CVUT.Auth;
+using System.Linq;
+using System.Security.Claims;
 
 namespace SelfServiceLibrary.Web
 {
@@ -98,8 +100,6 @@ namespace SelfServiceLibrary.Web
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basic);
                     options.Backchannel = client;
 
-                    // TODO claims mapping
-
                     // fetch user context
                     options.Events = new OAuthEvents
                     {
@@ -111,10 +111,19 @@ namespace SelfServiceLibrary.Web
                             var info = await zuul.CheckToken(context.AccessToken);
                             var user = await usermap.Get(info.UserName, context.AccessToken);
 
-                            user.GetHashCode();
+                            // claims mapping
+                            var claims = user
+                                .Roles
+                                .Concat(user.TechnicalRoles)
+                                .Select(role => new Claim(ClaimTypes.Role, role))
+                                .Append(new Claim(ClaimTypes.Name, user.Username))
+                                .Append(new Claim(ClaimTypes.Email, user.PreferredEmail))
+                                .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
+                                .Append(new Claim(ClaimTypes.Surname, user.LastName));
 
-
-                            return;
+                            var identity = new ClaimsIdentity(claims);
+                            context.Principal.AddIdentity(identity);
+                            context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(50);
                         }
                     };
 
