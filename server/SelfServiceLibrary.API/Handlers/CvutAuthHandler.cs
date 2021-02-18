@@ -1,4 +1,5 @@
 ﻿using CVUT.Auth;
+using CVUT.Usermap;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace SelfServiceLibrary.API.Handlers
     public class CvutAuthHandler : AuthenticationHandler<CvutAuthOptions>
     {
         private readonly ZuulClient _zuul;
-        private readonly IUserProvider _userProvider;
+        private readonly UsermapClient _userProvider;
 
         public CvutAuthHandler(
             IOptionsMonitor<CvutAuthOptions> options,
@@ -26,7 +27,7 @@ namespace SelfServiceLibrary.API.Handlers
             UrlEncoder encoder,
             ISystemClock clock,
             ZuulClient zuul,
-            IUserProvider userProvider)
+            UsermapClient userProvider)
             : base(options, logger, encoder, clock)
         {
             _zuul = zuul;
@@ -35,18 +36,19 @@ namespace SelfServiceLibrary.API.Handlers
 
         protected async override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var token = await _zuul.CheckToken(Request
-                .Headers["Authorization"]
-                .FirstOrDefault()?
-                .Split(" ")
-                .Last() ?? string.Empty);
-            if (!token.IsValid)
-                return AuthenticateResult.Fail($"{token.Error} {token.ErrorDescription}.");
+            string accessToken = Request
+                            .Headers["Authorization"]
+                            .FirstOrDefault()?
+                            .Split(" ")
+                            .Last() ?? string.Empty;
+            var tokenInfo = await _zuul.CheckToken(accessToken);
+            if (!tokenInfo.IsValid)
+                return AuthenticateResult.Fail($"{tokenInfo.Error} {tokenInfo.ErrorDescription}.");
 
-            if (string.IsNullOrEmpty(token.UserName))
+            if (string.IsNullOrEmpty(tokenInfo.UserName))
                 return AuthenticateResult.Fail("Not a user access.");
 
-            var user = await _userProvider.Get(token.UserName);
+            var user = await _userProvider.Get(tokenInfo.UserName, accessToken);
             var claims = user
                 .Roles
                 .Concat(user.TechnicalRoles)

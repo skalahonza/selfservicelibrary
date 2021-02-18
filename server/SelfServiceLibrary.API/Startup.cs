@@ -100,7 +100,7 @@ namespace SelfServiceLibrary.API
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpContextAccessor();
             services.AddHttpClient();
-            services.AddHttpClient<IUserProvider, UsermapClient>();
+            services.AddHttpClient<UsermapClient>();
             services.AddHttpClient<ZuulClient>();
 
             // Mapping

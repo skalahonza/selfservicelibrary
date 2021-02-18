@@ -10,16 +10,17 @@ using System.Threading.Tasks;
 
 namespace CVUT.Usermap
 {
-    public class UsermapClient : IUserProvider
+    public class UsermapClient
     {
         private readonly IClient _client;
 
         public UsermapClient(HttpClient client) =>
             _client = new FluentClient(new Uri("https://kosapi.fit.cvut.cz/usermap/v1"), client);
 
-        public Task<User> Get(string username) =>
+        public Task<User> Get(string username, string token) =>
             _client
                 .GetAsync($"people/{username}")
+                .WithBearerAuthentication(token)
                 .As<User>();
     }
 }

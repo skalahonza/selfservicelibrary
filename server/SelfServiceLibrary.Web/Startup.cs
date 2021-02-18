@@ -33,6 +33,10 @@ using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;
 using SelfServiceLibrary.Service.Validation;
+using System.Text;
+using System;
+using CVUT.Usermap;
+using CVUT.Auth;
 
 namespace SelfServiceLibrary.Web
 {
@@ -59,6 +63,12 @@ namespace SelfServiceLibrary.Web
 
             // CVUT Auth
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
+            services.AddHttpClient<ZuulClient>();
+
+            // Usermap
+            services.AddHttpClient<UsermapClient>();
+
+            // AUTH
             services
                 .AddAuthentication(options =>
                 {
@@ -82,6 +92,12 @@ namespace SelfServiceLibrary.Web
                     options.TokenEndpoint = "https://auth.fit.cvut.cz/oauth/token";
                     options.UserInformationEndpoint = "https://auth.fit.cvut.cz/oauth/check_token";
 
+                    // Zuul auth server requires client credentials to be send along with authorization code
+                    var client = new HttpClient();
+                    var basic = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Configuration["oAuth2:ClientId"]}:{Configuration["oAuth2:ClientSecret"]}"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basic);
+                    options.Backchannel = client;
+
                     // TODO claims mapping
 
                     // fetch user context
@@ -89,14 +105,14 @@ namespace SelfServiceLibrary.Web
                     {
                         OnCreatingTicket = async context =>
                         {
-                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                            var zuul = context.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
+                            var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
 
-                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
-                            response.EnsureSuccessStatusCode();
+                            var info = await zuul.CheckToken(context.AccessToken);
+                            var user = await usermap.Get(info.UserName, context.AccessToken);
 
-                            var tokenInfo = JObject.Parse(await response.Content.ReadAsStringAsync());
+                            user.GetHashCode();
+
 
                             return;
                         }
