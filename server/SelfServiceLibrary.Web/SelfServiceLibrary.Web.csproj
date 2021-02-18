@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\NewFile.txt" />
+    <None Remove="Shared\NewFile.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.5" />
     <PackageReference Include="Blazorise.DataGrid" Version="0.9.2.5" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.2.5" />

@@ -1,4 +1,7 @@
 
+using System.Net.Http;
+using System.Net.Http.Headers;
+
 using AutoMapper;
 
 using Blazorise;
@@ -9,14 +12,19 @@ using CVUT.Auth.Options;
 
 using FluentValidation.AspNetCore;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using MongoDB.Driver;
+
+using Newtonsoft.Json.Linq;
 
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
@@ -49,8 +57,53 @@ namespace SelfServiceLibrary.Web
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 
-            // Auth
+            // CVUT Auth
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = "CVUT";
+                })
+                .AddCookie(options =>
+                {
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.IsEssential = true;
+                })
+                .AddOAuth("CVUT", options =>
+                {
+                    options.ClientId = Configuration["oAuth2:ClientId"];
+                    options.ClientSecret = Configuration["oAuth2:ClientSecret"];
+                    options.CallbackPath = "/sign-in";
+
+                    options.AuthorizationEndpoint = "https://auth.fit.cvut.cz/oauth/authorize";
+                    options.TokenEndpoint = "https://auth.fit.cvut.cz/oauth/token";
+                    options.UserInformationEndpoint = "https://auth.fit.cvut.cz/oauth/check_token";
+
+                    // TODO claims mapping
+
+                    // fetch user context
+                    options.Events = new OAuthEvents
+                    {
+                        OnCreatingTicket = async context =>
+                        {
+                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+                            response.EnsureSuccessStatusCode();
+
+                            var tokenInfo = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+                            return;
+                        }
+                    };
+
+                    options.Validate();
+                });
 
             // Business logic
             services.AddScoped<BookService>();
@@ -89,6 +142,9 @@ namespace SelfServiceLibrary.Web
 
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // Blazorise
             app
