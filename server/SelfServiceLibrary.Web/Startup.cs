@@ -5,6 +5,8 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 
+using CVUT.Auth.Options;
+
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +48,9 @@ namespace SelfServiceLibrary.Web
                 .AddBlazorise(options => options.ChangeTextOnKeyPress = true)
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
+
+            // Auth
+            services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
 
             // Business logic
             services.AddScoped<BookService>();

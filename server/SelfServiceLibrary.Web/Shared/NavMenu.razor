@@ -1,4 +1,8 @@
-﻿<Bar Mode="BarMode.VerticalInline"
+﻿@using CVUT.Auth.Options
+@using Microsoft.Extensions.Options
+@inject IOptions<oAuth2Options> options
+
+<Bar Mode="BarMode.VerticalInline"
      CollapseMode="BarCollapseMode.Small"
      Breakpoint="Breakpoint.Desktop"
      NavigationBreakpoint="Breakpoint.Tablet"
@@ -41,7 +45,7 @@
         </BarStart>
         <BarEnd>
             <BarItem>
-                <BarLink To="/sign-in">
+                <BarLink To="@options.Value.SignInUri">
                     <BarIcon IconName="IconName.User" />
                     Sign In
                 </BarLink>

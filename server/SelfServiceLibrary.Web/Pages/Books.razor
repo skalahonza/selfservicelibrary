@@ -40,7 +40,7 @@
           PagerPosition="DataGridPagerPosition.Bottom"
           PageSize="15">
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
-    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Book Name" Sortable="true" />
+    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
     <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
         <DisplayTemplate>
@@ -68,6 +68,9 @@
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
     {
+        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
+        var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
+
         books = await Service.GetAll(e.Page, e.PageSize);
         StateHasChanged();
     }
