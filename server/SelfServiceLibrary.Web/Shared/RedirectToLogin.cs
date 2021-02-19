@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace SelfServiceLibrary.Web.Shared
 {
@@ -6,10 +9,16 @@ namespace SelfServiceLibrary.Web.Shared
     {
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
+        [Inject]
+        protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            NavigationManager.NavigateTo("/login", true);
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            if (!state.User.Identity.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/login", true);
+            }
         }
     }
 }

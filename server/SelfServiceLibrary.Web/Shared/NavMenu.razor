@@ -1,6 +1,8 @@
 ﻿@using CVUT.Auth.Options
 @using Microsoft.Extensions.Options
 @inject IOptions<oAuth2Options> options
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Mode="BarMode.VerticalInline"
      CollapseMode="BarCollapseMode.Small"
@@ -45,10 +47,7 @@
         </BarStart>
         <BarEnd>
             <BarItem>
-                <BarLink To="@options.Value.SignInUri">
-                    <BarIcon IconName="IconName.User" />
-                    Sign In
-                </BarLink>
+                <a href="/login"><BarIcon IconName="IconName.User" /> Login</a>
             </BarItem>
             <BarItem>
                 <BarLink To="/profile">
@@ -57,10 +56,7 @@
                 </BarLink>
             </BarItem>
             <BarItem>
-                <BarLink To="/sing-out">
-                    <BarIcon IconName="IconName.Lock" />
-                    Logout
-                </BarLink>
+                <a href="/logout"><BarIcon IconName="IconName.Lock" /> Logout</a>
             </BarItem>
         </BarEnd>
     </BarMenu>

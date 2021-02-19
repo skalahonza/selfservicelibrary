@@ -9,6 +9,21 @@
     </BarBrand>
 </Bar>
 
+<AuthorizeView>
+    <Authorized>
+        You can only see this if you're authenticated.
+        <ul>
+            @foreach(var claim in context.User.Claims)
+            {
+                <li>@claim.Value -- @claim.Type</li>
+            }
+        </ul>
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
 <Container Fluid="true">
     <h2>ID Cards</h2>
     <CardDeck>

@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace SelfServiceLibrary.Web.Pages
 {
     [IgnoreAntiforgeryToken]
-    public class LoginModel : PageModel
+    public class LogoutModel : PageModel
     {
-        public Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
-            return HttpContext.ChallengeAsync("CVUT", new AuthenticationProperties { RedirectUri = "/" });
+            await HttpContext.SignOutAsync();
+            return Redirect("/");
         }
     }
 }

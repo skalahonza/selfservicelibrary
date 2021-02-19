@@ -13,7 +13,5 @@ namespace CVUT.Auth.Options
         [Required]
         public string RedirectUri { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public string SignInUri =>
-            $"https://auth.fit.cvut.cz/oauth/authorize?response_type=code&client_id={ClientId}&redirect_uri={WebUtility.UrlEncode(RedirectUri)}";
     }
 }
