@@ -83,6 +83,7 @@ namespace SelfServiceLibrary.Web
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
+                    options.Validate();
                 })
                 .AddOAuth("CVUT", options =>
                 {
