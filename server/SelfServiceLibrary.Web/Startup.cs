@@ -85,7 +85,7 @@ namespace SelfServiceLibrary.Web
                 {
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    options.Cookie.IsEssential = true;                    
+                    options.Cookie.IsEssential = true;
 
                     // TODO might be extended
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
@@ -97,11 +97,9 @@ namespace SelfServiceLibrary.Web
                         // then we use the refresh token to get a new access token and save them.
                         // If the refresh token does not work for some reason then we redirect to 
                         // the login screen.
-                        OnValidatePrincipal = async cookieCtx =>
+                        OnValidatePrincipal = async context =>
                         {
-                            var now = DateTimeOffset.UtcNow;
-                            var accessTokenExpiration = cookieCtx.Properties.ExpiresUtc;
-                            var timeRemaining = accessTokenExpiration - now;
+                            var timeRemaining = context.Properties.ExpiresUtc - DateTimeOffset.UtcNow;
 
                             // TODO: Get this from configuration with a fall back value.
                             var refreshThresholdMinutes = 5;
@@ -109,23 +107,57 @@ namespace SelfServiceLibrary.Web
 
                             if (timeRemaining < refreshThreshold)
                             {
-                                var refreshToken = cookieCtx.Properties.GetTokenValue("refresh_token");
+                                var refreshToken = context.Properties.GetTokenValue("refresh_token");
                                 try
                                 {
                                     // refresh tokens 
-                                    var zuul = cookieCtx.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
+                                    var zuul = context.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
                                     var response = await zuul.Refresh(refreshToken);
-                                    cookieCtx.Properties.UpdateTokenValue("access_token", response.AccessToken);
-                                    cookieCtx.Properties.UpdateTokenValue("refresh_token", response.RefreshToken);
-                                    cookieCtx.ShouldRenew = true;
+                                    context.Properties.UpdateTokenValue("access_token", response.AccessToken);
+                                    context.Properties.UpdateTokenValue("refresh_token", response.RefreshToken);
 
                                     // refresh USERMAP roles
+                                    var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
+                                    var info = await zuul.CheckToken(response.AccessToken);
+                                    var user = await usermap.Get(info.UserName, response.AccessToken);
+                                    var claims = user
+                                        .Roles
+                                        .Concat(user.TechnicalRoles)
+                                        .Select(role => new Claim(ClaimTypes.Role, role))
+                                        .Append(new Claim(ClaimTypes.Name, user.Username))
+                                        .Append(new Claim(ClaimTypes.Email, user.PreferredEmail))
+                                        .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
+                                        .Append(new Claim(ClaimTypes.Surname, user.LastName));
 
+                                    var claimsToRefresh = new HashSet<string>
+                                    {
+                                        ClaimTypes.Role,
+                                        ClaimTypes.Name,
+                                        ClaimTypes.Email,
+                                        ClaimTypes.GivenName,
+                                        ClaimTypes.Surname
+                                    };
+
+                                    var cookieIdentity = context.Principal.Identities.FirstOrDefault(x => x.AuthenticationType == "Cookie");
+                                    if (cookieIdentity != null)
+                                    {
+                                        foreach (var claim in cookieIdentity.Claims.Where(x => claimsToRefresh.Contains(x.Type)).ToArray())
+                                        {
+                                            cookieIdentity.RemoveClaim(claim);
+                                        }
+                                        cookieIdentity.AddClaims(claims);
+                                    }
+                                    else
+                                    {
+                                        var identity = new ClaimsIdentity(claims, "Cookie");
+                                        context.Principal.AddIdentity(identity);
+                                    }
+                                    context.ShouldRenew = true;
                                 }
                                 catch (ApiException)
                                 {
-                                    cookieCtx.RejectPrincipal();
-                                    await cookieCtx.HttpContext.SignOutAsync();
+                                    context.RejectPrincipal();
+                                    await context.HttpContext.SignOutAsync();
                                 }
                             }
                         }
@@ -173,6 +205,8 @@ namespace SelfServiceLibrary.Web
 
                             var identity = new ClaimsIdentity(claims, "Cookie");
                             context.Principal.AddIdentity(identity);
+
+                            // TODO should be set from token info
                             context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(59);
                         }
                     };
