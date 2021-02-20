@@ -14,14 +14,21 @@
     <BarMenu>
         <BarStart>
             <BarItem>
-                <Inline>
-                    <Field Margin="Margin.Is3.OnX.OnTablet">
+                <Buttons>
+                    <Button Color="Color.Info">All</Button>
+                    <Button Color="Color.Primary">Active</Button>
+                    <Button Color="Color.Success">Returned</Button>
+                </Buttons>
+            </BarItem>
+            <BarItem>
+                <Addons Margin="Margin.Is3.OnX.OnTablet">
+                    <Addon AddonType="AddonType.Body">
                         <TextEdit Placeholder="Algebra..." />
-                    </Field>
-                    <Field>
+                    </Addon>
+                    <Addon AddonType="AddonType.End">
                         <Button Color="Color.Primary">Search</Button>
-                    </Field>
-                </Inline>
+                    </Addon>
+                </Addons>
             </BarItem>
         </BarStart>
     </BarMenu>
