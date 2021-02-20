@@ -39,6 +39,9 @@ using CVUT.Usermap;
 using CVUT.Auth;
 using System.Linq;
 using System.Security.Claims;
+using Pathoschild.Http.Client;
+using Microsoft.AspNetCore.Authentication;
+using System.Collections.Generic;
 
 namespace SelfServiceLibrary.Web
 {
@@ -82,8 +85,52 @@ namespace SelfServiceLibrary.Web
                 {
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    options.Cookie.IsEssential = true;
+                    options.Cookie.IsEssential = true;                    
+
+                    // TODO might be extended
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        // After the auth cookie has been validated, this event is called.
+                        // In it we see if the access token is close to expiring.  If it is
+                        // then we use the refresh token to get a new access token and save them.
+                        // If the refresh token does not work for some reason then we redirect to 
+                        // the login screen.
+                        OnValidatePrincipal = async cookieCtx =>
+                        {
+                            var now = DateTimeOffset.UtcNow;
+                            var accessTokenExpiration = cookieCtx.Properties.ExpiresUtc;
+                            var timeRemaining = accessTokenExpiration - now;
+
+                            // TODO: Get this from configuration with a fall back value.
+                            var refreshThresholdMinutes = 5;
+                            var refreshThreshold = TimeSpan.FromMinutes(refreshThresholdMinutes);
+
+                            if (timeRemaining < refreshThreshold)
+                            {
+                                var refreshToken = cookieCtx.Properties.GetTokenValue("refresh_token");
+                                try
+                                {
+                                    // refresh tokens 
+                                    var zuul = cookieCtx.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
+                                    var response = await zuul.Refresh(refreshToken);
+                                    cookieCtx.Properties.UpdateTokenValue("access_token", response.AccessToken);
+                                    cookieCtx.Properties.UpdateTokenValue("refresh_token", response.RefreshToken);
+                                    cookieCtx.ShouldRenew = true;
+
+                                    // refresh USERMAP roles
+
+                                }
+                                catch (ApiException)
+                                {
+                                    cookieCtx.RejectPrincipal();
+                                    await cookieCtx.HttpContext.SignOutAsync();
+                                }
+                            }
+                        }
+                    };
+
                     options.Validate();
                 })
                 .AddOAuth("CVUT", options =>
@@ -101,6 +148,7 @@ namespace SelfServiceLibrary.Web
                     var basic = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{Configuration["oAuth2:ClientId"]}:{Configuration["oAuth2:ClientSecret"]}"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basic);
                     options.Backchannel = client;
+                    options.SaveTokens = true;
 
                     // fetch user context
                     options.Events = new OAuthEvents
@@ -123,7 +171,7 @@ namespace SelfServiceLibrary.Web
                                 .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
                                 .Append(new Claim(ClaimTypes.Surname, user.LastName));
 
-                            var identity = new ClaimsIdentity(claims);
+                            var identity = new ClaimsIdentity(claims, "Cookie");
                             context.Principal.AddIdentity(identity);
                             context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(59);
                         }
