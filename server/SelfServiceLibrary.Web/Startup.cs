@@ -83,6 +83,7 @@ namespace SelfServiceLibrary.Web
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
                     options.Validate();
                 })
                 .AddOAuth("CVUT", options =>
@@ -124,7 +125,7 @@ namespace SelfServiceLibrary.Web
 
                             var identity = new ClaimsIdentity(claims);
                             context.Principal.AddIdentity(identity);
-                            context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(50);
+                            context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(59);
                         }
                     };
 
