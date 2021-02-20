@@ -138,20 +138,12 @@ namespace SelfServiceLibrary.Web
                                         ClaimTypes.Surname
                                     };
 
-                                    var cookieIdentity = context.Principal.Identities.FirstOrDefault(x => x.AuthenticationType == "Cookie");
-                                    if (cookieIdentity != null)
+                                    var identity = context.Principal.Identities.FirstOrDefault(x => x.AuthenticationType == "CVUT");
+                                    foreach (var claim in identity.Claims.Where(x => claimsToRefresh.Contains(x.Type)).ToArray())
                                     {
-                                        foreach (var claim in cookieIdentity.Claims.Where(x => claimsToRefresh.Contains(x.Type)).ToArray())
-                                        {
-                                            cookieIdentity.RemoveClaim(claim);
-                                        }
-                                        cookieIdentity.AddClaims(claims);
+                                        identity.RemoveClaim(claim);
                                     }
-                                    else
-                                    {
-                                        var identity = new ClaimsIdentity(claims, "Cookie");
-                                        context.Principal.AddIdentity(identity);
-                                    }
+                                    identity.AddClaims(claims);
                                     context.ShouldRenew = true;
                                 }
                                 catch (ApiException)
@@ -203,8 +195,7 @@ namespace SelfServiceLibrary.Web
                                 .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
                                 .Append(new Claim(ClaimTypes.Surname, user.LastName));
 
-                            var identity = new ClaimsIdentity(claims, "Cookie");
-                            context.Principal.AddIdentity(identity);
+                            context.Identity.AddClaims(claims);
 
                             // TODO should be set from token info
                             context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(59);

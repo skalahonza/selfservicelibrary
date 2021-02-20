@@ -12,6 +12,7 @@
 <AuthorizeView>
     <Authorized>
         You can only see this if you're authenticated.
+        <h1>User: @context.User.Identity.Name</h1>
         <ul>
             @foreach(var claim in context.User.Claims)
             {
