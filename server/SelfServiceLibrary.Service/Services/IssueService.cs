@@ -36,7 +36,7 @@ namespace SelfServiceLibrary.Service.Services
                 .Project(Builders<Issue>.Projection.Expression(x => _mapper.Map<IssueListlDTO>(x)))
                 .ToListAsync();
 
-        public Task<List<IssueListlDTO>> GetByIds(IEnumerable<Guid> ids) =>
+        public Task<List<IssueListlDTO>> GetByIds(IEnumerable<string> ids) =>
             _issues
                 .AsQueryable()
                 .Where(x => ids.Contains(x.Id))
@@ -48,37 +48,16 @@ namespace SelfServiceLibrary.Service.Services
         /// </summary>
         /// <param name="issue">Issue details.</param>
         /// <param name="username">To whom will the book be issued.</param>
-        /// <param name="bookId">Id of the book to borrow.</param>
-        /// <returns>Null if book not found, true if borrowed, false if out of capacity</returns>
-        public async Task<(bool?, IssueDetailDTO?)> Borrow(string username, Guid bookId, IssueCreateDTO issue)
+        /// <param name="departmentNumber">Department number of the book to borrow.</param>
+        /// <returns>Issue details.</returns>
+        public async Task<IssueDetailDTO> Borrow(string username, string departmentNumber, IssueCreateDTO issue)
         {
-            var book = await _books.Find(x => x.Id == bookId).FirstOrDefaultAsync();
-            if (book == null) return (null, null);
-            var update = Builders<Book>.Update.Set(x => x.IsAvailable, false);
-            var result = await _books.UpdateOneAsync(x => x.Id == bookId && x.IsAvailable, update);
-            if (result.ModifiedCount == 0) return (false, null);
-
-            var entity = new Issue { Id = Guid.NewGuid(), IssuedTo = username };
-            entity = _mapper.Map(issue, entity);
-            entity = _mapper.Map(book, entity);
-            await _issues.InsertOneAsync(entity);
-
-            return (true, _mapper.Map<IssueDetailDTO>(entity));
+            throw new NotImplementedException();
         }
 
-        public async Task<IssueDetailDTO?> Return(Guid id, string username)
+        public async Task<IssueDetailDTO?> Return(string id)
         {
-            var update = Builders<Issue>.Update
-                .Set(x => x.ReturnDate, DateTime.UtcNow)
-                .Set(x => x.IsReturned, true);
-            var result = await _issues.UpdateOneAsync(x => x.Id == id
-                    && x.IssuedTo == username
-                    && !x.IsReturned,
-                update);
-            if (result.ModifiedCount == 0) return null;
-            var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
-            await _books.UpdateOneAsync(x => x.Id == issue.BookId, Builders<Book>.Update.Set(x => x.IsAvailable, false));
-            return _mapper.Map<IssueDetailDTO>(issue);
+            throw new NotImplementedException();
         }
     }
 }

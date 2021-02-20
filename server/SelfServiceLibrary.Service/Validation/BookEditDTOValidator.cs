@@ -10,7 +10,6 @@ namespace SelfServiceLibrary.Service.Validation
         public BookEditDTOValidator()
         {
             RuleFor(x => x.Name).Length(0, 100);
-            RuleFor(x => x.Quantity).GreaterThanOrEqualTo(0);
         }
     }
 }
