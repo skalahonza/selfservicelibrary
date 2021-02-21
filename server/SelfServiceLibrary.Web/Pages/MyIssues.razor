@@ -1,8 +1,11 @@
 ﻿@page "/my-issues"
+@attribute [Authorize]
+
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Issue
-@using System.IO
-@inject IssueService Service
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IssueService issueService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -56,15 +59,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        issues = Enumerable.Range(1, 30)
-            .Select(i => new IssueListlDTO
-            {
-                BookName = "Book",
-                IssueDate = DateTime.Now.AddDays(-i),
-                ExpiryDate = DateTime.Now.AddDays(i + 2),
-                ReturnDate = i % 2 == 0 ? DateTime.Now : null,
-                IsReturned = i % 2 == 0
-            })
-            .ToList();
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        issues = await issueService.GetAll(state.User.Identity.Name);
     }
 }

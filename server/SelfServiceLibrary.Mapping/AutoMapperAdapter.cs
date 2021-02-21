@@ -5,7 +5,6 @@ using AutoMapper.QueryableExtensions;
 
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Mapping
@@ -30,6 +29,6 @@ namespace SelfServiceLibrary.Mapping
             _autoMapper.Map(source, destination);
 
         public IMongoQueryable<TDestination> ProjectTo<TSource, TDestination>(IQueryable<TSource> query) =>
-            query.ProjectTo<BookListDTO>(_autoMapper.ConfigurationProvider) as IMongoQueryable<TDestination>;
+            query.ProjectTo<TDestination>(_autoMapper.ConfigurationProvider) as IMongoQueryable<TDestination>;
     }
 }

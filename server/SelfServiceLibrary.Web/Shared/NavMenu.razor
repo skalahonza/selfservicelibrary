@@ -32,18 +32,24 @@
                     Books
                 </BarLink>
             </BarItem>
-            <BarItem>
-                <BarLink To="/my-issues">
-                    <BarIcon IconName="IconName.BookReader" />
-                    My Issues
-                </BarLink>
-            </BarItem>
-            <BarItem>
-                <BarLink To="/issues">
-                    <BarIcon IconName="IconName.Bookmark" />
-                    All Issues
-                </BarLink>
-            </BarItem>
+
+            <AuthorizeView>
+                <Authorized>
+                    <BarItem>
+                        <BarLink To="/my-issues">
+                            <BarIcon IconName="IconName.BookReader" />
+                            My Issues
+                        </BarLink>
+                    </BarItem>
+                    <BarItem>
+                        <BarLink To="/issues">
+                            <BarIcon IconName="IconName.Bookmark" />
+                            All Issues
+                        </BarLink>
+                    </BarItem>
+                </Authorized>
+            </AuthorizeView>
+
         </BarStart>
         <BarEnd>
             <AuthorizeView>

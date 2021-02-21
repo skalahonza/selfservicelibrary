@@ -35,8 +35,10 @@ namespace SelfServiceLibrary.Service.Services
         }
 
         public Task<List<IssueListlDTO>> GetAll(string username) =>
-            _issues.Find(Builders<Issue>.Filter.Where(x => x.IssuedTo == username))
-                .Project(Builders<Issue>.Projection.Expression(x => _mapper.Map<IssueListlDTO>(x)))
+            _issues
+                .AsQueryable()
+                .Where(x => x.IssuedTo == username)
+                .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
         public Task<List<IssueListlDTO>> GetByIds(IEnumerable<string> ids) =>
