@@ -16,12 +16,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Middlewares;
-using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.Mapping.Profiles;
 using SelfServiceLibrary.Service.DTO.Book;
-using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Validation;
 
 namespace SelfServiceLibrary.API
@@ -87,15 +84,6 @@ namespace SelfServiceLibrary.API
                 .AddControllers()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>())
                 .AddNewtonsoftJson();
-
-            // Auth
-            services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CvutAuthOptions.DefaultScheme;
-                options.DefaultChallengeScheme = CvutAuthOptions.DefaultScheme;
-            })
-            .AddCVUT(_ => { });
 
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpContextAccessor();
