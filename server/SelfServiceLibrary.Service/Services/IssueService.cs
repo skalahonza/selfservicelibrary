@@ -58,13 +58,13 @@ namespace SelfServiceLibrary.Service.Services
             var book = await _books.Find(x => x.DepartmentNumber == departmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
-                // TODO handle not found
+                // TODO handle not found                
             }
 
             // try to mark the book as borrowed
             var result = await _books.UpdateOneAsync(
                 x => x.DepartmentNumber == departmentNumber && x.IsAvailable,
-                Builders<Book>.Update.Inc(x => x.IsAvailable, false));
+                Builders<Book>.Update.Set(x => x.IsAvailable, false));
             if (result.ModifiedCount == 0)
             {
                 // TODO handle book was already taken
@@ -74,6 +74,7 @@ namespace SelfServiceLibrary.Service.Services
             var entity = new Issue
             {
                 Id = Guid.NewGuid().ToString(),
+                IssueDate = DateTime.UtcNow,
                 IssuedTo = username
             };
             entity = _mapper.Map(issue, entity);
