@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Extensions.Options;
 
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -104,6 +103,12 @@ namespace SelfServiceLibrary.Service.Services
         /// <returns></returns>
         public async Task<IssueDetailDTO?> Return(string id)
         {
+            var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if (issue == null)
+            {
+                // TODO handle not found
+            }
+
             await _issues.UpdateOneAsync(
                 x => x.Id == id,
                 Builders<Issue>
@@ -111,12 +116,12 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(x => x.IsReturned, true)
                     .CurrentDate(x => x.ReturnDate));
 
-            var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (issue == null)
-            {
-                // TODO handle not found
-            }
-            return _mapper.Map<IssueDetailDTO>(issue);
+            // mark book as available again
+            await _books.UpdateOneAsync(
+                x => x.DepartmentNumber == issue.DepartmentNumber,
+                Builders<Book>.Update.Set(x => x.IsAvailable, true));
+
+            return _mapper.Map<IssueDetailDTO>(await _issues.Find(x => x.Id == id).FirstAsync());
         }
     }
 }

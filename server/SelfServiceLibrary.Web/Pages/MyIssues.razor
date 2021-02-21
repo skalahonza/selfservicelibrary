@@ -37,7 +37,8 @@
     </BarMenu>
 </Bar>
 
-<DataGrid Margin="Margin.Is4.OnX"
+<DataGrid RowSelectable=@(_ => false)
+          Margin="Margin.Is4.OnX"
           TItem="IssueListlDTO"
           Data="@issues"
           ShowPager="true"
@@ -52,6 +53,11 @@
             <Check TValue="bool" Checked="context.IsReturned" Disabled="true" ReadOnly="true" />
         </DisplayTemplate>
     </DataGridCheckColumn>
+    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.Id)" Caption="Actions" Sortable="false">
+        <DisplayTemplate Context="item">
+            <Button Disabled="item.IsReturned" Color="Color.Success" Clicked="() => Return(item)">Return</Button>
+        </DisplayTemplate>
+    </DataGridColumn>
 </DataGrid>
 
 @code {
@@ -61,5 +67,14 @@
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         issues = await issueService.GetAll(state.User.Identity.Name);
+    }
+
+    private async Task Return(IssueListlDTO issue)
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var detail = await issueService.Return(issue.Id);
+        issue.IsReturned = detail.IsReturned;
+        issue.ReturnDate = detail.ReturnDate;
+        StateHasChanged();
     }
 }
