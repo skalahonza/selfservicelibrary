@@ -13,6 +13,6 @@ namespace SelfServiceLibrary.Service.Interfaces
         /// </summary>
         /// <param name="stream">Stream of CSV data, with first line as a header</param>
         /// <returns></returns>
-        IAsyncEnumerable<Book> ImportBooks(Stream stream);
+        IAsyncEnumerable<BookImportCsvDTO> ImportBooks(Stream stream);
     }
 }

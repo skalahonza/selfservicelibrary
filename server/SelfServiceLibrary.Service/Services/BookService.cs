@@ -8,6 +8,7 @@ using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,14 +38,48 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<long> GetTotalCount() =>
-            _books.EstimatedDocumentCountAsync();
+        public Task<long> GetTotalCount(bool estimated = true) =>
+            estimated
+                ? _books.EstimatedDocumentCountAsync()
+                : _books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
 
         public async Task ImportCsv(Stream csv)
         {
-            await foreach (var book in _csv.ImportBooks(csv))
+            var writes = _csv.ImportBooks(csv)
+                .Select(row =>
+                {
+                    var filter = Builders<Book>.Filter.Where(book => book.DepartmentNumber == row.DepartmentNumber);
+                    var update = Builders<Book>.Update
+                    // first insert only
+                    .SetOnInsert(book => book.Entered, DateTime.UtcNow)
+                    .SetOnInsert(book => book.IsAvailable, true)
+                    // update
+                    .Set(book => book.Name, row.Name)
+                    .Set(book => book.Author, row.Author)
+                    .Set(book => book.CoAuthors, row.CoAuthors)
+                    .Set(book => book.PublicationType, row.PublicationType)
+                    .Set(book => book.Depended, row.Depended)
+                    .Set(book => book.SystemNumber, row.SystemNumber)
+                    .Set(book => book.FelNumber, row.FelNumber)
+                    .Set(book => book.BarCode, row.BarCode)
+                    .Set(book => book.Pages, row.Pages)
+                    .Set(book => book.Publication, row.Publication)
+                    .Set(book => book.YearOfPublication, row.YearOfPublication)
+                    .Set(book => book.Publisher, row.Publisher)
+                    .Set(book => book.CountryOfPublication, row.CountryOfPublication)
+                    .Set(book => book.ISBNorISSN, row.ISBNorISSN)
+                    .Set(book => book.MagazineNumber, row.MagazineNumber)
+                    .Set(book => book.MagazineYear, row.MagazineYear)
+                    .Set(book => book.Conference, row.Conference)
+                    .Set(book => book.Price, row.Price)
+                    .Set(book => book.Keywords, row.Keywords)
+                    .Set(book => book.Note, row.Note);
+                    return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
+                });
+
+            await foreach(var batch in writes.Batchify(1000))
             {
-                await _books.InsertOneAsync(book);
+                await _books.BulkWriteAsync(batch);
             }
         }
 

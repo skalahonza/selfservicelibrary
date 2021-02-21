@@ -19,7 +19,7 @@
             <BarItem>
                 <Inline>
                     <Field>
-                        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
+                        <Button Color="Color.Danger" Clicked="@DeleteAll" Disabled="true">Delete all !</Button>
                     </Field>
                     <Field Margin="Margin.Is3.OnX.OnTablet">
                         <Label>Import CSV</Label>
@@ -93,7 +93,7 @@
         // 5 Megabytes = 5242880 Bytes
         await bookService.ImportCsv(e.File.OpenReadStream(5242880));
 
-        totalBooks = (int)await bookService.GetTotalCount();
+        totalBooks = (int)await bookService.GetTotalCount(false);
         books = await bookService.GetAll(1, 15);
         StateHasChanged();
     }

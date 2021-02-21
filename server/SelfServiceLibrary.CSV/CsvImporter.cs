@@ -10,6 +10,7 @@ using CsvHelper.Configuration;
 using Microsoft.Extensions.Logging;
 
 using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.CSV
@@ -35,7 +36,7 @@ namespace SelfServiceLibrary.CSV
             return null;
         }
 
-        public async IAsyncEnumerable<Book> ImportBooks(Stream stream)
+        public async IAsyncEnumerable<BookImportCsvDTO> ImportBooks(Stream stream)
         {
             using var reader = new StreamReader(stream);
             using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -55,7 +56,7 @@ namespace SelfServiceLibrary.CSV
 
             while (await csv.ReadAsync())
             {
-                yield return new Book
+                yield return new BookImportCsvDTO
                 {
                     Name = csv.GetField(0),
                     Author = csv.GetField(1),
@@ -77,9 +78,7 @@ namespace SelfServiceLibrary.CSV
                     Conference = csv.GetField(17),
                     Price = TryParseDouble(csv.GetField(18)),
                     Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).ToList(),
-                    Note = csv.GetField(20),
-                    Entered = DateTime.UtcNow,
-                    IsAvailable = true
+                    Note = csv.GetField(20)
                 };
             }
         }
