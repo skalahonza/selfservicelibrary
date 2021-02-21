@@ -33,6 +33,17 @@ namespace SelfServiceLibrary.Service.Services
             _mapper = mapper;
         }
 
+        public Task<long> GetTotalCount() =>
+            _issues.EstimatedDocumentCountAsync();
+
+        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize) =>
+            _issues
+                .AsQueryable()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<Issue, IssueListlDTO>(_mapper)
+                .ToListAsync();
+
         public Task<List<IssueListlDTO>> GetAll(string username) =>
             _issues
                 .AsQueryable()

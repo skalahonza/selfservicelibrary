@@ -2,7 +2,7 @@
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Issue
 @using System.IO
-@inject IssueService Service
+@inject IssueService issueService
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -34,9 +34,12 @@
     </BarMenu>
 </Bar>
 
-<DataGrid Margin="Margin.Is4.OnX"
+<DataGrid RowSelectable=@(_ => false)
+          Margin="Margin.Is4.OnX"
           TItem="IssueListlDTO"
           Data="@issues"
+          ReadData="@OnReadData"
+          TotalItems="@totalIssues"
           ShowPager="true"
           PagerPosition="DataGridPagerPosition.Bottom"
           PageSize="15">
@@ -54,19 +57,19 @@
 
 @code {
     private List<IssueListlDTO> issues;
+    private int? totalIssues;
 
     protected override async Task OnInitializedAsync()
     {
-        issues = Enumerable.Range(1, 30)
-            .Select(i => new IssueListlDTO
-            {
-                BookName = "Book",
-                IssuedTo = i % 2 == 0 ? "skalaja7" : "novakpe",
-                IssueDate = DateTime.Now.AddDays(-i),
-                ExpiryDate = DateTime.Now.AddDays(i + 2),
-                ReturnDate = i % 2 == 0 ? DateTime.Now : null,
-                IsReturned = i % 2 == 0
-            })
-            .ToList();
+        totalIssues = (int)await issueService.GetTotalCount();
+    }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<IssueListlDTO> e)
+    {
+        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
+        var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
+
+        issues = await issueService.GetAll(e.Page, e.PageSize);
+        StateHasChanged();
     }
 }
