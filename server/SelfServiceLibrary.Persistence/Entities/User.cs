@@ -6,6 +6,8 @@ namespace SelfServiceLibrary.Persistence.Entities
 {
     public class User
     {
+        public const string COLLECTION_NAME = "users";
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         [BsonId]
         public string Username { get; set; }

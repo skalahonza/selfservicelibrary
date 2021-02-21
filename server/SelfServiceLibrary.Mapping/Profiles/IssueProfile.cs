@@ -9,15 +9,14 @@ namespace SelfServiceLibrary.Mapping.Profiles
     {
         public IssueProfile()
         {
-            CreateMap<IssueCreateDTO, Issue>()
-                .ForMember(x => x.IssueDate, x => x.MapFrom(y => y.IssueDate))
-                .ForMember(x => x.ExpiryDate, x => x.MapFrom(y => y.ExpiryDate))
-                .ForAllOtherMembers(X => X.Ignore());
+            CreateMap<IssueCreateDTO, Issue>(MemberList.Source);
             CreateMap<Issue, IssueDetailDTO>();
             CreateMap<Issue, IssueListlDTO>();
+
             CreateMap<Book, Issue>()
                 .ForMember(x => x.BookName, x => x.MapFrom(y => y.Name))
-                .ForAllOtherMembers(X => X.Ignore());
+                .ForMember(x => x.DepartmentNumber, x => x.MapFrom(y => y.DepartmentNumber))
+                .ForAllOtherMembers(x => x.Ignore());
         }
     }
 }
