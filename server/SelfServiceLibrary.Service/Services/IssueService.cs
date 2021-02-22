@@ -6,6 +6,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
@@ -48,6 +49,15 @@ namespace SelfServiceLibrary.Service.Services
             _issues
                 .AsQueryable()
                 .Where(x => x.IssuedTo == username)
+                .OrderBy(x => x.IsReturned).ThenBy(x => x.ExpiryDate)
+                .ProjectTo<Issue, IssueListlDTO>(_mapper)
+                .ToListAsync();
+
+        public Task<List<IssueListlDTO>> GetAll(BookDetailDTO book) =>
+            _issues
+                .AsQueryable()
+                .Where(x => x.DepartmentNumber == book.DepartmentNumber)
+                .OrderByDescending(x => x.IssueDate)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 

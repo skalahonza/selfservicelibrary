@@ -39,11 +39,13 @@
 
 <DataGrid RowSelectable=@(_ => false)
           Margin="Margin.Is4.OnX"
+          Padding="Padding.Is4.OnAll"
           TItem="IssueListlDTO"
           Data="@issues"
           ShowPager="true"
           PagerPosition="DataGridPagerPosition.Bottom"
-          PageSize="15">
+          PageSize="10">
+    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />

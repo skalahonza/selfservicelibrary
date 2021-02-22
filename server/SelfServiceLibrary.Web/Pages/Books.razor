@@ -35,13 +35,14 @@
 
 <DataGrid RowSelectable=@(_ => false)
           Margin="Margin.Is4.OnX"
+          Padding="Padding.Is4.OnAll"
           TItem="BookListDTO"
           Data="@books"
           ReadData="@OnReadData"
           TotalItems="@totalBooks"
           ShowPager="true"
           PagerPosition="DataGridPagerPosition.Bottom"
-          PageSize="15">
+          PageSize="10">
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
     <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />

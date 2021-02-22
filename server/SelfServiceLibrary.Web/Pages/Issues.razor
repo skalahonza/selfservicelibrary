@@ -36,15 +36,17 @@
 
 <DataGrid RowSelectable=@(_ => false)
           Margin="Margin.Is4.OnX"
+          Padding="Padding.Is4.OnAll"
           TItem="IssueListlDTO"
           Data="@issues"
           ReadData="@OnReadData"
           TotalItems="@totalIssues"
           ShowPager="true"
           PagerPosition="DataGridPagerPosition.Bottom"
-          PageSize="15">
+          PageSize="10">
+    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="#" Sortable="false" />
     <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" />
-    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="User" Sortable="true" />
+    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />

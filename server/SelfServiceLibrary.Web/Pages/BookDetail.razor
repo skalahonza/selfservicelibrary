@@ -2,7 +2,9 @@
 
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Book
+@using SelfServiceLibrary.Service.DTO.Issue
 @inject BookService bookService
+@inject IssueService issueService
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -15,21 +17,38 @@
 <Container Fluid="true">
     @if (book != null)
     {
-        <Badge Color="Color.Info">@book.PublicationType</Badge>
+        <h2>@book.Name <Badge Color="Color.Primary">@book.PublicationType</Badge></h2>
 
-        <h1>@book.Name</h1>
-        <h2>@book.Author</h2>
-        <h3>@string.Join(", ", book.CoAuthors)</h3>
+        <h3>@book.Author <Badge Color="Color.Secondary">Author</Badge> </h3>
+
+        @if (book.CoAuthors.Any(x => !string.IsNullOrEmpty(x)))
+        {
+            <h4>@string.Join(", ", book.CoAuthors) <Badge Color="Color.Secondary">Co-Authors</Badge></h4>
+        }
 
         @if (book.Keywords.Any(x => !string.IsNullOrEmpty(x)))
         {
-            <h4>Keywords</h4>
+            <h5>Keywords</h5>
             @foreach (var keyword in book.Keywords)
             {
                 <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
             }
         }
 
+        <br />
+        <h3>History</h3>
+
+        <DataGrid RowSelectable=@(_ => false)
+                  TItem="IssueListlDTO"
+                  Data="@issues"
+                  ShowPager="true"
+                  PagerPosition="DataGridPagerPosition.Bottom"
+                  PageSize="10">
+            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+        </DataGrid>
     }
     else
     {
@@ -42,6 +61,7 @@
 
 @code {
     private BookDetailDTO book;
+    private List<IssueListlDTO> issues;
 
     [Parameter]
     public string DepartmentNumber { get; set; }
@@ -49,5 +69,6 @@
     protected override async Task OnInitializedAsync()
     {
         book = await bookService.GetDetail(DepartmentNumber);
+        issues = await issueService.GetAll(book);
     }
 }
