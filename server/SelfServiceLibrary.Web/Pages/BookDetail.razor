@@ -1,0 +1,53 @@
+﻿@page "/books/{departmentNumber}"
+
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Service.DTO.Book
+@inject BookService bookService
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        @DepartmentNumber
+    </BarBrand>
+</Bar>
+
+<Container Fluid="true">
+    @if (book != null)
+    {
+        <Badge Color="Color.Info">@book.PublicationType</Badge>
+
+        <h1>@book.Name</h1>
+        <h2>@book.Author</h2>
+        <h3>@string.Join(", ", book.CoAuthors)</h3>
+
+        @if (book.Keywords.Any(x => !string.IsNullOrEmpty(x)))
+        {
+            <h4>Keywords</h4>
+            @foreach (var keyword in book.Keywords)
+            {
+                <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
+            }
+        }
+
+    }
+    else
+    {
+        <div>
+            Book not found
+        </div>
+    }
+</Container>
+
+
+@code {
+    private BookDetailDTO book;
+
+    [Parameter]
+    public string DepartmentNumber { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        book = await bookService.GetDetail(DepartmentNumber);
+    }
+}

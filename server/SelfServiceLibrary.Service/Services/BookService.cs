@@ -43,6 +43,13 @@ namespace SelfServiceLibrary.Service.Services
                 ? _books.EstimatedDocumentCountAsync()
                 : _books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
 
+        public Task<BookDetailDTO> GetDetail(string departmentNumber) =>
+            _books
+                .AsQueryable()
+                .Where(x => x.DepartmentNumber == departmentNumber)
+                .ProjectTo<Book, BookDetailDTO>(_mapper)
+                .FirstOrDefaultAsync();
+
         public async Task ImportCsv(Stream csv)
         {
             var writes = _csv.ImportBooks(csv)
