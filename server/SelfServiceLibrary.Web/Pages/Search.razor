@@ -69,6 +69,8 @@
 
     private async Task Fulltext()
     {
+        if (string.IsNullOrEmpty(search)) return;
+
         var result = await bookService.Fulltext(search);
         if (result.Any())
         {
