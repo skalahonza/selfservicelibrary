@@ -33,35 +33,38 @@
     </BarMenu>
 </Bar>
 
-<DataGrid RowSelectable=@(_ => false)
-          Margin="Margin.Is4.OnX"
-          Padding="Padding.Is4.OnAll"
-          TItem="BookListDTO"
-          Data="@books"
-          ReadData="@OnReadData"
-          TotalItems="@totalBooks"
-          ShowPager="true"
-          PagerPosition="DataGridPagerPosition.Bottom"
-          PageSize="10">
-    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
-    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
-    <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
-    <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
-        <DisplayTemplate>
-            <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
-        </DisplayTemplate>
-    </DataGridCheckColumn>
+<Container Fluid="true">
+    <DataGrid RowSelectable=@(_ => false)
+              TItem="BookListDTO"
+              Data="@books"
+              ReadData="@OnReadData"
+              TotalItems="@totalBooks"
+              ShowPager="true"
+              PagerPosition="DataGridPagerPosition.Bottom"
+              PageSize="10">
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)">
 
-    <AuthorizeView>
-        <Authorized>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Actions">
-                <DisplayTemplate Context="item">
-                    <Button Disabled="@(!item.IsAvailable)" Color="Color.Success" Clicked="() => Borrow(item)">Borrow</Button>
-                </DisplayTemplate>
-            </DataGridColumn>
-        </Authorized>
-    </AuthorizeView>
-</DataGrid>
+        </DataGridColumn>
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
+
+        <AuthorizeView>
+            <Authorized>
+                <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Actions">
+                    <DisplayTemplate Context="item">
+                        <Button Disabled="@(!item.IsAvailable)" Color="Color.Success" Clicked="() => Borrow(item)">Borrow</Button>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            </Authorized>
+        </AuthorizeView>
+    </DataGrid>
+</Container>
 
 @code {
     private List<BookListDTO> books;
