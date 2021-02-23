@@ -63,7 +63,7 @@ namespace SelfServiceLibrary.Web
 
             // Blazorise
             services
-                .AddBlazorise(options => options.ChangeTextOnKeyPress = true)
+                .AddBlazorise(options => options.ChangeTextOnKeyPress = false)
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 

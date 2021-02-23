@@ -50,15 +50,14 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookDetailDTO>(_mapper)
                 .FirstOrDefaultAsync();
 
-        public Task<List<BookListDTO>> Fulltext(string searchedTerm) =>
-            _books.Find(Builders<Book>.Filter
-                .Text(searchedTerm, new TextSearchOptions
-                {
-                    CaseSensitive = false,
-                    DiacriticSensitive = false
-                }))
-            .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookListDTO>(x)))
-            .ToListAsync();
+        public Task<List<BookSearchDTO>> Fulltext(string searchedTerm)
+        {
+            var query = _books
+                .Find(Builders<Book>.Filter.Text(searchedTerm, new TextSearchOptions { CaseSensitive = false, DiacriticSensitive = false }))
+                .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookSearchDTO>(x)));
+
+            return query.ToListAsync();
+        }
 
         public async Task ImportCsv(Stream csv)
         {

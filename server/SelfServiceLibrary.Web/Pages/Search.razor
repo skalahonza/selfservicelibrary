@@ -15,7 +15,12 @@
             <BarItem>
                 <Addons Margin="Margin.Is3.OnX.OnTablet">
                     <Addon AddonType="AddonType.Body">
-                        <TextEdit Placeholder="Algebra..." @bind-Text="@search"/>
+                        <TextEdit Placeholder="Algebra..." 
+                                  Text="@search" 
+                                  TextChanged="@OnSearchChanged"
+                                  ChangeTextOnKeyPress="false"
+                                  DelayTextOnKeyPress="true"
+                                  DelayTextOnKeyPressInterval="300" />
                     </Addon>
                     <Addon AddonType="AddonType.End">
                         <Button Color="Color.Primary" Clicked="@Fulltext">Search</Button>
@@ -38,15 +43,24 @@
     </Tabs>
 
     <DataGrid RowSelectable=@(_ => false)
-              TItem="BookListDTO"
+              TItem="BookSearchDTO"
               Data="@items"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
               PageSize="10">
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
-        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
+        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
+        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Keywords" Sortable="false">
+            <DisplayTemplate>
+                @foreach (var keyword in context.Keywords)
+                {
+                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
+                }
+            </DisplayTemplate>
+        </DataGridColumn>
+        <DataGridDateColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
+        <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
             <DisplayTemplate>
                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
             </DisplayTemplate>
@@ -57,8 +71,8 @@
     private string selectedTab;
     private string search;
 
-    private IDictionary<string, List<BookListDTO>> searchResults = new Dictionary<string, List<BookListDTO>>();
-    private List<BookListDTO> items;
+    private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>();
+    private List<BookSearchDTO> items;
 
     private void OnSelectedTabChanged(string name)
     {
@@ -67,11 +81,17 @@
         StateHasChanged();
     }
 
+    private void OnSearchChanged(string value)
+    {
+        search = value;
+    }
+
     private async Task Fulltext()
     {
-        if (string.IsNullOrEmpty(search)) return;
+        var result = string.IsNullOrEmpty(search)
+            ? new List<BookSearchDTO>()
+            : await bookService.Fulltext(search);
 
-        var result = await bookService.Fulltext(search);
         if (result.Any())
         {
             searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
