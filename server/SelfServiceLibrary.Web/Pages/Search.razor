@@ -1,4 +1,7 @@
 ﻿@page "/search"
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Service.DTO.Book
+@inject BookService bookService
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -12,10 +15,10 @@
             <BarItem>
                 <Addons Margin="Margin.Is3.OnX.OnTablet">
                     <Addon AddonType="AddonType.Body">
-                        <TextEdit Placeholder="Algebra..." />
+                        <TextEdit Placeholder="Algebra..." @bind-Text="@search"/>
                     </Addon>
                     <Addon AddonType="AddonType.End">
-                        <Button Color="Color.Primary">Search</Button>
+                        <Button Color="Color.Primary" Clicked="@Fulltext">Search</Button>
                     </Addon>
                 </Addons>
             </BarItem>
@@ -23,20 +26,61 @@
     </BarMenu>
 </Bar>
 
-<Tabs SelectedTab="@selectedTab" 
-      SelectedTabChanged="@OnSelectedTabChanged">
-    <Items>
-        <Tab Name="books">Books <Badge Color="Color.Primary">50</Badge></Tab>
-        <Tab Name="magazines">Magazines <Badge Color="Color.Primary">10</Badge></Tab>
-        <Tab Name="anthologies">Anthologies <Badge Color="Color.Primary">5</Badge></Tab>
-        <Tab Name="theses">Theses <Badge Color="Color.Primary">2</Badge></Tab>
-    </Items>
-</Tabs>
+<Container Fluid="true">
+    <Tabs SelectedTab="@selectedTab"
+          SelectedTabChanged="@OnSelectedTabChanged">
+        <Items>
+            @foreach (var (type, items) in searchResults.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value.Count))
+            {
+                <Tab Name="@type">@type <Badge Color="Color.Primary">@items.Count</Badge></Tab>
+            }
+        </Items>
+    </Tabs>
+
+    <DataGrid RowSelectable=@(_ => false)
+              TItem="BookListDTO"
+              Data="@items"
+              ShowPager="true"
+              PagerPosition="DataGridPagerPosition.Bottom"
+              PageSize="10">
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
+    </DataGrid>
+</Container>
 @code{
-    string selectedTab = "profile";
+    private string selectedTab;
+    private string search;
+
+    private IDictionary<string, List<BookListDTO>> searchResults = new Dictionary<string, List<BookListDTO>>();
+    private List<BookListDTO> items;
 
     private void OnSelectedTabChanged(string name)
     {
         selectedTab = name;
+        items = searchResults[name];
+        StateHasChanged();
+    }
+
+    private async Task Fulltext()
+    {
+        var result = await bookService.Fulltext(search);
+        if (result.Any())
+        {
+            searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
+            selectedTab = searchResults.OrderByDescending(x => x.Value.Count).FirstOrDefault().Key;
+            items = searchResults[selectedTab];
+        }
+        else
+        {
+            items?.Clear();
+            searchResults?.Clear();
+            selectedTab = null;
+        }
     }
 }

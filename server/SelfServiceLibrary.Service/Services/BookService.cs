@@ -50,6 +50,16 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookDetailDTO>(_mapper)
                 .FirstOrDefaultAsync();
 
+        public Task<List<BookListDTO>> Fulltext(string searchedTerm) =>
+            _books.Find(Builders<Book>.Filter
+                .Text(searchedTerm, new TextSearchOptions
+                {
+                    CaseSensitive = false,
+                    DiacriticSensitive = false
+                }))
+            .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookListDTO>(x)))
+            .ToListAsync();
+
         public async Task ImportCsv(Stream csv)
         {
             var writes = _csv.ImportBooks(csv)
@@ -84,7 +94,7 @@ namespace SelfServiceLibrary.Service.Services
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
                 });
 
-            await foreach(var batch in writes.Batchify(1000))
+            await foreach (var batch in writes.Batchify(1000))
             {
                 await _books.BulkWriteAsync(batch);
             }

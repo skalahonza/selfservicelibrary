@@ -42,6 +42,7 @@ using System.Security.Claims;
 using Pathoschild.Http.Client;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
+using SelfServiceLibrary.Persistence.Entities;
 
 namespace SelfServiceLibrary.Web
 {
@@ -217,7 +218,19 @@ namespace SelfServiceLibrary.Web
             services.AddSingleton<IMongoClient, MongoClient>(x =>
             {
                 var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
-                return new MongoClient(options.Value.ConnectionString);
+                var client = new MongoClient(options.Value.ConnectionString);
+
+                // TODO create indexes
+                var database = client.GetDatabase(options.Value.DatabaseName);
+                var books = database.GetCollection<Book>(Book.COLLECTION_NAME);
+                books
+                    .Indexes
+                    .CreateOneAsync(new CreateIndexModel<Book>(Builders<Book>
+                        .IndexKeys
+                        .Text("$**")))
+                    .Wait();
+
+                return client;
             });
 
             // Mapping

@@ -44,9 +44,6 @@
               PageSize="10">
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)">
-
-        </DataGridColumn>
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
             <DisplayTemplate>

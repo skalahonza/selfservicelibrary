@@ -20,8 +20,4 @@
     <ProjectReference Include="..\SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
 </Project>
