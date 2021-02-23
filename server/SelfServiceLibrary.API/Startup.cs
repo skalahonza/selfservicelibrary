@@ -46,6 +46,25 @@ namespace SelfServiceLibrary.API
                     Description = "Self service library for university departments.",
                 });
 
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "Please enter your card number and pin.",
+                    Type = SecuritySchemeType.Http,
+                    In = ParameterLocation.Header,
+                    Scheme = "basic",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Basic"
+                    }
+                };
+                c.AddSecurityDefinition("Basic", securitySchema);
+                var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    { securitySchema, new[] { "Basic" } }
+                };
+                c.AddSecurityRequirement(securityRequirement);
+
                 var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(BookListDTO).Assembly };
                 foreach (var assembly in assemblies)
                 {
