@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SelfServiceLibrary.API.Controllers
 {
-    public class IssuesController : BaseController
+    public class BooksController : BaseController
     {
         /// <summary>
         /// Borrow a book from a library
