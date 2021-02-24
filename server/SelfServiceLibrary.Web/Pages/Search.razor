@@ -40,44 +40,49 @@
                 <Tab Name="@type">@type <Badge Color="Color.Primary">@items.Count</Badge></Tab>
             }
         </Items>
+        <Content>
+            @foreach (var (type, items) in searchResults.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value.Count))
+            {
+                <TabPanel Name="@type">
+                    <DataGrid RowSelectable=@(_ => false)
+                              TItem="BookSearchDTO"
+                              Data="@items"
+                              ShowPager="true"
+                              PagerPosition="DataGridPagerPosition.Bottom"
+                              PageSize="10">
+                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
+                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Keywords" Sortable="false">
+                            <DisplayTemplate>
+                                @foreach (var keyword in context.Keywords)
+                                {
+                                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
+                                }
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridDateColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
+                        <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
+                            <DisplayTemplate>
+                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+                            </DisplayTemplate>
+                        </DataGridCheckColumn>
+                    </DataGrid>
+                </TabPanel>
+            }
+        </Content>
     </Tabs>
-
-    <DataGrid RowSelectable=@(_ => false)
-              TItem="BookSearchDTO"
-              Data="@items"
-              ShowPager="true"
-              PagerPosition="DataGridPagerPosition.Bottom"
-              PageSize="10">
-        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false" />
-        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
-        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
-        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Keywords" Sortable="false">
-            <DisplayTemplate>
-                @foreach (var keyword in context.Keywords)
-                {
-                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
-                }
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridDateColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
-        <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
-            <DisplayTemplate>
-                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
-            </DisplayTemplate>
-        </DataGridCheckColumn>
-    </DataGrid>
+    
 </Container>
 @code{
     private string selectedTab;
     private string search;
 
     private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>();
-    private List<BookSearchDTO> items;
 
     private void OnSelectedTabChanged(string name)
     {
         selectedTab = name;
-        items = searchResults[name];
         StateHasChanged();
     }
 
@@ -96,11 +101,9 @@
         {
             searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
             selectedTab = searchResults.OrderByDescending(x => x.Value.Count).FirstOrDefault().Key;
-            items = searchResults[selectedTab];
         }
         else
         {
-            items?.Clear();
             searchResults?.Clear();
             selectedTab = null;
         }
