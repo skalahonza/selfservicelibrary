@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 
+using AspNetCore.Identity.Mongo;
+
 using AutoMapper;
 
 using FluentValidation.AspNetCore;
@@ -15,10 +17,14 @@ using Microsoft.OpenApi.Models;
 
 using MongoDB.Driver;
 
+using SelfServiceLibrary.Card.Authentication.Extensions;
+using SelfServiceLibrary.Card.Authentication.Model;
+using SelfServiceLibrary.Card.Authentication.Services;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
+using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;
 using SelfServiceLibrary.Service.Validation;
 
@@ -101,6 +107,10 @@ namespace SelfServiceLibrary.API
                 var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
                 return new MongoClient(options.Value.ConnectionString);
             });
+
+            // Id cards
+            services.AddCardAuthentication(Configuration.GetSection("Identity"));
+            services.AddScoped<ICardAuthenticator, AspNetCoreIdentityAuthenticator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,5 +1,10 @@
 ﻿@page "/profile"
 @attribute [Authorize]
+@using SelfServiceLibrary.Service.DTO.Card
+@using SelfServiceLibrary.Service.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ICardService cardService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -9,49 +14,133 @@
     </BarBrand>
 </Bar>
 
-<AuthorizeView>
-    <Authorized>
-        You can only see this if you're authenticated.
-        <h1>User: @context.User.Identity.Name</h1>
-        <ul>
-            @foreach(var claim in context.User.Claims)
-            {
-                <li>@claim.Value -- @claim.Type</li>
-            }
-        </ul>
-    </Authorized>
-    <NotAuthorized>
-        You're not logged in.
-    </NotAuthorized>
-</AuthorizeView>
-
 <Container Fluid="true">
     <h2>ID Cards</h2>
     <CardDeck>
+        @foreach (var card in cards)
+        {
+            <Card>
+                <CardBody>
+                    <CardTitle Size="5">@card.Name</CardTitle>
+                    <CardText>
+                        @card.Number
+                    </CardText>
+                    <Button Clicked="() => RemoveCard(card)" Color="Color.Danger">Remove</Button>
+                </CardBody>
+            </Card>
+        }
         <Card>
             <CardBody>
-                <CardTitle Size="5">ISIC</CardTitle>
-                <CardText>
-                    123456789
-                </CardText>
-                <Button Color="Color.Primary">Edit</Button>
-                <Button Color="Color.Danger">Remove</Button>
-            </CardBody>
-        </Card>
-        <Card>
-            <CardBody>
-                <CardTitle Size="5">CVUT</CardTitle>
-                <CardText>
-                    123456789
-                </CardText>
-                <Button Color="Color.Primary">Edit</Button>
-                <Button Color="Color.Danger">Remove</Button>
-            </CardBody>
-        </Card>
-        <Card>
-            <CardBody>
-                <Button Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
+                <Button Clicked="@ShowModal" Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
             </CardBody>
         </Card>
     </CardDeck>
+
+    <!-- Add card modal -->
+    <Modal @ref="modalRef">
+        <ModalBackdrop />
+        <ModalContent IsCentered="true">
+            <ModalHeader>
+                <ModalTitle>Add ID card</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Validations Mode="ValidationMode.Auto" Model="@card" @ref="validations">
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Card number</FieldLabel>
+                            <TextEdit @bind-Text="@card.Number">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Card name</FieldLabel>
+                            <TextEdit Placeholder="CVUT, ISIC" @bind-Text="@card.Name">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Pin</FieldLabel>
+                            <TextEdit Role="TextRole.Password" @bind-Text="@card.Pin">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field>
+                            <FieldLabel>Pin confirmation</FieldLabel>
+                            <TextEdit Role="TextRole.Password" @bind-Text="@card.PinConfirmation">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+                <Button Color="Color.Primary" Clicked="@AddCard">Save Changes</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
 </Container>
+
+@code{
+    // reference to the modal component
+    private Modal modalRef;
+    private AddCardDTO card = new AddCardDTO();
+    private Validations validations;
+    private List<CardListDTO> cards = new List<CardListDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        cards = await cardService.GetAll(state.User.Identity.Name) ?? new List<CardListDTO>();
+    }
+
+    private void ShowModal()
+    {
+        card = new AddCardDTO();
+        modalRef.Show();
+    }
+
+    private void HideModal()
+    {
+        modalRef.Hide();
+    }
+
+    private async Task AddCard()
+    {
+        if (validations.ValidateAll())
+        {
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            await cardService.Add(state.User.Identity.Name, card);
+            cards.Add(new CardListDTO
+            {
+                Name = card.Name,
+                Number = card.Number
+            });
+            StateHasChanged();
+            modalRef.Hide();
+        }
+    }
+
+    private async Task RemoveCard(CardListDTO card)
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await cardService.Remove(state.User.Identity.Name, card.Number);
+        cards.Remove(card);
+        StateHasChanged();
+    }
+}

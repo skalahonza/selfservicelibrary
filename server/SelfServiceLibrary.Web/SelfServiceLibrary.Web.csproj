@@ -15,15 +15,19 @@
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.5" />
     <PackageReference Include="Blazorise.DataGrid" Version="0.9.2.5" />
+    <PackageReference Include="Blazorise.FluentValidation" Version="0.9.2.1" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.2.5" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.5.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CVUT.Auth\CVUT.Auth.csproj" />
     <ProjectReference Include="..\CVUT.Usermap\CVUT.Usermap.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />

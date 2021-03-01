@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   books.db:
-    image: mongo:latest
+    image: mongo:4.4
     environment:
       MONGO_INITDB_DATABASE: BooksDb
       MONGO_INITDB_ROOT_USERNAME: root
@@ -16,6 +16,7 @@ services:
     image: skalahonza/self-service-library-api:latest
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - Identity__ConnectionString=mongodb://root:rootpassword@books.db:27017/identity
       - MongoDb__DatabaseName=BooksDb
     build:
       context: .
@@ -25,6 +26,7 @@ services:
     image: skalahonza/self-service-library-web:latest
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - Identity__ConnectionString=mongodb://root:rootpassword@books.db:27017/identity
       - MongoDb__DatabaseName=BooksDb
     build:
       context: .

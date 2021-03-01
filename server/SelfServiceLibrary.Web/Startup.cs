@@ -43,6 +43,9 @@ using Pathoschild.Http.Client;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.Card.Authentication.Extensions;
+using SelfServiceLibrary.Card.Authentication.Services;
+using FluentValidation;
 
 namespace SelfServiceLibrary.Web
 {
@@ -57,13 +60,22 @@ namespace SelfServiceLibrary.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Blazor
             services.AddRazorPages()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>());
             services.AddServerSideBlazor();
 
+            // Validation
+            services.AddValidatorsFromAssemblyContaining<BookAddDTOValidator>();
+
             // Blazorise
             services
-                .AddBlazorise(options => options.ChangeTextOnKeyPress = false)
+                .AddBlazoriseWithFluentValidation(options =>
+                {
+                    options.ChangeTextOnKeyPress = false;
+                    options.DelayTextOnKeyPress = true;
+                    options.DelayTextOnKeyPressInterval = 300;
+                })
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 
@@ -206,9 +218,16 @@ namespace SelfServiceLibrary.Web
                     options.Validate();
                 });
 
+            // Id cards
+            /*
+            services.AddCardAuthentication(Configuration.GetSection("Identity"))
+            services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
+            */
+
             // Business logic
             services.AddScoped<BookService>();
             services.AddScoped<IssueService>();
+            services.AddScoped<ICardService, CardService>();
 
             // Persistence, MongoDB
             services

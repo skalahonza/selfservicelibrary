@@ -15,7 +15,7 @@ namespace SelfServiceLibrary.Persistence.Entities
 
         #region Related entities
         public List<string> IssueIds { get; set; } = new List<string>();
-
+        public List<IdCard> Cards { get; set; } = new List<IdCard>();
         #endregion
     }
 }
