@@ -19,30 +19,30 @@
     <CardDeck>
         @foreach (var card in cards)
         {
-            <Card>
+            <Card ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet.Is12.OnMobile">
                 <CardBody>
                     <CardTitle Size="5">@card.Name</CardTitle>
                     <CardText>
                         @card.Number
                     </CardText>
-                    <Button Clicked="() => RemoveCard(card)" Color="Color.Danger">Remove</Button>
+                    <Button Clicked="() => RemoveCard(card)" Block="true" Size="Size.Small" Color="Color.Danger">Remove</Button>
                 </CardBody>
             </Card>
         }
-        <Card>
+        <Card ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet.Is12.OnMobile">
             <CardBody>
-                <Button Clicked="@ShowModal" Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
+                <Button Clicked="() => ShowModal(addCardModal)" Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
             </CardBody>
         </Card>
     </CardDeck>
 
     <!-- Add card modal -->
-    <Modal @ref="modalRef">
+    <Modal @ref="addCardModal">
         <ModalBackdrop />
         <ModalContent IsCentered="true">
             <ModalHeader>
                 <ModalTitle>Add ID card</ModalTitle>
-                <CloseButton Clicked="@HideModal" />
+                <CloseButton Clicked="() => HideModal(addCardModal)" />
             </ModalHeader>
             <ModalBody>
                 <Validations Mode="ValidationMode.Auto" Model="@card" @ref="validations">
@@ -89,19 +89,38 @@
                 </Validations>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+                <Button Color="Color.Secondary" Clicked="() => HideModal(addCardModal)">Close</Button>
                 <Button Color="Color.Primary" Clicked="@AddCard">Save Changes</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+
+    <!-- Delete card modal -->
+    <Modal @ref="@deleteCardModal">
+        <ModalBackdrop />
+        <ModalContent IsCentered="true">
+            <ModalHeader>
+                <ModalTitle>Delete card</ModalTitle>
+                <CloseButton Clicked="() => HideModal(deleteCardModal)" />
+            </ModalHeader>
+            <ModalBody>
+               Are you sure you want to delete this card?
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="() => HideModal(deleteCardModal)">Close</Button>
+                <Button Color="Color.Danger" Clicked="() => RemoveCardConfirmed(cardToDelete)">Delete!</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
 </Container>
 
 @code{
-    // reference to the modal component
-    private Modal modalRef;
+    private Modal addCardModal;
+    private Modal deleteCardModal;
     private AddCardDTO card = new AddCardDTO();
     private Validations validations;
     private List<CardListDTO> cards = new List<CardListDTO>();
+    private CardListDTO cardToDelete;
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,15 +128,15 @@
         cards = await cardService.GetAll(state.User.Identity.Name) ?? new List<CardListDTO>();
     }
 
-    private void ShowModal()
+    private void ShowModal(Modal modal)
     {
         card = new AddCardDTO();
-        modalRef.Show();
+        modal.Show();
     }
 
-    private void HideModal()
+    private void HideModal(Modal modal)
     {
-        modalRef.Hide();
+        modal.Hide();
     }
 
     private async Task AddCard()
@@ -132,15 +151,23 @@
                 Number = card.Number
             });
             StateHasChanged();
-            modalRef.Hide();
+            addCardModal.Hide();
         }
     }
 
     private async Task RemoveCard(CardListDTO card)
     {
+        cardToDelete = card;
+        deleteCardModal.Show();
+    }
+
+    private async Task RemoveCardConfirmed(CardListDTO card)
+    {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         await cardService.Remove(state.User.Identity.Name, card.Number);
         cards.Remove(card);
+        deleteCardModal.Hide();
+        cardToDelete = null;
         StateHasChanged();
     }
 }
