@@ -79,6 +79,9 @@ namespace SelfServiceLibrary.Web
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 
+            // Id cards
+            services.AddCardAuthentication(Configuration.GetSection("Identity"));
+
             // CVUT Auth
             services.AddOptions<oAuth2Options>().Bind(Configuration.GetSection("oAuth2")).ValidateDataAnnotations();
             services.AddHttpClient<ZuulClient>();
@@ -218,16 +221,11 @@ namespace SelfServiceLibrary.Web
                     options.Validate();
                 });
 
-            // Id cards
-            /*
-            services.AddCardAuthentication(Configuration.GetSection("Identity"))
-            services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
-            */
-
             // Business logic
             services.AddScoped<BookService>();
             services.AddScoped<IssueService>();
             services.AddScoped<ICardService, CardService>();
+            services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
 
             // Persistence, MongoDB
             services

@@ -3,6 +3,7 @@ using System;
 
 using AspNetCore.Identity.Mongo;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,9 +17,12 @@ namespace SelfServiceLibrary.Card.Authentication.Extensions
         {
             services.AddIdentityMongoDbProvider<IdCard>(options =>
             {
-                
-
-                // Password settings.
+                // Password settings.                
+                options.Password.RequiredLength = 0;
+                options.Password.RequiredUniqueChars = 1;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = true;
 
                 // Lockout settings

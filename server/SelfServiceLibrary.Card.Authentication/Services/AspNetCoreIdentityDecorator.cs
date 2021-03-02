@@ -22,7 +22,9 @@ namespace SelfServiceLibrary.Card.Authentication.Services
 
         public async Task<bool> Add(string username, AddCardDTO card)
         {
-            var result = await _userManager.CreateAsync(new IdCard(card.Number, username));
+            var result = string.IsNullOrEmpty(card.Pin)
+                ? await _userManager.CreateAsync(new IdCard(card.Number, username))
+                : await _userManager.CreateAsync(new IdCard(card.Number, username), card.Pin);
             return result.Succeeded && await _decorated.Add(username, card);
         }
 
