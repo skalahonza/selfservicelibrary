@@ -8,11 +8,14 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["SelfServiceLibrary.Web/SelfServiceLibrary.Web.csproj", "SelfServiceLibrary.Web/"]
+COPY ["CVUT.Auth/CVUT.Auth.csproj", "CVUT.Auth/"]
 COPY ["SelfServiceLibrary.Service/SelfServiceLibrary.Service.csproj", "SelfServiceLibrary.Service/"]
 COPY ["SelfServiceLibrary.Persistence/SelfServiceLibrary.Persistence.csproj", "SelfServiceLibrary.Persistence/"]
 COPY ["SelfServiceLibrary.Domain/SelfServiceLibrary.Domain.csproj", "SelfServiceLibrary.Domain/"]
+COPY ["CVUT.Usermap/CVUT.Usermap.csproj", "CVUT.Usermap/"]
 COPY ["SelfServiceLibrary.CSV/SelfServiceLibrary.CSV.csproj", "SelfServiceLibrary.CSV/"]
 COPY ["SelfServiceLibrary.Mapping/SelfServiceLibrary.Mapping.csproj", "SelfServiceLibrary.Mapping/"]
+COPY ["SelfServiceLibrary.Card.Authentication/SelfServiceLibrary.Card.Authentication.csproj", "SelfServiceLibrary.Card.Authentication/"]
 RUN dotnet restore "SelfServiceLibrary.Web/SelfServiceLibrary.Web.csproj"
 COPY . .
 WORKDIR "/src/SelfServiceLibrary.Web"

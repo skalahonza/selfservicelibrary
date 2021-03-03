@@ -11,6 +11,7 @@ COPY ["SelfServiceLibrary.Service/SelfServiceLibrary.Service.csproj", "SelfServi
 COPY ["SelfServiceLibrary.Persistence/SelfServiceLibrary.Persistence.csproj", "SelfServiceLibrary.Persistence/"]
 COPY ["SelfServiceLibrary.Domain/SelfServiceLibrary.Domain.csproj", "SelfServiceLibrary.Domain/"]
 COPY ["SelfServiceLibrary.Mapping/SelfServiceLibrary.Mapping.csproj", "SelfServiceLibrary.Mapping/"]
+COPY ["SelfServiceLibrary.Card.Authentication/SelfServiceLibrary.Card.Authentication.csproj", "SelfServiceLibrary.Card.Authentication/"]
 RUN dotnet restore "SelfServiceLibrary.API/SelfServiceLibrary.API.csproj"
 COPY . .
 WORKDIR "/src/SelfServiceLibrary.API"

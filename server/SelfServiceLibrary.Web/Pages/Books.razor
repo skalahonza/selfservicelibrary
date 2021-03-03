@@ -44,9 +44,7 @@
               PageSize="10">
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
             <DisplayTemplate>
-                <Link To="@($"books/{context.DepartmentNumber}")">
-                    @context.DepartmentNumber
-                </Link>
+                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
             </DisplayTemplate>
         </DataGridColumn>
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
