@@ -40,9 +40,15 @@
               ReadData="@OnReadData"
               TotalItems="@totalBooks"
               ShowPager="true"
-              PagerPosition="DataGridPagerPosition.Bottom"
+              PagerPosition="DataGridPagerPosition.Top"
               PageSize="10">
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false" />
+        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
+            <DisplayTemplate>
+                <Link To="@($"books/{context.DepartmentNumber}")">
+                    @context.DepartmentNumber
+                </Link>
+            </DisplayTemplate>
+        </DataGridColumn>
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
         <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />

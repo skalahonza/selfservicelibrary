@@ -42,7 +42,7 @@
                   TItem="IssueListlDTO"
                   Data="@issues"
                   ShowPager="true"
-                  PagerPosition="DataGridPagerPosition.Bottom"
+                  PagerPosition="DataGridPagerPosition.Top"
                   PageSize="10">
             <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
             <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
