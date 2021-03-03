@@ -3,7 +3,6 @@ using System;
 
 using AspNetCore.Identity.Mongo;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +18,7 @@ namespace SelfServiceLibrary.Card.Authentication.Extensions
             {
                 // Password settings.                
                 options.Password.RequiredLength = 0;
-                options.Password.RequiredUniqueChars = 1;
+                options.Password.RequiredUniqueChars = 0;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;

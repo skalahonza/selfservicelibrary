@@ -17,6 +17,8 @@ using Microsoft.OpenApi.Models;
 
 using MongoDB.Driver;
 
+using SelfServiceLibrary.API.Extensions;
+using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Model;
 using SelfServiceLibrary.Card.Authentication.Services;
@@ -84,11 +86,11 @@ namespace SelfServiceLibrary.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureSwagger(services);
             services
                 .AddControllers()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>())
                 .AddNewtonsoftJson();
+            ConfigureSwagger(services);
 
             // Business logic
             services.AddScoped<IssueService>();
@@ -111,6 +113,15 @@ namespace SelfServiceLibrary.API
             // Id cards
             services.AddCardAuthentication(Configuration.GetSection("Identity"));
             services.AddScoped<ICardAuthenticator, AspNetCoreIdentityAuthenticator>();
+
+            // Auth
+            services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CvutAuthOptions.DefaultScheme;
+                options.DefaultChallengeScheme = CvutAuthOptions.DefaultScheme;
+            })
+           .AddCVUT(_ => { });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
