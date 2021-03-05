@@ -1,0 +1,13 @@
+image: microsoft/dotnet:latest
+
+stages:
+    - test
+
+before_script:
+    - "cd server"
+    - "dotnet restore"
+
+test:
+    stage: test
+    script:
+        - "dotnet test"
