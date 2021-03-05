@@ -73,11 +73,10 @@ namespace SelfServiceLibrary.Service.Services
         /// </summary>
         /// <param name="issue">Issue details.</param>
         /// <param name="username">To whom will the book be issued.</param>
-        /// <param name="departmentNumber">Department number of the book to borrow.</param>
         /// <returns>Issue details.</returns>
-        public async Task<IssueDetailDTO> Borrow(string username, string departmentNumber, IssueCreateDTO issue)
+        public async Task<IssueDetailDTO> Borrow(string username, IssueCreateDTO issue)
         {
-            var book = await _books.Find(x => x.DepartmentNumber == departmentNumber).FirstOrDefaultAsync();
+            var book = await _books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
                 // TODO handle not found                
@@ -85,7 +84,7 @@ namespace SelfServiceLibrary.Service.Services
 
             // try to mark the book as borrowed
             var result = await _books.UpdateOneAsync(
-                x => x.DepartmentNumber == departmentNumber && x.IsAvailable,
+                x => x.DepartmentNumber == issue.DepartmentNumber && x.IsAvailable,
                 Builders<Book>.Update.Set(x => x.IsAvailable, false));
             if (result.ModifiedCount == 0)
             {
@@ -111,7 +110,7 @@ namespace SelfServiceLibrary.Service.Services
 
             // link issue to a book
             await _books.UpdateOneAsync(
-                x => x.DepartmentNumber == departmentNumber,
+                x => x.DepartmentNumber == issue.DepartmentNumber,
                 Builders<Book>.Update.AddToSet(x => x.IssueIds, entity.Id));
 
             return _mapper.Map<IssueDetailDTO>(entity);

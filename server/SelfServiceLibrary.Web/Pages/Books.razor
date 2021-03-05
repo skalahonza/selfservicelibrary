@@ -107,8 +107,9 @@
     private async Task Borrow(BookListDTO book)
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        await issueService.Borrow(state.User.Identity.Name, book.DepartmentNumber, new IssueCreateDTO
+        await issueService.Borrow(state.User.Identity.Name, new IssueCreateDTO
         {
+            DepartmentNumber = book.DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
         });
         book.IsAvailable = false;

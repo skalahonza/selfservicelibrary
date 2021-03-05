@@ -104,7 +104,7 @@ namespace SelfServiceLibrary.Web
                     options.Cookie.IsEssential = true;
 
                     // TODO might be extended
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
 
                     options.Events = new CookieAuthenticationEvents
                     {
@@ -118,7 +118,7 @@ namespace SelfServiceLibrary.Web
                             var timeRemaining = context.Properties.ExpiresUtc - DateTimeOffset.UtcNow;
 
                             // TODO: Get this from configuration with a fall back value.
-                            var refreshThresholdMinutes = 5;
+                            const int refreshThresholdMinutes = 5;
                             var refreshThreshold = TimeSpan.FromMinutes(refreshThresholdMinutes);
 
                             if (timeRemaining < refreshThreshold)

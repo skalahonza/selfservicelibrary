@@ -1,11 +1,10 @@
 ﻿
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Services;
 
 namespace SelfServiceLibrary.API.Controllers
@@ -13,33 +12,32 @@ namespace SelfServiceLibrary.API.Controllers
     public class BooksController : BaseController
     {
         private readonly IssueService _service;
-        private readonly ICardAuthenticator _authenticator;
 
-        public BooksController(IssueService service, ICardAuthenticator authenticator)
-        {
+        public BooksController(IssueService service) =>
             _service = service;
-            _authenticator = authenticator;
-        }
 
         /// <summary>
         /// Borrow a book from a library
         /// </summary>
-        /// <param name="departmentNumber">Department number of the book to be borrowed.</param>
         /// <returns></returns>
-        [HttpPost("{departmentNumber}/borrow")]
-        public async Task<IActionResult> Borrow(string departmentNumber)
+        [HttpPost("borrow")]
+        public async Task<ActionResult<IssueDetailDTO>> Borrow([FromBody] NfcIssueCreateDTO[] issues)
         {
+            if (issues.Length == 0) return BadRequest();
+            if (string.IsNullOrEmpty(User.Identity?.Name)) return Unauthorized();
+
+            // await _service.Borrow(User.Identity.Name, issues);
             throw new NotImplementedException();
         }
 
         /// <summary>
         /// Return a previously borrowed book
         /// </summary>
-        /// <param name="departmentNumber">Department number of the book to be returned.</param>
         /// <returns></returns>
-        [HttpPost("{departmentNumber}/return")]
-        public async Task<IActionResult> Return(string departmentNumber)
+        [HttpPost("return")]
+        public async Task<IActionResult> Return([FromBody] NfcIssueReturnDTO[] issues)
         {
+            if (issues.Length == 0) return BadRequest();
             throw new NotImplementedException();
         }
     }

@@ -13,7 +13,7 @@ services:
       - mongodb_data_container:/data/db
 
   selfservicelibrary.api:
-    image: skalahonza/self-service-library-api:latest
+    image: registry.gitlab.fel.cvut.cz:443/skalaja7/self-service-library/api:latest
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
       - Identity__ConnectionString=mongodb://root:rootpassword@books.db:27017
@@ -23,7 +23,7 @@ services:
       dockerfile: SelfServiceLibrary.API/Dockerfile
 
   selfservicelibrary.web:
-    image: skalahonza/self-service-library-web:latest
+    image: registry.gitlab.fel.cvut.cz:443/skalaja7/self-service-library/web:latest
     environment:
       - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
       - Identity__ConnectionString=mongodb://root:rootpassword@books.db:27017

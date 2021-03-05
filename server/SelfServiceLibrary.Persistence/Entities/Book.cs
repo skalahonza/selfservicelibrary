@@ -47,10 +47,10 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// <summary>
         /// Evidenční-Číslo-Oddělení – Unikátní Číslo přiřazené naší katedrou (v současnosti GL-XXXXX, CMP-XXXXX)
         /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Database id cannot be empty
         [BsonId]
         public string DepartmentNumber { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Database id cannot be empty
 
         /// <summary>
         /// Čárový-Kód – Číslo z čárového kódu nalepeného na začátku knihy

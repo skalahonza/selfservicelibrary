@@ -20,10 +20,9 @@ namespace SelfServiceLibrary.Card.Authentication.Services
 
         public async Task<string?> Authenticate(string cardNumber, string? pin)
         {
-            var card = await _userManager.FindByNameAsync(cardNumber);            
+            var card = await _userManager.FindByNameAsync(cardNumber);
             var result = await _signInManager.CheckPasswordSignInAsync(card, pin, false);
 
-            // TODO handle failure
             return result.Succeeded
                 ? card.CvutUsername
                 : null;
