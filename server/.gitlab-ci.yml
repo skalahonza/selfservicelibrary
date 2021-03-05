@@ -1,7 +1,0 @@
-image: microsoft/dotnet:latest
-
-test:
-    stage: test
-    script: 
-        - "ls"
-        - "dotnet test"
