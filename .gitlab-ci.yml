@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/sdk:5.0
+
 
 stages:
     - build
@@ -6,7 +6,6 @@ stages:
 
 before_script:
     - "cd server"
-    - "dotnet restore SelfServiceLibrary.sln"
 
 test:
     image: mcr.microsoft.com/dotnet/sdk:5.0
