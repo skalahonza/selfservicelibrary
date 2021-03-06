@@ -19,6 +19,7 @@ build:
         - docker:dind
     stage: build
     script:
+        - "echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
         - "docker build -f SelfServiceLibrary.Web/Dockerfile -t $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH -t $CI_REGISTRY_IMAGE/web:latest ."
         - "docker push $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH"
         - "docker push $CI_REGISTRY_IMAGE/web:latest"
