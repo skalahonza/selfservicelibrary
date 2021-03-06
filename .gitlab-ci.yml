@@ -14,7 +14,7 @@ test:
         - "dotnet test SelfServiceLibrary.sln"
 
 build:
-    image: gitlab/dind
+    image: docker
     services:
         - docker:dind
     stage: build
