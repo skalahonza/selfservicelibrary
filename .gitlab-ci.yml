@@ -9,11 +9,15 @@ before_script:
     - "dotnet restore SelfServiceLibrary.sln"
 
 test:
+    image: mcr.microsoft.com/dotnet/sdk:5.0
     stage: test
     script:
         - "dotnet test SelfServiceLibrary.sln"
 
 build:
+    image: gitlab/dind
+    services:
+        - docker:dind
     stage: build
     script:
         - "docker build -f SelfServiceLibrary.Web/Dockerfile -t $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH -t $CI_REGISTRY_IMAGE/web:latest ."
