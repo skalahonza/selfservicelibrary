@@ -1,25 +1,13 @@
-
+image: mcr.microsoft.com/dotnet/sdk:5.0
 
 stages:
-    - build
     - test
 
 before_script:
     - "cd server"
+    - "dotnet restore SelfServiceLibrary.sln"
 
 test:
-    image: mcr.microsoft.com/dotnet/sdk:5.0
     stage: test
     script:
         - "dotnet test SelfServiceLibrary.sln"
-
-build:
-    image: docker
-    services:
-        - docker:dind
-    stage: build
-    script:
-        - "echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
-        - "docker build -f SelfServiceLibrary.Web/Dockerfile -t $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH -t $CI_REGISTRY_IMAGE/web:latest ."
-        - "docker push $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH"
-        - "docker push $CI_REGISTRY_IMAGE/web:latest"
