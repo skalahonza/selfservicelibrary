@@ -8,12 +8,14 @@ before_script:
     - "cd server"
     - "dotnet restore SelfServiceLibrary.sln"
 
-build:
-    stage: build
-    script:
-        - "dotnet build SelfServiceLibrary.sln"
-
 test:
     stage: test
     script:
         - "dotnet test SelfServiceLibrary.sln"
+
+build:
+    stage: build
+    script:
+        - "docker build -f SelfServiceLibrary.Web/Dockerfile -t $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH -t $CI_REGISTRY_IMAGE/web:latest ."
+        - "docker push $CI_REGISTRY_IMAGE/web:$CI_COMMIT_BRANCH"
+        - "docker push $CI_REGISTRY_IMAGE/web:latest"
