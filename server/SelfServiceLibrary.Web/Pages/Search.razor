@@ -6,24 +6,24 @@
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
+    <BarBrand Display="Display.None.OnMobile.Block.OnTablet">
         Search
     </BarBrand>
-    <BarToggler />
     <BarMenu>
         <BarStart>
             <BarItem>
                 <Addons Margin="Margin.Is3.OnX.OnTablet">
                     <Addon AddonType="AddonType.Body">
-                        <TextEdit Placeholder="Algebra..." 
-                                  Text="@search" 
+                        <TextEdit Placeholder="Algebra, genetics, algorithm"
+                                  Text="@search"
                                   TextChanged="@OnSearchChanged"
                                   ChangeTextOnKeyPress="false"
+                                  KeyPress="@(args => Fulltext(args))"
                                   DelayTextOnKeyPress="true"
                                   DelayTextOnKeyPressInterval="300" />
                     </Addon>
                     <Addon AddonType="AddonType.End">
-                        <Button Color="Color.Primary" Clicked="@Fulltext">Search</Button>
+                        <Button Color="Color.Primary" Clicked="@Fulltext"><Icon Name="IconName.Search" /></Button>
                     </Addon>
                 </Addons>
             </BarItem>
@@ -79,21 +79,26 @@
     
 </Container>
 @code{
-    private string selectedTab;
-    private string search;
+        private string selectedTab;
+        private string search;
 
-    private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>();
+        private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>();
 
-    private void OnSelectedTabChanged(string name)
-    {
-        selectedTab = name;
-        StateHasChanged();
-    }
+        private void OnSelectedTabChanged(string name)
+        {
+            selectedTab = name;
+            StateHasChanged();
+        }
 
-    private void OnSearchChanged(string value)
-    {
-        search = value;
-    }
+        private void OnSearchChanged(string value)
+        {
+            search = value;
+        }
+
+        private Task Fulltext(KeyboardEventArgs args) =>
+            args.Key.Equals("Enter", StringComparison.OrdinalIgnoreCase)
+                ? Fulltext()
+                : Task.CompletedTask;
 
     private async Task Fulltext()
     {
