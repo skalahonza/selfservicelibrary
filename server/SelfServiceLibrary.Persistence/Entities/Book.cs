@@ -127,6 +127,16 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// </summary>
         public bool IsAvailable { get; set; }
 
+        /// <summary>
+        /// Evidováno
+        /// </summary>
+        public bool StsLocal { get; set; }
+
+        /// <summary>
+        /// Evidováno ústřední knihovnou
+        /// </summary>
+        public bool StsUK { get; set; }
+
         #region Related entities
         public List<string> IssueIds { get; set; } = new List<string>();
 

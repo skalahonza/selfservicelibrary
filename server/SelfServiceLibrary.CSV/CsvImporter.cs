@@ -78,7 +78,9 @@ namespace SelfServiceLibrary.CSV
                     Conference = csv.GetField(17),
                     Price = TryParseDouble(csv.GetField(18)),
                     Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).ToList(),
-                    Note = csv.GetField(20)
+                    Note = csv.GetField(20),
+                    StsLocal = !string.IsNullOrEmpty(csv.GetField(30)),
+                    StsUK = !string.IsNullOrEmpty(csv.GetField(31))
                 };
             }
         }

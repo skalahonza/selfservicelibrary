@@ -89,7 +89,9 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(book => book.Conference, row.Conference)
                     .Set(book => book.Price, row.Price)
                     .Set(book => book.Keywords, row.Keywords)
-                    .Set(book => book.Note, row.Note);
+                    .Set(book => book.Note, row.Note)
+                    .Set(book => book.StsLocal, row.StsLocal)
+                    .Set(book => book.StsUK, row.StsUK);
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
                 });
 
