@@ -20,7 +20,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         public string? Author { get; set; }
 
         /// <summary>
-        /// Seznam dalších autorů 
+        /// Seznam dalších autorů
         /// </summary>
         public List<string> CoAuthors { get; set; } = new List<string>();
 
@@ -103,7 +103,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         public string? Conference { get; set; }
 
         /// <summary>
-        /// Cena – Cena publikace (pokud je uvedena) 
+        /// Cena – Cena publikace (pokud je uvedena) v CZK
         /// </summary>
         public double? Price { get; set; }
 
@@ -126,6 +126,11 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// Určuje zda je kniha k zapůjčení
         /// </summary>
         public bool IsAvailable { get; set; }
+
+        /// <summary>
+        /// Stav knihy
+        /// </summary>
+        public BookStatus Status { get; set; } = new BookStatus();
 
         /// <summary>
         /// Evidováno

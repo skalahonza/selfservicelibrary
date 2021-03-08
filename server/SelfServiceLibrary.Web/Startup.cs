@@ -46,6 +46,7 @@ using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
+using SelfServiceLibrary.Web.Policies;
 
 namespace SelfServiceLibrary.Web
 {
@@ -89,7 +90,7 @@ namespace SelfServiceLibrary.Web
             // Usermap
             services.AddHttpClient<UsermapClient>();
 
-            // AUTH
+            // Authentication
             services
                 .AddAuthentication(options =>
                 {
@@ -221,8 +222,15 @@ namespace SelfServiceLibrary.Web
                     options.Validate();
                 });
 
+            // Authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(LibrarianPolicy.NAME, LibrarianPolicy.Build);
+            });
+
             // Business logic
             services.AddScoped<BookService>();
+            services.AddScoped<BookStatusService>();
             services.AddScoped<IssueService>();
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();

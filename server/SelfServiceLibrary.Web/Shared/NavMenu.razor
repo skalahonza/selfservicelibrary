@@ -1,7 +1,5 @@
-﻿@using CVUT.Auth.Options
-@using Microsoft.Extensions.Options
-@inject IOptions<oAuth2Options> options
-@using Microsoft.AspNetCore.Components.Authorization
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using SelfServiceLibrary.Web.Policies
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Mode="BarMode.VerticalInline"
@@ -9,7 +7,7 @@
      Breakpoint="Breakpoint.Desktop"
      NavigationBreakpoint="Breakpoint.Tablet"
      ThemeContrast="ThemeContrast.Dark">
-    <BarToggler />
+    <BarToggler/>
     <BarBrand>
         <BarItem>
             <BarLink To="/">
@@ -32,7 +30,6 @@
                     Books
                 </BarLink>
             </BarItem>
-
             <AuthorizeView>
                 <Authorized>
                     <BarItem>
@@ -41,15 +38,27 @@
                             My Issues
                         </BarLink>
                     </BarItem>
-                    <BarItem>
-                        <BarLink To="/issues">
-                            <BarIcon IconName="IconName.Bookmark" />
-                            All Issues
-                        </BarLink>
-                    </BarItem>
                 </Authorized>
             </AuthorizeView>
-
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <BarItem>
+                    <BarLink To="/issues">
+                        <BarIcon IconName="IconName.Bookmark" />
+                        All Issues
+                    </BarLink>
+                </BarItem>
+                <BarItem>
+                    <BarDropdown>
+                        <BarDropdownToggle>
+                            <BarIcon IconName="IconName.Edit" />
+                            Settings
+                        </BarDropdownToggle>
+                        <BarDropdownMenu>
+                            <BarDropdownItem>Book statuses</BarDropdownItem>
+                        </BarDropdownMenu>
+                    </BarDropdown>
+                </BarItem>
+            </AuthorizeView>
         </BarStart>
         <BarEnd>
             <AuthorizeView>
