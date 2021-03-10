@@ -19,7 +19,7 @@
             <BarItem>
                 <Inline>
                     <Field>
-                        <Button Color="Color.Danger" Clicked="@DeleteAll" Disabled="true">Delete all !</Button>
+                        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
                     </Field>
                     <Field Margin="Margin.Is3.OnX.OnTablet">
                         <Label>Import CSV</Label>
@@ -41,7 +41,7 @@
               TotalItems="@totalBooks"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Top"
-              PageSize="10">
+              PageSize="@pageSize">
         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
             <DisplayTemplate>
                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
@@ -69,6 +69,7 @@
 </Container>
 
 @code {
+    private int pageSize = 10;
     private List<BookListDTO> books;
     private int? totalBooks;
 
@@ -100,7 +101,7 @@
         await bookService.ImportCsv(e.File.OpenReadStream(5242880));
 
         totalBooks = (int)await bookService.GetTotalCount(false);
-        books = await bookService.GetAll(1, 15);
+        books = await bookService.GetAll(1, pageSize);
         StateHasChanged();
     }
 

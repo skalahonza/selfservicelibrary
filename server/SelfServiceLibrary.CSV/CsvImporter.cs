@@ -46,8 +46,12 @@ namespace SelfServiceLibrary.CSV
                 HasHeaderRecord = true,
                 BadDataFound = context => _log.LogWarning(
                     "Bad CSV data found. {RowNumber} {RowData}",
-                    context.Parser.RawRow,
-                    context.Parser.RawRow),
+                    context.Parser.Row,
+                    context.Parser.RawRecord),
+                MissingFieldFound = (headers, index, context) => _log.LogWarning(
+                    "Missing field in row {RowNumber} at: {Index}",
+                    context.Parser.Row,
+                    index)
             });
 
             // process header
