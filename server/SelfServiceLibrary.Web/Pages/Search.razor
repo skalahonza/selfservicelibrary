@@ -93,11 +93,6 @@
         search = value;
     }
 
-    //private Task Fulltext(KeyboardEventArgs args) =>
-    //    args.Key.Equals("Enter", StringComparison.OrdinalIgnoreCase)
-    //        ? Fulltext()
-    //        : Task.CompletedTask;
-
     private async Task Fulltext()
     {
         var result = string.IsNullOrEmpty(search)
