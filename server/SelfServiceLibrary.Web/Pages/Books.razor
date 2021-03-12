@@ -34,7 +34,7 @@
 </Bar>
 
 <Container Fluid="true">
-    <Tabs SelectedTab="@selectedPublicationType" @ref="tabs">
+    <Tabs SelectedTab="@selectedPublicationType" SelectedTabChanged="OnSelectedTabChanged">
         <Items>
             @foreach (var (type, count) in publicationTypes.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value))
             {
@@ -86,7 +86,6 @@
 @code {
     private string selectedPublicationType;
     private int pageSize = 10;
-    private Tabs tabs;
 
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
     private Dictionary<string, List<BookListDTO>> books = new Dictionary<string, List<BookListDTO>>();
