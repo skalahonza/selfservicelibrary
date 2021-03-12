@@ -34,64 +34,85 @@
 </Bar>
 
 <Container Fluid="true">
-    <DataGrid RowSelectable=@(_ => false)
-              TItem="BookListDTO"
-              Data="@books"
-              ReadData="@OnReadData"
-              TotalItems="@totalBooks"
-              ShowPager="true"
-              PagerPosition="DataGridPagerPosition.Top"
-              PageSize="@pageSize">
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
-            <DisplayTemplate>
-                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
-        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
-        <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
-        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
-            <DisplayTemplate>
-                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
-            </DisplayTemplate>
-        </DataGridCheckColumn>
+    <Tabs SelectedTab="@selectedPublicationType" @ref="tabs">
+        <Items>
+            @foreach (var (type, count) in publicationTypes.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value))
+            {
+                <Tab Name="@type">@type <Badge Color="Color.Primary">@count</Badge></Tab>
+            }
+        </Items>
+        <Content>
+            @foreach (var type in publicationTypes.OrderByDescending(x => x.Value).Select(x => x.Key))
+            {
+                <TabPanel Name="@type">
+                    <DataGrid RowSelectable=@(_ => false)
+                              TItem="BookListDTO"
+                              Data="@books[type]"
+                              ReadData="@((e) => OnReadData(e,type))"
+                              TotalItems="@publicationTypes[type]"
+                              ShowPager="true"
+                              PagerPosition="DataGridPagerPosition.Top"
+                              PageSize="@pageSize">
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
+                            <DisplayTemplate>
+                                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
+                        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+                            <DisplayTemplate>
+                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+                            </DisplayTemplate>
+                        </DataGridCheckColumn>
 
-        <AuthorizeView>
-            <Authorized>
-                <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Actions">
-                    <DisplayTemplate Context="item">
-                        <Button Disabled="@(!item.IsAvailable)" Color="Color.Success" Clicked="() => Borrow(item)">Borrow</Button>
-                    </DisplayTemplate>
-                </DataGridColumn>
-            </Authorized>
-        </AuthorizeView>
-    </DataGrid>
+                        <AuthorizeView>
+                            <Authorized>
+                                <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Actions">
+                                    <DisplayTemplate Context="item">
+                                        <Button Disabled="@(!item.IsAvailable)" Color="Color.Success" Clicked="() => Borrow(item)">Borrow</Button>
+                                    </DisplayTemplate>
+                                </DataGridColumn>
+                            </Authorized>
+                        </AuthorizeView>
+                    </DataGrid>
+                </TabPanel>
+            }
+        </Content>
+    </Tabs>
 </Container>
 
 @code {
+    private string selectedPublicationType;
     private int pageSize = 10;
-    private List<BookListDTO> books;
-    private int? totalBooks;
+    private Tabs tabs;
+
+    private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
+    private Dictionary<string, List<BookListDTO>> books = new Dictionary<string, List<BookListDTO>>();
 
     protected override async Task OnInitializedAsync()
     {
-        totalBooks = (int)await bookService.GetTotalCount();
+        publicationTypes = await bookService.GetPublicationTypes();
+        books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
+
+        selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 
     private async Task DeleteAll()
     {
         await bookService.DeleteAll();
-        totalBooks = 0;
+        publicationTypes.Clear();
         books.Clear();
         StateHasChanged();
     }
 
-    private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
+    private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e, string publicationType)
     {
         var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
         var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
 
-        books = await bookService.GetAll(e.Page, e.PageSize);
+        books[publicationType] = await bookService.GetAll(e.Page, e.PageSize, publicationType);
         StateHasChanged();
     }
 
@@ -100,8 +121,9 @@
         // 5 Megabytes = 5242880 Bytes
         await bookService.ImportCsv(e.File.OpenReadStream(5242880));
 
-        totalBooks = (int)await bookService.GetTotalCount(false);
-        books = await bookService.GetAll(1, pageSize);
+        publicationTypes = await bookService.GetPublicationTypes();
+        books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
+        books[selectedPublicationType] = await bookService.GetAll(1, pageSize);
         StateHasChanged();
     }
 
@@ -115,5 +137,10 @@
         });
         book.IsAvailable = false;
         StateHasChanged();
+    }
+
+    private void OnSelectedTabChanged(string name)
+    {
+        selectedPublicationType = name;
     }
 }

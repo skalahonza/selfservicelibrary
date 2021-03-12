@@ -38,6 +38,27 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
 
+        public Task<List<BookListDTO>> GetAll(int page, int pageSize, string publicationType) =>
+            _books
+                .AsQueryable()
+                .Where(x => x.PublicationType == publicationType)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<Book, BookListDTO>(_mapper)
+                .ToListAsync();
+
+        public async Task<Dictionary<string, int>> GetPublicationTypes()
+        {
+            var types = await _books
+                .Aggregate()
+                .Group(x => x.PublicationType, x => new
+                {
+                    Type = x.Key,
+                    Count = x.Count()
+                }).ToListAsync();
+            return types.ToDictionary(x => x.Type, x => x.Count);
+        }
+
         public Task<long> GetTotalCount(bool estimated = true) =>
             estimated
                 ? _books.EstimatedDocumentCountAsync()

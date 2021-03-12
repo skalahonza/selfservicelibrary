@@ -1,0 +1,42 @@
+﻿@page "/settings/status"
+@attribute [Authorize(Policy = LibrarianPolicy.NAME)]
+@using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Service.DTO.Book
+@using Service.DTO.Issue
+@using Microsoft.AspNetCore.Components.Authorization
+@inject BookService bookService
+@inject IssueService issueService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        Book status settings
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+
+        </BarStart>
+    </BarMenu>
+</Bar>
+
+<Container Fluid="true">
+    <ul>
+        @foreach(var item in items)
+        {
+            <li>@item.Key -- @item.Value</li>
+        }
+    </ul>    
+</Container>
+
+@code {
+    private Dictionary<string, int> items = new Dictionary<string, int>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await bookService.GetPublicationTypes();
+    }
+}
