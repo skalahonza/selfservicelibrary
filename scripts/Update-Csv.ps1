@@ -7,7 +7,7 @@ Param
     [String]$DownloadToFolder = 'C:\Temp\test'
 )
 
-function Combine-UriParts ($base, $path)
+function Join-UriParts ($base, $path)
 {
     return [Uri]::new([Uri]::new($base), $path).ToString()
 }
@@ -18,7 +18,7 @@ $csvs = $HttpContent.Links | Where-Object href -match "csv" | Select-Object -Exp
 $WebClient = New-Object System.Net.WebClient
 
 foreach ($file in $csvs) {    
-    $source = Combine-UriParts $Downloadurl $file
+    $source = Join-UriParts $Downloadurl $file
     $destination = Join-Path $DownloadToFolder $file
     Write-Host "Downloading $source to $destination"
     $WebClient.DownloadFile($source, (Resolve-Path $destination))
