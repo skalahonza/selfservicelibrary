@@ -2,11 +2,11 @@
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.Service.Services
-@using SelfServiceLibrary.Service.DTO.Book
-@using Service.DTO.Issue
+@using SelfServiceLibrary.Service.Interfaces
+@using SelfServiceLibrary.Service.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
-@inject BookService bookService
-@inject IssueService issueService
+@inject BookStatusService _bookStatusService
+@inject IMapper _mapper
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Breakpoint="Breakpoint.Desktop"
@@ -24,19 +24,66 @@
 </Bar>
 
 <Container Fluid="true">
-    <ul>
-        @foreach(var item in items)
-        {
-            <li>@item.Key -- @item.Value</li>
-        }
-    </ul>    
+    <DataGrid TItem="BookStatusListDTO"
+              Data="@items" 
+              RowSelectable=@(_ => false)
+              Editable="true"
+              SortMode="DataGridSortMode.Multiple"
+              EditMode="DataGridEditMode.Inline"
+              RowInserted="@OnRowInserted"
+              RowUpdated="@OnRowUpdated"
+              RowRemoved="@OnRowRemoved">
+        <DataGridCommandColumn TItem="BookStatusListDTO" Width="170px">
+            <NewCommandTemplate>
+                <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+            </NewCommandTemplate>
+            <EditCommandTemplate>
+                <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
+            </EditCommandTemplate>
+            <SaveCommandTemplate>
+                <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+            </SaveCommandTemplate>
+            <DeleteCommandTemplate>
+                <Button Color="Color.Danger" Clicked="@context.Clicked">Delete</Button>
+            </DeleteCommandTemplate>
+            <CancelCommandTemplate>
+                <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+            </CancelCommandTemplate>
+        </DataGridCommandColumn>
+        <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true"/>
+        <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Can be borrowed" Editable="true" Filterable="false">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
+        <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Is vissible" Editable="true" Filterable="false">
+            <DisplayTemplate>
+                <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
+            </DisplayTemplate>
+        </DataGridCheckColumn>
+    </DataGrid>
 </Container>
 
 @code {
-    private Dictionary<string, int> items = new Dictionary<string, int>();
+    private List<BookStatusListDTO> items = new List<BookStatusListDTO>();
 
     protected override async Task OnInitializedAsync()
     {
-        items = await bookService.GetPublicationTypes();
+        items = await _bookStatusService.GetAll();
+    }
+
+    private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
+    {
+        await _bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
+    }
+
+    private async Task OnRowUpdated(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
+    {
+        await _bookStatusService.Update(e.Item.Name, _mapper.Map<BookStatusUpdateDTO>(e.Item));
+    }
+
+    private async Task OnRowRemoved(BookStatusListDTO model)
+    {
+        await _bookStatusService.Remove(model.Name);
     }
 }

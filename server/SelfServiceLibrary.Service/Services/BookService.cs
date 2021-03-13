@@ -19,6 +19,7 @@ namespace SelfServiceLibrary.Service.Services
     public class BookService
     {
         private readonly IMongoCollection<Book> _books;
+        private readonly IMongoCollection<BookStatus> _statuses;
         private readonly IMapper _mapper;
         private readonly ICsvImporter _csv;
 
@@ -26,6 +27,7 @@ namespace SelfServiceLibrary.Service.Services
         {
             var database = client.GetDatabase(options.Value.DatabaseName);
             _books = database.GetCollection<Book>(Book.COLLECTION_NAME);
+            _statuses = database.GetCollection<BookStatus>(BookStatus.COLLECTION_NAME);
             _mapper = mapper;
             _csv = csv;
         }
@@ -82,6 +84,36 @@ namespace SelfServiceLibrary.Service.Services
 
         public async Task ImportCsv(Stream csv)
         {
+            var statuses = (await _statuses.AsQueryable()
+                .ToListAsync())
+                .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+
+            var newStatuses = new List<BookStatus> { new BookStatus() };
+
+            BookStatus MapStatus(string? intStatus)
+            {
+                if (string.IsNullOrEmpty(intStatus))
+                {
+                    return new BookStatus();
+                }
+                else if (statuses.TryGetValue(intStatus, out var status))
+                {
+                    // find in existing statuses
+                    return status;
+                }
+                else
+                {
+                    var newStatus = new BookStatus
+                    {
+                        Name = intStatus,
+                        IsVissible = true,
+                        CanBeBorrowed = false
+                    };
+                    newStatuses.Add(newStatus);
+                    return newStatus;
+                }
+            }
+
             var writes = _csv.ImportBooks(csv)
                 .Select(row =>
                 {
@@ -111,15 +143,24 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(book => book.Price, row.Price)
                     .Set(book => book.Keywords, row.Keywords)
                     .Set(book => book.Note, row.Note)
+                    .Set(book => book.Status, MapStatus(row.IntStatus))
                     .Set(book => book.StsLocal, row.StsLocal)
                     .Set(book => book.StsUK, row.StsUK);
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
                 });
 
+            // bulk insert books
             await foreach (var batch in writes.Batchify(1000))
             {
                 await _books.BulkWriteAsync(batch);
             }
+
+            // insert new statuses
+            await _statuses.BulkWriteAsync(newStatuses.Select(x =>
+            {
+                var filter = Builders<BookStatus>.Filter.Where(status => status.Name == x.Name);
+                return new ReplaceOneModel<BookStatus>(filter, x) { IsUpsert = true };
+            }));
         }
 
         public Task DeleteAll() =>

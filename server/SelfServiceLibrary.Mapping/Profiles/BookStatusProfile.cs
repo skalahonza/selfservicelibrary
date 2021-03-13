@@ -11,6 +11,8 @@ namespace SelfServiceLibrary.Mapping.Profiles
         public BookStatusProfile()
         {
             CreateMap<BookStatus, BookStatusListDTO>();
+            CreateMap<BookStatusListDTO, BookStatusCreateDTO>();
+            CreateMap<BookStatusListDTO, BookStatusUpdateDTO>();
             CreateMap<BookStatusCreateDTO, BookStatus>(MemberList.Source);
             CreateMap<BookStatusUpdateDTO, BookStatus>(MemberList.Source);
         }

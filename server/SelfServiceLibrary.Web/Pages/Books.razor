@@ -94,7 +94,6 @@
     {
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
-
         selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 
@@ -122,6 +121,7 @@
 
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
+        selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
         books[selectedPublicationType] = await bookService.GetAll(1, pageSize);
         StateHasChanged();
     }

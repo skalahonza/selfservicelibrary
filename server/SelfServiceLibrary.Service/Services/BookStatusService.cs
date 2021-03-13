@@ -43,5 +43,11 @@ namespace SelfServiceLibrary.Service.Services
             await _statuses.ReplaceOneAsync(x => x.Name == name, entity, new ReplaceOptions { IsUpsert = true });
             await _books.UpdateManyAsync(x => x.Status.Name == name, Builders<Book>.Update.Set(x => x.Status, entity));
         }
+
+        public async Task Remove(string name)
+        {
+            await _statuses.DeleteOneAsync(x => x.Name == name);
+            await _books.UpdateManyAsync(x => x.Status.Name == name, Builders<Book>.Update.Set(x => x.Status, new BookStatus()));
+        }
     }
 }

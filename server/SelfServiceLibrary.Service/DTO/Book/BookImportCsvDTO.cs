@@ -27,6 +27,7 @@ namespace SelfServiceLibrary.Service.DTO.Book
         public double? Price { get; set; }
         public List<string> Keywords { get; set; } = new List<string>();
         public string? Note { get; set; }
+        public string? IntStatus { get; set; }
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }
     }
