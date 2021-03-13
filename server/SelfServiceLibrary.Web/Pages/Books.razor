@@ -58,6 +58,14 @@
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Keywords)" Caption="Keywords" Sortable="false">
+                            <DisplayTemplate>
+                                @foreach (var keyword in context.Keywords)
+                                {
+                                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
+                                }
+                            </DisplayTemplate>
+                        </DataGridColumn>
                         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
                                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />

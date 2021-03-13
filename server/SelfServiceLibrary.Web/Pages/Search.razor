@@ -55,7 +55,7 @@
                         </DataGridColumn>
                         <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
                         <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
-                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Keywords" Sortable="false">
+                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Keywords)" Caption="Keywords" Sortable="false">
                             <DisplayTemplate>
                                 @foreach (var keyword in context.Keywords)
                                 {
@@ -63,7 +63,6 @@
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridDateColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
                         <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
                                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
