@@ -83,6 +83,7 @@ namespace SelfServiceLibrary.CSV
                     Price = TryParseDouble(csv.GetField(18)),
                     Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).ToList(),
                     Note = csv.GetField(20),
+                    FormType = csv.GetField(25),
                     IntStatus = csv.GetField(26),
                     StsLocal = !string.IsNullOrEmpty(csv.GetField(30)),
                     StsUK = !string.IsNullOrEmpty(csv.GetField(31))

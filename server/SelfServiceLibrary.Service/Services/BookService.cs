@@ -144,6 +144,7 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(book => book.Keywords, row.Keywords)
                     .Set(book => book.Note, row.Note)
                     .Set(book => book.Status, MapStatus(row.IntStatus))
+                    .Set(book => book.FormType, row.FormType)
                     .Set(book => book.StsLocal, row.StsLocal)
                     .Set(book => book.StsUK, row.StsUK);
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };

@@ -133,6 +133,11 @@ namespace SelfServiceLibrary.Persistence.Entities
         public BookStatus Status { get; set; } = new BookStatus();
 
         /// <summary>
+        /// Fyzický stav nebo podoba knihy
+        /// </summary>
+        public string? FormType { get; set; }
+
+        /// <summary>
         /// Evidováno
         /// </summary>
         public bool StsLocal { get; set; }

@@ -94,7 +94,8 @@
     {
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
-        selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+        if(publicationTypes.Any())
+            selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 
     private async Task DeleteAll()
