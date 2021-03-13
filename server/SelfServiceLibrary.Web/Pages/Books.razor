@@ -3,6 +3,7 @@
 @using SelfServiceLibrary.Service.DTO.Book
 @using Service.DTO.Issue
 @using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager uriHelper
 @inject BookService bookService
 @inject IssueService issueService
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -94,16 +95,17 @@
     {
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
-        if(publicationTypes.Any())
+        if (publicationTypes.Any())
             selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 
     private async Task DeleteAll()
     {
         await bookService.DeleteAll();
-        publicationTypes.Clear();
-        books.Clear();
-        StateHasChanged();
+        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+        //publicationTypes.Clear();
+        //books.Clear();
+        //StateHasChanged();
     }
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e, string publicationType)
