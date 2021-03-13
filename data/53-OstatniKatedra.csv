@@ -10,7 +10,7 @@ Biochemie 2;Vodrážka, Zdeněk;;Book;Katedra;19412;950146;KAT-1007;BC000019412-
 Biochemie 3;Vodrážka, Zdeněk;;Book;Katedra;19413;950147;KAT-1008;BC000019413-000010;191;1;1993;Academia,nakladatelství ČAV;Praha;80-200-0471-8;;;;115,00 Kč;BIOCHEMIE;12;;VOLNÁ;;;;;;;;OK;;
 Biomechanika: Vysokoškolská učebnice;Valenta, J.;;Book;Katedra;13063;870036;KAT-1009;BC000013063-000010;539;1;1985;Academia,nakladatelství ČAV;Praha;;;;;0,00 Kč;BIOFYZIKA;;;JEŽEK, FILIP;20.10.2010;;;;;;;;;
 Databázové systémy;Scheber A.;;Book;Katedra;10493;890069;KAT-1010;BC000010493-000020;321;1;1988;SNTL;Praha;;;;;0,00 Kč;DATABÁZE;;;VOLNÁ;;;;;;;;OK;;
-Databázové systémy;Tsichritis D. C.;F. H. Lochovsky;Book;Katedra;93583;871408;KAT-1011;BC000011695-000040;383;1;1987;SNTL;Praha;;;;;0,00 Kč;DATABÁZE;;;VOLNÁ;;;;;;;;OK;;
+Databázové systémy;Tsichritis, D. C.;Lochovsky, F. H.;Book;Katedra;93583;871408;KAT-1011;BC000011695-000040;383;1;1987;SNTL;Praha;;;;;0,00 Kč;DATABÁZE;;;VOLNÁ;;;;;;;;OK;;
 Design of Probabilistic Models for Text Input Correction - I.;Novák, Antonín;;Book;Katedra;;;KAT-1012;;52;1;2013;Czech Technical University in Prague;Praha;;;;;;;s CD;;VOLNÁ;;;;;;;;;;
 Foudations of Informations Theory;Fienstein, A.;;Book;Katedra;;621206;KAT-1013;731140-10;;;1958;McGraw-Hill, Publishing Comp.;USA;;;;;0,00 Kč;;12;;VOLNÁ;;;;;;;;OK;;
 Fuzzy Logic with Engineering Applications;Ross, T.J.;;Book;Katedra;689467;280758;KAT-1014;3102030425;628;1;2004;John Wiley & Sons;USA;0-470-86075-8;;;;1400,656 Kč;matematická logika, fuzzy logika;;;VOLNÁ;;;;;;;;;;
@@ -25,7 +25,7 @@ Kompendium lékařské psychologie: Pro studující a lékaře;Feldman, Harald;B
 Logika prvého rádu;Smullyan Raymond M.;;Book;Katedra;20985;801796;KAT-1023;BC000020985-000010;212;1;1979;ALFA, Bratislava + SNTL/SPN Praha;Slovennsko;;;;;0,00 Kč;LOGIKA MATEMATICKÁ;;;ŽELEZNÝ, FILIP;27.11.2007;;;;;;;;;
 Lékařská fyziologie;Trojan Stanislav;;Book;Katedra;99707;950153;KAT-1024;BC000019419-000010;460;1;1994;Grada Publishing;CZ;80-7169-036-8;;;;370,00 Kč;LÉKAŘSTVÍ, FYZIOLOGIE;;;VOLNÁ;;;;;;;;OK;;
 Matematická statistika;Anděl,Jiří;;Book;Katedra;;790289;KAT-1025;79116-440;346;;1978;SNTL;CZ;;;;;0,00 Kč;;;;NOVÁK, DANIEL;07.03.2011;;;;;;;;;
-Metoda GUHA: Automatická tvorba hypotéz;Hájek P.;T. Havránek, K. M. Chytil;Book;Katedra;4249;840679;KAT-1026;BC000022371-000010;314;1;1983;Academia,nakladatelství ČAV;Praha;;;;;0,00 Kč;LOGIKA MATEMATICKÁ, STATISTIKA MATEMATICKÁ;;;VOLNÁ;;;;;;;;OK;;
+Metoda GUHA: Automatická tvorba hypotéz;Hájek P.;Havránek, T.,Chytil, K. M.;Book;Katedra;4249;840679;KAT-1026;BC000022371-000010;314;1;1983;Academia,nakladatelství ČAV;Praha;;;;;0,00 Kč;LOGIKA MATEMATICKÁ, STATISTIKA MATEMATICKÁ;;;VOLNÁ;;;;;;;;OK;;
 OCCAM 2;Galletly, John;;Book;Katedra;19442;950178;KAT-1027;BC000019442-000010;271;1;1990;Pitman Publishing, London;Great Britain;0-273-03067-1;;;;0,00 Kč;JAZYKY PROGRAMOVACÍ, TRANSPUTERY, ARCHITEKTURA PARALELNÍ;;;VOLNÁ;;;;;;;;OK;;
 Optimal Statistical Decisions;DeGroot, M.H.;;Book;Katedra;685560;270832;KAT-1028;3102000880;489;1;2004;John Wiley & Sons;USA;0-471-68029-X;;;;2450 Kč;matematická statistika;;;NOVÁK, DANIEL;;;;;;;;;;
 Petriho sítě: Úvod do teorie nástrojů pro aplikaci Petriho sítí;Češka, Milan;;Book;Katedra;25270;952091;KAT-1029;BC000025270-000010;94;1;1994;Akademické nakladatelství CERM Brno;CZ;80-85867-35-4;;;;150,00 Kč;SÍTĚ PETRIHO, SYSTÉMY INFORMAČNÍ;vč.diskety;;VOLNÁ;;;;;;;;OK;;
@@ -34,7 +34,7 @@ Pravidla českého pravopisu;;;Book;Katedra;;700425;KAT-1031;41932-70;499;5;1969
 Psychologie: Lexikon základních pojmů;Schmidbauer, Wolfgang;;Book;Katedra;19423;950157;KAT-1032;BC000019423-000010;203;1;1994;Naše vojsko;CZ;80-206-0459-6;;;;79,00 Kč;PSYCHOLOGIE;12;;VOLNÁ;;;;;;;;OK;;
 Přehled lékařské fyziologie;Ganong, William F.;;Book;Katedra;;781018;KAT-1033;;632;1;1976;Avicenum, zdravotnické nakladatelství;CZ;;;;;89,00 Kč;;;;VOLNÁ;;;;;;;;OK;;
 Quaternions for Computer Graphics;Vince, John;;Book;Katedra;000772823;150886;KAT-1034;3102008342;140;1;2011;Springer-Verlag;New York;978-0-85729-759-4;;;;891 Kč;Počítačová grafika;;;JANOUCH, MARTIN;;;;;;;;;;
-Real World Color Management: Industrial-Strenght Production Techniques;Fraser, B.;Murphy, Ch., Bunting, F.;Book;Katedra;692479;290273;KAT-1035;3102031788;582;2;2005;Peachpit;USA;0-321-26722-2;;;;1889,90 Kč;počítačová grafika, management barev;;;VOLNÁ;;;;;;;;;;
+Real World Color Management: Industrial - Strenght Production Techniques;Fraser, B.;Murphy, Ch., Bunting, F.;Book;Katedra;692479;290273;KAT-1035;3102031788;582;2;2005;Peachpit;USA;0-321-26722-2;;;;1889,90 Kč;počítačová grafika, management barev;;;VOLNÁ;;;;;;;;;;
 Spravočnik po statističeskim raspredelenijam;Hastings, N. A. J.;Peacock,J.;Book;Katedra;;820846;KAT-1036;;94;1;1980;Vydavatelství USSR;USSR;;;;;0,00 Kč;STATISTIKA MATEMATICKÁ;12;;VOLNÁ;;;;;;;;OK;;
 The Concise Oxford Dictionary of Current English;Sykes J. B.;;Book;Katedra;12935;890210;KAT-1037;BC000012935-000010;1264;7;1989;Oxford University Press;;;;;;0,00 Kč;SLOVNÍKY ANGLICKÉ;12;;VOLNÁ;;;;;;;;OK;;
 Typografický systém TEX;Olšák, Petr;;Book;Katedra;25185;951629;KAT-1038;BC000025185-000010;269;1;1995;CSTUG;CZ;80-901950-0-8;;;;105,00 Kč;TEX;12;;VOLNÁ;;;;;;;;OK;;
@@ -67,8 +67,8 @@ Anglicko - český technický slovník;;;Dicti/Encyc;Katedra;;700112;KAT-1064;80
 Anglicko-český slovník výpočetní techniky;Minihofer, Oldřich;Kratochvílová, J.;Dicti/Encyc;Katedra;5185;880383;KAT-1065;BC000012589-000170;334;1;1986;SNTL;Praha;;;;;0,00 Kč;SLOVNÍK, SLOVNÍKY ANGLICKÉ, ANGLIČTINA, TECHNIKA VÝPOČETNÍ;;;VOLNÁ;;;;;;;;;;
 Anglicko-český slovník výpočetní techniky;Minihofer, Oldřich;Kratochvílová,J.;Dicti/Encyc;Katedra;5186;870485;KAT-1066;BC000012585-000040;494;1;1986;SNTL;CZ;;;;;0,00 Kč;SLOVNÍK, SLOVNÍKY ANGLICKÉ, ANGLIČTINA;12;;VOLNÁ;;;;;;;;OK;;
 Anglicko-český výkladový slovník výpočetní techniky;Minihofer, Oldřich;Kratochvílová, J.;Dicti/Encyc;Katedra;13209;900640;KAT-1067;BC000012586-000030;228;1;1990;SNTL;CZ;80-03-00182-X;;;;0,00 Kč;SLOVNÍK, SLOVNÍKY ANGLICKÉ, ANGLIČTINA;12;;VOLNÁ;;;;;;;;OK;;
-Ilustrovaný encyklopedický slovník III: Pro - Ž;;;Dicti/Encyc;Katedra;20111;830556;KAT-1068;BC000020111-000030;975;1;1982;Academia,nakladatelství ČAV;Praha;;;;;0,00 Kč;ENCYKLOPEDIE;12;;VOLNÁ;;;;;;;;OK;;
-Lékařský slovník anglicko-český a česko-anglický: A - Z;;;Dicti/Encyc;Katedra;18459;931881;KAT-1069;BC000018459-000010;693;2;1991;Avicenum, zdravotnické nakladatelství;CZ;80-201-0178-0;;;;152,50 Kč;SLOVNÍKY ANGLICKÉ, LÉKAŘSTVÍ;12;;VOLNÁ;;;;;;;;OK;;
+Ilustrovaný encyklopedický slovník III: Pro-Ž;;;Dicti/Encyc;Katedra;20111;830556;KAT-1068;BC000020111-000030;975;1;1982;Academia,nakladatelství ČAV;Praha;;;;;0,00 Kč;ENCYKLOPEDIE;12;;VOLNÁ;;;;;;;;OK;;
+Lékařský slovník anglicko-český a česko-anglický: A-Z;;;Dicti/Encyc;Katedra;18459;931881;KAT-1069;BC000018459-000010;693;2;1991;Avicenum, zdravotnické nakladatelství;CZ;80-201-0178-0;;;;152,50 Kč;SLOVNÍKY ANGLICKÉ, LÉKAŘSTVÍ;12;;VOLNÁ;;;;;;;;OK;;
 Malý N-Č a Č-N tech. slovník;;;Dicti/Encyc;Katedra;;770451;KAT-1070;;599;;1974;SNTL;CZ;;;;;0,00 Kč;;12;;VOLNÁ;;;;;;;;OK;;
 N-Č a Č-N elektrotechnický slovník;;;Dicti/Encyc;Katedra;;750230;KAT-1071;731159-10;947;;1973;SNTL;CZ;;;;;0,00 Kč;;12;;VOLNÁ;;;;;;;;OK;;
 Německo-český slovník I (A - L);;;Dicti/Encyc;Katedra;;701010;KAT-1072;;754;;1970;SPN Praha;CZ;;;;;0,00 Kč;;;;VOLNÁ;;;;;;;;OK;;
@@ -76,6 +76,6 @@ Německo-český slovník II (M - Z);;;Dicti/Encyc;Katedra;;701011;KAT-1073;;144
 Rusko-český a česko-ruský elektrotechnický a elektronický slovník;;;Dicti/Encyc;Katedra;12855;830075;KAT-1074;BC000012855-000130;804;1;1982;SNTL;Praha;;;;;0,00 Kč;SLOVNÍKY RUSKÉ;12;;VOLNÁ;;;;;;;;OK;;
 Slovník výpočetní techniky: Anglicko-český;Minihofer, Oldřich;Kratochvílová,Jindra,Kabeš, Karel, Janoš, Karel;Dicti/Encyc;Katedra;80331;800171;KAT-1075;5181-60;353;1;1979;Interpress;CZ;;;;;0,00 Kč;SLOVNÍKY TECHNICKÉ, ANGLIČTINA;12;;VOLNÁ;;;;;;;;OK;;
 Slovník výpočetní techniky: Francouzsko-český a česko-francouzský;Janoš, K.;Laitl, J.;Dicti/Encyc;Katedra;84004;850573;KAT-1076;BC000084004-000020;351;1;1980;Videopress;CZ;;;;;0,00 Kč;SLOVNÍKY FRANCOUZSKÉ, TECHNIKA VÝPOČETNÍ;12;;VOLNÁ;;;;;;;;OK;;
-Velký anglicko-český technický slovník : P-Z;Pekárek, Otakar;Cacek,Karel, Káš, Zdeněk;Dicti/Encyc;Katedra;;661562;KAT-1077;64280-260;;;1960;SNTL;CZ;;;;;0,00 Kč;slovník A-Č;12;;VOLNÁ;;;;;;;;OK;;
+Velký anglicko-český technický slovník: P-Z;Pekárek, Otakar;Cacek,Karel, Káš, Zdeněk;Dicti/Encyc;Katedra;;661562;KAT-1077;64280-260;;;1960;SNTL;CZ;;;;;0,00 Kč;slovník A-Č;12;;VOLNÁ;;;;;;;;OK;;
 Information Technology in Bio-and Medical Informatics;;;kniha-sborník;Katedra;000733603;112134;KAT-1078;3102025444;185;1;2011;Springer-Verlag;Berlin;978-3-642-23207-7;;;;;biomedicínské materiály, biomedicína;;;VOLNÁ;;;;;;;;OK;;
 Computational Logic in Multi-Agent Systems - LNAI 6214;Dix, Jurgen;;kniha-sborník;Katedra;000733604;112133;KAT-1079;3102025445;195;1;2009;Springer-Verlag;New York;978-3-642-16866-6;;;;0,00 Kč;umělá inteligence;;;VOLNÁ;;;;;;;;OK;;
