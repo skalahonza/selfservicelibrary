@@ -50,7 +50,9 @@
                               TotalItems="@publicationTypes[type]"
                               ShowPager="true"
                               PagerPosition="DataGridPagerPosition.Top"
-                              PageSize="@pageSize">
+                              ShowPageSizes="true"
+                              CurrentPage="@currentPage[type]"
+                              PageChanged="(e) => currentPage[type] = e.Page">
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
                             <DisplayTemplate>
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
@@ -80,15 +82,16 @@
 
 @code {
     private string selectedPublicationType;
-    private int pageSize = 10;
 
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
     private Dictionary<string, List<BookListDTO>> books = new Dictionary<string, List<BookListDTO>>();
+    private Dictionary<string, int> currentPage = new Dictionary<string, int>();
 
     protected override async Task OnInitializedAsync()
     {
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
+        currentPage = publicationTypes.ToDictionary(x => x.Key, _ => 1);
         if (publicationTypes.Any())
             selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
@@ -115,12 +118,7 @@
         {
             await bookService.ImportCsv(file.OpenReadStream(5242880));
         }
-
-        publicationTypes = await bookService.GetPublicationTypes();
-        books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
-        selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-        books[selectedPublicationType] = await bookService.GetAll(1, pageSize);
-        StateHasChanged();
+        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
     }
 
     private void OnSelectedTabChanged(string name)
