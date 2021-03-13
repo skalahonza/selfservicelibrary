@@ -26,7 +26,7 @@
                         <Label>Import CSV</Label>
                     </Field>
                     <Field>
-                        <InputFile OnChange="@OnInputFileChange" accept=".csv, .txt" single>Import CSV</InputFile>
+                        <InputFile OnChange="@OnInputFileChange" accept=".csv, .txt" multiple>Import CSV</InputFile>
                     </Field>
                 </Inline>
             </BarItem>
@@ -103,9 +103,6 @@
     {
         await bookService.DeleteAll();
         uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
-        //publicationTypes.Clear();
-        //books.Clear();
-        //StateHasChanged();
     }
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e, string publicationType)
@@ -120,7 +117,10 @@
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         // 5 Megabytes = 5242880 Bytes
-        await bookService.ImportCsv(e.File.OpenReadStream(5242880));
+        foreach (var file in e.GetMultipleFiles())
+        {
+            await bookService.ImportCsv(file.OpenReadStream(5242880));
+        }
 
         publicationTypes = await bookService.GetPublicationTypes();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
