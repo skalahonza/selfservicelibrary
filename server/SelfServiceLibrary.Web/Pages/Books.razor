@@ -1,12 +1,9 @@
 ﻿@page "/books"
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Book
-@using Service.DTO.Issue
-@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager uriHelper
 @inject BookService bookService
 @inject IssueService issueService
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -61,22 +58,11 @@
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
-                        <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Entered)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Entered" Sortable="true" />
                         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
                                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
                             </DisplayTemplate>
                         </DataGridCheckColumn>
-
-                        <AuthorizeView>
-                            <Authorized>
-                                <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Actions">
-                                    <DisplayTemplate Context="item">
-                                        <Button Disabled="@(!item.IsAvailable)" Color="Color.Success" Clicked="() => Borrow(item)">Borrow</Button>
-                                    </DisplayTemplate>
-                                </DataGridColumn>
-                            </Authorized>
-                        </AuthorizeView>
                     </DataGrid>
                 </TabPanel>
             }
@@ -126,18 +112,6 @@
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
         selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
         books[selectedPublicationType] = await bookService.GetAll(1, pageSize);
-        StateHasChanged();
-    }
-
-    private async Task Borrow(BookListDTO book)
-    {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        await issueService.Borrow(state.User.Identity.Name, new IssueCreateDTO
-        {
-            DepartmentNumber = book.DepartmentNumber,
-            ExpiryDate = DateTime.UtcNow.AddDays(30)
-        });
-        book.IsAvailable = false;
         StateHasChanged();
     }
 

@@ -10,5 +10,6 @@ namespace SelfServiceLibrary.Service.DTO.Book
         public string? PublicationType { get; set; }
         public List<string> Keywords { get; set; } = new List<string>();
         public string? DepartmentNumber { get; set; }
+        public bool IsAvailable { get; set; }
     }
 }

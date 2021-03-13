@@ -3,10 +3,12 @@
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Book
 @using SelfServiceLibrary.Service.DTO.Issue
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject BookService bookService
 @inject IssueService issueService
 
-<Bar Breakpoint="Breakpoint.Desktop"
+<Bar Breakpoint="Breakpoint.Desktop" 
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
     <BarBrand>
@@ -35,6 +37,15 @@
             }
         }
 
+        <AuthorizeView>
+            <Authorized>
+                <BarItem>
+                    <Button Disabled="@(!book.IsAvailable)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+                    <Button Disabled="@(book.IsAvailable)" Color="Color.Primary" >Return</Button>
+                </BarItem>
+            </Authorized>
+        </AuthorizeView>
+
         <br />
         <h3>History</h3>
 
@@ -60,8 +71,8 @@
 
 
 @code {
-    private BookDetailDTO book;
-    private List<IssueListlDTO> issues;
+    private BookDetailDTO book = new BookDetailDTO();
+    private List<IssueListlDTO> issues = new List<IssueListlDTO>();
 
     [Parameter]
     public string DepartmentNumber { get; set; }
@@ -70,5 +81,18 @@
     {
         book = await bookService.GetDetail(DepartmentNumber);
         issues = await issueService.GetAll(book);
+    }
+
+    private async Task Borrow()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await issueService.Borrow(state.User.Identity.Name, new IssueCreateDTO
+        {
+            DepartmentNumber = book.DepartmentNumber,
+            ExpiryDate = DateTime.UtcNow.AddDays(30)
+        });
+        book.IsAvailable = false;
+        issues = await issueService.GetAll(book);
+        // StateHasChanged();
     }
 }
