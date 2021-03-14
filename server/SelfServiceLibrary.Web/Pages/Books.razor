@@ -64,8 +64,13 @@
                                 <div><Keywords Words="context.Keywords" /></div>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Authors" Sortable="true" >
+                            <DisplayTemplate>
+                                @string.Join(", ", context.Authors)
+                            </DisplayTemplate>
+                        </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.YearOfPublication)" Caption="Year" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Caption="Publication" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Pages)" Caption="Pages" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.FormType)" Caption="Type" Sortable="true" />
                         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
