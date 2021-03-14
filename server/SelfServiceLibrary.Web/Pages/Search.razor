@@ -57,10 +57,7 @@
                         <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
                         <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Keywords)" Caption="Keywords" Sortable="false">
                             <DisplayTemplate>
-                                @foreach (var keyword in context.Keywords)
-                                {
-                                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
-                                }
+                                <Keywords Words="context.Keywords" />
                             </DisplayTemplate>
                         </DataGridColumn>
                         <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">

@@ -58,16 +58,16 @@
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Keywords)" Caption="Keywords" Sortable="false">
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" >
                             <DisplayTemplate>
-                                @foreach (var keyword in context.Keywords)
-                                {
-                                    <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
-                                }
+                                <div>@context.Name</div>
+                                <div><Keywords Words="context.Keywords" /></div>
                             </DisplayTemplate>
                         </DataGridColumn>
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.YearOfPublication)" Caption="Year" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Pages)" Caption="Pages" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.FormType)" Caption="Type" Sortable="true" />
                         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
                                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />

@@ -1,0 +1,9 @@
+﻿@foreach (var keyword in Words.Where(x => !string.IsNullOrEmpty(x)))
+{
+    <Badge Color="Color.Info" Margin="Margin.Is1">#@keyword</Badge>
+}
+
+@code {
+    [Parameter]
+    public List<string> Words { get; set; } = new List<string>();
+}
