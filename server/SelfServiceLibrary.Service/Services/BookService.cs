@@ -73,13 +73,22 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookDetailDTO>(_mapper)
                 .FirstOrDefaultAsync();
 
-        public Task<List<BookSearchDTO>> Fulltext(string searchedTerm)
+        public async Task<List<BookSearchDTO>> Fulltext(string searchedTerm)
         {
-            var query = _books
-                .Find(Builders<Book>.Filter.Text(searchedTerm, new TextSearchOptions { CaseSensitive = false, DiacriticSensitive = false }))
-                .Project(Builders<Book>.Projection.Expression(x => _mapper.Map<BookSearchDTO>(x)));
+            // https://stackoverflow.com/questions/32194379/mongodb-text-search-with-sorting-in-c-sharp/32194762
+            var F = Builders<Book>.Filter.Text(searchedTerm, new TextSearchOptions { CaseSensitive = false, DiacriticSensitive = false });
+            var P = Builders<Book>.Projection.MetaTextScore("TextMatchScore");
+            var S = Builders<Book>.Sort.MetaTextScore("TextMatchScore");
 
-            return query.ToListAsync();
+            var query = _books
+                .Find(F)
+                .Project<Book>(P)
+                .Limit(100)
+                .Sort(S);
+
+            var results = await query.ToListAsync();
+
+            return _mapper.Map<List<BookSearchDTO>>(results);
         }
 
         public async Task ImportCsv(Stream csv)

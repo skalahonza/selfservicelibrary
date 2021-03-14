@@ -147,6 +147,12 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// </summary>
         public bool StsUK { get; set; }
 
+        /// <summary>
+        /// Full text search match score
+        /// </summary>
+        [BsonIgnoreIfNull]
+        public double? TextMatchScore { get; set; }
+
         #region Related entities
         public List<string> IssueIds { get; set; } = new List<string>();
 
