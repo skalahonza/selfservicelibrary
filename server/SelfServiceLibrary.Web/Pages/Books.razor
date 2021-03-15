@@ -1,4 +1,6 @@
 ﻿@page "/books"
+@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.Service.Services
 @using SelfServiceLibrary.Service.DTO.Book
 @inject NavigationManager uriHelper
@@ -56,23 +58,42 @@
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
                             <DisplayTemplate>
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                                <div>@context.Depended</div>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true" >
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
                             <DisplayTemplate>
                                 <div>@context.Name</div>
                                 <div><Keywords Words="context.Keywords" /></div>
+                                <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
+                                    @{
+                                        var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
+                                        @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(context.Note))
+                                    {
+                                        <Tooltip Text="@context.Note" Placement="Placement.Top">
+                                            <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
+                                        </Tooltip>
+                                    }
+                                </AuthorizeView>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Authors" Sortable="true" >
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Authors" Sortable="true">
                             <DisplayTemplate>
                                 @string.Join(", ", context.Authors)
                             </DisplayTemplate>
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.YearOfPublication)" Caption="Year" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Caption="Publication" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Caption="Publication" Sortable="true" CellClass="@((_) => "text-center")" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Pages)" Caption="Pages" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.FormType)" Caption="Type" Sortable="true" />
+
+                        <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Status" Sortable="true" />
+                        </AuthorizeView>
+
                         <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
                                 <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
