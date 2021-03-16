@@ -89,15 +89,15 @@
                             <DisplayTemplate>
                                 @if (context.YearOfPublication.HasValue)
                                 {
-                                    <Badge>Year: @context.YearOfPublication</Badge>
+                                    <div><Badge>Year: @context.YearOfPublication</Badge></div>
                                 }
                                 @if (context.Pages.HasValue)
                                 {
-                                    <Badge>Pages: @context.Pages</Badge>
+                                    <div><Badge>Pages: @context.Pages</Badge></div>
                                 }
                                 @if (context.Publication.HasValue)
                                 {
-                                    <Badge>Publication: @context.Publication</Badge>
+                                    <div><Badge>Publication: @context.Publication</Badge></div>
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>
@@ -113,29 +113,6 @@
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
-                            <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueIssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Sortable="true">
-                                <CaptionTemplate>
-                                    <Tooltip Text="Issue date">
-                                        <Icon Name="@("fa-calendar-plus")" />
-                                    </Tooltip>
-                                </CaptionTemplate>
-                            </DataGridDateColumn>
-                            <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Sortable="true">
-                                <CaptionTemplate>
-                                    <Tooltip Text="Return date">
-                                        <Icon Name="@("fa-calendar-check")" />
-                                    </Tooltip>
-                                </CaptionTemplate>
-                            </DataGridDateColumn>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueIssuedTo)" Sortable="true">
-                                <CaptionTemplate>
-                                    <Tooltip Text="Issued to">
-                                        <Icon Name="@("fa-book-reader")" />
-                                    </Tooltip>
-                                </CaptionTemplate>
-                            </DataGridColumn>
-                        </AuthorizeView>
                     </DataGrid>
                 </TabPanel>
             }
