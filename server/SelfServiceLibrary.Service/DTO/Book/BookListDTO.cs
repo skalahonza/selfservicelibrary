@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SelfServiceLibrary.Service.DTO.Book
 {
@@ -15,7 +14,6 @@ namespace SelfServiceLibrary.Service.DTO.Book
         public string? Depended { get; set; }
         public string? Author { get; set; }
         public List<string> CoAuthors { get; set; } = new List<string>();
-        public IEnumerable<string?> Authors => CoAuthors.Prepend(Author);
         public int? YearOfPublication { get; set; }
         public int? Publication { get; set; }
         public int? Pages { get; set; }

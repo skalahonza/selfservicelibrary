@@ -82,7 +82,11 @@
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Authors" Sortable="true">
                             <DisplayTemplate>
-                                @string.Join(", ", context.Authors)
+                                <div>@context.Author</div>
+                                @foreach (var coauthor in context.CoAuthors)
+                                {
+                                    <div>@coauthor</div>
+                                }
                             </DisplayTemplate>
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
@@ -97,7 +101,7 @@
                                 }
                                 @if (context.Publication.HasValue)
                                 {
-                                    <div><Badge>Publication: @context.Publication</Badge></div>
+                                    <div><Badge>Edition: @context.Publication</Badge></div>
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>

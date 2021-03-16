@@ -11,8 +11,7 @@ namespace SelfServiceLibrary.Mapping.Profiles
         {
             CreateMap<BookAddDTO, Book>(MemberList.Source);
             CreateMap<BookEditDTO, Book>(MemberList.Source);
-            CreateMap<Book, BookListDTO>()
-                .ForMember(x => x.Authors, x => x.Ignore());
+            CreateMap<Book, BookListDTO>();
             CreateMap<Book, BookSearchDTO>();
             CreateMap<Book, BookDetailDTO>();
         }
