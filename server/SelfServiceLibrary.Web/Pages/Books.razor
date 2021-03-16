@@ -85,20 +85,57 @@
                                 @string.Join(", ", context.Authors)
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.YearOfPublication)" Caption="Year" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Caption="Publication" Sortable="true" CellClass="@((_) => "text-center")" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Pages)" Caption="Pages" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.FormType)" Caption="Type" Sortable="true" />
-
-                        <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Status" Sortable="true" />
-                        </AuthorizeView>
-
-                        <DataGridCheckColumn TItem="BookListDTO" Field="@nameof(BookListDTO.IsAvailable)" Caption="Available" Sortable="true">
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
                             <DisplayTemplate>
-                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+                                @if (context.YearOfPublication.HasValue)
+                                {
+                                    <Badge>Year: @context.YearOfPublication</Badge>
+                                }
+                                @if (context.Pages.HasValue)
+                                {
+                                    <Badge>Pages: @context.Pages</Badge>
+                                }
+                                @if (context.Publication.HasValue)
+                                {
+                                    <Badge>Publication: @context.Publication</Badge>
+                                }
                             </DisplayTemplate>
-                        </DataGridCheckColumn>
+                        </DataGridColumn>
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Status" Sortable="true">
+                            <DisplayTemplate>
+                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
+                                    @(context.IsAvailable ? "Available" : "Borrowed")
+                                </Check>
+                                <div><Badge Color="Color.Primary">@context.FormType</Badge></div>
+                                @if (context.StatusName != "Default")
+                                {
+                                    <div><Badge Color="Color.Primary">@context.StatusName</Badge></div>
+                                }
+                            </DisplayTemplate>
+                        </DataGridColumn>
+                        <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
+                            <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueIssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Sortable="true">
+                                <CaptionTemplate>
+                                    <Tooltip Text="Issue date">
+                                        <Icon Name="@("fa-calendar-plus")" />
+                                    </Tooltip>
+                                </CaptionTemplate>
+                            </DataGridDateColumn>
+                            <DataGridDateColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Sortable="true">
+                                <CaptionTemplate>
+                                    <Tooltip Text="Expected return date">
+                                        <Icon Name="@("fa-calendar-times")" />
+                                    </Tooltip>
+                                </CaptionTemplate>
+                            </DataGridDateColumn>
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.CurrentIssueIssuedTo)" Sortable="true">
+                                <CaptionTemplate>
+                                    <Tooltip Text="Issued to">
+                                        <Icon Name="@("fa-book-reader")" />
+                                    </Tooltip>
+                                </CaptionTemplate>
+                            </DataGridColumn>
+                        </AuthorizeView>
                     </DataGrid>
                 </TabPanel>
             }

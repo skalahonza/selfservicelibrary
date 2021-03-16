@@ -154,6 +154,8 @@ namespace SelfServiceLibrary.Persistence.Entities
         public double? TextMatchScore { get; set; }
 
         #region Related entities
+        public Issue? CurrentIssue { get; set; }
+
         public List<string> IssueIds { get; set; } = new List<string>();
 
         #endregion

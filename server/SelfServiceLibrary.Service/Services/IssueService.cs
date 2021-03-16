@@ -111,7 +111,9 @@ namespace SelfServiceLibrary.Service.Services
             // link issue to a book
             await _books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber,
-                Builders<Book>.Update.AddToSet(x => x.IssueIds, entity.Id));
+                Builders<Book>.Update
+                .AddToSet(x => x.IssueIds, entity.Id)
+                .Set(x => x.CurrentIssue, entity));
 
             return _mapper.Map<IssueDetailDTO>(entity);
         }
@@ -123,6 +125,7 @@ namespace SelfServiceLibrary.Service.Services
         /// <returns></returns>
         public async Task<IssueDetailDTO?> Return(string id)
         {
+            var now = DateTime.UtcNow;
             var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (issue == null)
             {
@@ -134,12 +137,15 @@ namespace SelfServiceLibrary.Service.Services
                 Builders<Issue>
                     .Update
                     .Set(x => x.IsReturned, true)
-                    .CurrentDate(x => x.ReturnDate));
+                    .Set(x => x.ReturnDate, now));
 
             // mark book as available again
             await _books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber,
-                Builders<Book>.Update.Set(x => x.IsAvailable, true));
+                Builders<Book>.Update
+                .Set(x => x.IsAvailable, true)
+                .Set(x => x.CurrentIssue.IsReturned, true)
+                .Set(x => x.CurrentIssue.ReturnDate, now));
 
             return _mapper.Map<IssueDetailDTO>(await _issues.Find(x => x.Id == id).FirstAsync());
         }

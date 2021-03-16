@@ -1,6 +1,6 @@
 Param
 (
-    [parameter(Position=0, Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
+    [parameter(Position=0, Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
     [String]$Downloadurl = 'http://cyber.felk.cvut.cz/novakpe/Skola/Knihovna/ToNewDB/',
     [parameter(Position=1, Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
     [alias('DownloadPath')]
