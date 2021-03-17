@@ -55,7 +55,7 @@
                               ShowPageSizes="true"
                               CurrentPage="@currentPage[type]"
                               PageChanged="(e) => currentPage[type] = e.Page">
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="#" Sortable="false">
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
                             <DisplayTemplate>
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
                                 <div>@context.Depended</div>
@@ -70,13 +70,9 @@
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
                             <DisplayTemplate>
                                 <div>@context.Name</div>
-                                <div><Icon Name="IconName.User" /> @context.Author</div>
-                                @if (context.CoAuthors.Any(x => !string.IsNullOrEmpty(x)))
-                                {
-                                    <div>
-                                        <Icon Name="IconName.Users" /> @string.Join(", ", context.CoAuthors)
-                                    </div>
-                                }
+                                <div>
+                                    <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Where(x => !string.IsNullOrEmpty(x)).Prepend(context.Author))
+                                </div>
                                 <div><Keywords Words="context.Keywords" /></div>
                                 <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
                                     @{
@@ -93,7 +89,7 @@
                                 </AuthorizeView>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
                             <DisplayTemplate>
                                 @if (context.YearOfPublication.HasValue)
