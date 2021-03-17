@@ -34,7 +34,7 @@
 </Bar>
 
 <Container Fluid="true">
-    <Tabs SelectedTab="@selectedPublicationType" SelectedTabChanged="OnSelectedTabChanged">
+    <Tabs SelectedTab="@selectedPublicationType" SelectedTabChanged="OnSelectedTabChanged" Class="nav-fill">
         <Items>
             @foreach (var (type, count) in publicationTypes.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value))
             {
@@ -70,6 +70,13 @@
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
                             <DisplayTemplate>
                                 <div>@context.Name</div>
+                                <div><Icon Name="IconName.User" /> @context.Author</div>
+                                @if (context.CoAuthors.Any(x => !string.IsNullOrEmpty(x)))
+                                {
+                                    <div>
+                                        <Icon Name="IconName.Users" /> @string.Join(", ", context.CoAuthors)
+                                    </div>
+                                }
                                 <div><Keywords Words="context.Keywords" /></div>
                                 <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
                                     @{
@@ -86,15 +93,7 @@
                                 </AuthorizeView>
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Authors" Sortable="true">
-                            <DisplayTemplate>
-                                <div>@context.Author</div>
-                                @foreach (var coauthor in context.CoAuthors)
-                                {
-                                    <div>@coauthor</div>
-                                }
-                            </DisplayTemplate>
-                        </DataGridColumn>
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Author" Sortable="true" />
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
                             <DisplayTemplate>
                                 @if (context.YearOfPublication.HasValue)
@@ -111,16 +110,20 @@
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Status" Sortable="true">
+                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
                             <DisplayTemplate>
-                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
-                                    @(context.IsAvailable ? "Available" : "Borrowed")
-                                </Check>
-                                <div><Badge Color="Color.Primary">@context.FormType</Badge></div>
-                                @if (context.StatusName != "Default")
-                                {
-                                    <div><Badge Color="Color.Warning">@context.StatusName</Badge></div>
-                                }
+                                <div>
+                                    <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
+                                        <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
+                                            @(context.IsAvailable ? "Yes" : "No")
+                                        </div>
+                                    </Check>
+                                    <div><Badge Color="Color.Light">@context.FormType</Badge></div>
+                                    @if (context.StatusName != "Default")
+                                    {
+                                        <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
+                                    }
+                                </div>
                             </DisplayTemplate>
                         </DataGridColumn>
                     </DataGrid>
@@ -164,11 +167,14 @@
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e, string publicationType)
     {
-        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
-        var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
+        if (publicationType == selectedPublicationType || e.Page == 1)
+        {
+            var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
+            var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
 
-        books[publicationType] = await bookService.GetAll(e.Page, e.PageSize, publicationType);
-        StateHasChanged();
+            books[publicationType] = await bookService.GetAll(e.Page, e.PageSize, publicationType);
+            StateHasChanged();
+        }
     }
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
