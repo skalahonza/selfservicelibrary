@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SelfServiceLibrary.Service.DTO.Book
 {
@@ -21,10 +20,8 @@ namespace SelfServiceLibrary.Service.DTO.Book
         public List<string> Keywords { get; set; } = new List<string>();
         public string? Note { get; set; }
         public string? StatusName { get; set; }
+        public bool StsLocal { get; set; }
+        public bool StsUK { get; set; }
         public bool IsAvailable { get; set; }
-
-        public string? CurrentIssueIssuedTo { get; set; }
-        public DateTime? CurrentIssueIssueDate { get; set; }
-        public DateTime? CurrentIssueExpiryDate { get; set; }
     }
 }

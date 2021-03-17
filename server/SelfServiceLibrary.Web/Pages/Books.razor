@@ -59,6 +59,12 @@
                             <DisplayTemplate>
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
                                 <div>@context.Depended</div>
+                                <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
+                                    StsLocal
+                                </Check>
+                                <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
+                                    StsUK
+                                </Check>
                             </DisplayTemplate>
                         </DataGridColumn>
                         <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
@@ -113,7 +119,7 @@
                                 <div><Badge Color="Color.Primary">@context.FormType</Badge></div>
                                 @if (context.StatusName != "Default")
                                 {
-                                    <div><Badge Color="Color.Primary">@context.StatusName</Badge></div>
+                                    <div><Badge Color="Color.Warning">@context.StatusName</Badge></div>
                                 }
                             </DisplayTemplate>
                         </DataGridColumn>
