@@ -35,7 +35,8 @@ namespace SelfServiceLibrary.Card.Authentication.Extensions
                 mongo.MigrationCollection = "migrations";
                 mongo.RolesCollection = "roles";
                 mongo.UsersCollection = "cards";
-            });
+            })
+            .AddCardLoginTokenProvider();
             return services;
         }
     }
