@@ -15,9 +15,10 @@ namespace SelfServiceLibrary.Web.Shared
         protected override async Task OnInitializedAsync()
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var redirectUri = NavigationManager.Uri;
             if (!state.User.Identity.IsAuthenticated)
             {
-                NavigationManager.NavigateTo("/login", true);
+                NavigationManager.NavigateTo($"/login?redirectUri={redirectUri}", true);
             }
         }
     }

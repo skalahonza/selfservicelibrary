@@ -9,9 +9,9 @@ namespace SelfServiceLibrary.Web.Pages
     [IgnoreAntiforgeryToken]
     public class LoginModel : PageModel
     {
-        public Task OnGet()
+        public Task OnGet([FromQuery] string redirectUri)
         {
-            return HttpContext.ChallengeAsync("CVUT", new AuthenticationProperties { RedirectUri = "/" });
+            return HttpContext.ChallengeAsync("CVUT", new AuthenticationProperties { RedirectUri = redirectUri });
         }
     }
 }
