@@ -1,6 +1,4 @@
 ﻿
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
