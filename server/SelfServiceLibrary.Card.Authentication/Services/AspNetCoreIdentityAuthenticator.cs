@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 
 using SelfServiceLibrary.Card.Authentication.Model;
-using SelfServiceLibrary.Card.Authentication.Options;
+using SelfServiceLibrary.Card.Authentication.Providers;
 using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Card.Authentication.Services
@@ -35,14 +35,14 @@ namespace SelfServiceLibrary.Card.Authentication.Services
             var result = await _signInManager.CheckPasswordSignInAsync(card, pin, true);
 
             return result.Succeeded
-                ? await _userManager.GenerateUserTokenAsync(card, CardLoginTokenProviderOptions.NAME, "card-auth")
+                ? await _userManager.GenerateUserTokenAsync(card, CardLoginTokenProvider.NAME, "card-auth")
                 : null;
         }
 
         public async Task<string?> AuthenticateWithToken(string cardNumber, string? token)
         {
             var card = await _userManager.FindByNameAsync(cardNumber);
-            var isValid = await _userManager.VerifyUserTokenAsync(card, CardLoginTokenProviderOptions.NAME, "card-auth", token);
+            var isValid = await _userManager.VerifyUserTokenAsync(card, CardLoginTokenProvider.NAME, "card-auth", token);
 
             return isValid
                 ? card.CvutUsername

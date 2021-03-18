@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 
-using SelfServiceLibrary.Card.Authentication.Options;
 using SelfServiceLibrary.Card.Authentication.Providers;
 
 namespace SelfServiceLibrary.Card.Authentication.Extensions
@@ -12,7 +11,7 @@ namespace SelfServiceLibrary.Card.Authentication.Extensions
         {
             var userType = builder.UserType;
             var provider = typeof(CardLoginTokenProvider<>).MakeGenericType(userType);
-            return builder.AddTokenProvider(CardLoginTokenProviderOptions.NAME, provider);
+            return builder.AddTokenProvider(CardLoginTokenProvider.NAME, provider);
         }
     }
 }

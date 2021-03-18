@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using SelfServiceLibrary.Card.Authentication.Model;
+using SelfServiceLibrary.Card.Authentication.Services;
+using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Card.Authentication.Extensions
 {
@@ -38,6 +40,7 @@ namespace SelfServiceLibrary.Card.Authentication.Extensions
                 mongo.UsersCollection = "cards";
             })
             .AddCardLoginTokenProvider();
+            services.AddScoped<ICardAuthenticator, AspNetCoreIdentityAuthenticator>();
             return services;
         }
     }

@@ -111,8 +111,7 @@ namespace SelfServiceLibrary.API
             });
 
             // Id cards
-            services.AddCardAuthentication(Configuration.GetSection("Identity"));
-            services.AddScoped<ICardAuthenticator, AspNetCoreIdentityAuthenticator>();
+            services.AddCardAuthentication(Configuration.GetSection("Identity"));            
 
             // Auth
             services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();

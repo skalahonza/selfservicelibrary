@@ -1,21 +1,19 @@
 ﻿
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
-using SelfServiceLibrary.Card.Authentication.Options;
+using Microsoft.AspNetCore.Identity;
 
 namespace SelfServiceLibrary.Card.Authentication.Providers
 {
-    public class CardLoginTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
+    public static class CardLoginTokenProvider
+    {
+        public const string NAME = "CardLoginTokenProvider";
+    }
+
+    public class CardLoginTokenProvider<TUser> : TotpSecurityStampBasedTokenProvider<TUser>
         where TUser : class
     {
-        public CardLoginTokenProvider(IDataProtectionProvider dataProtectionProvider,
-            IOptions<CardLoginTokenProviderOptions> options,
-            ILogger<DataProtectorTokenProvider<TUser>> logger)
-            : base(dataProtectionProvider, options, logger)
-        {
-        }
+        public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<TUser> manager, TUser user) =>
+            Task.FromResult(false);
     }
 }
