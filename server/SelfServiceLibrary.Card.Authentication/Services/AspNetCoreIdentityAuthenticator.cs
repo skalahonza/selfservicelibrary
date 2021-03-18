@@ -22,6 +22,7 @@ namespace SelfServiceLibrary.Card.Authentication.Services
         public async Task<string?> Authenticate(string cardNumber, string? pin)
         {
             var card = await _userManager.FindByNameAsync(cardNumber);
+            if (card == null) return null;
             var result = await _signInManager.CheckPasswordSignInAsync(card, pin, true);
 
             return result.Succeeded
@@ -32,6 +33,7 @@ namespace SelfServiceLibrary.Card.Authentication.Services
         public async Task<string?> GetToken(string cardNumber, string? pin)
         {
             var card = await _userManager.FindByNameAsync(cardNumber);
+            if (card == null) return null;
             var result = await _signInManager.CheckPasswordSignInAsync(card, pin, true);
 
             return result.Succeeded
@@ -42,6 +44,7 @@ namespace SelfServiceLibrary.Card.Authentication.Services
         public async Task<string?> AuthenticateWithToken(string cardNumber, string? token)
         {
             var card = await _userManager.FindByNameAsync(cardNumber);
+            if (card == null) return null;
             var isValid = await _userManager.VerifyUserTokenAsync(card, CardLoginTokenProvider.NAME, "card-auth", token);
 
             return isValid
