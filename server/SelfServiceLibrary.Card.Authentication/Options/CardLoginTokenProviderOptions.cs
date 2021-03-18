@@ -11,7 +11,7 @@ namespace SelfServiceLibrary.Card.Authentication.Options
         public CardLoginTokenProviderOptions()
         {
             Name = NAME;
-            TokenLifespan = TimeSpan.FromMinutes(1);
+            TokenLifespan = TimeSpan.FromSeconds(30);
         }
     }
 }

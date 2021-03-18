@@ -50,9 +50,15 @@ namespace SelfServiceLibrary.Card.Authentication.Services
             var card = await _userManager.FindByNameAsync(cardNumber);
             var isValid = await _userManager.VerifyUserTokenAsync(card, CardLoginTokenProviderOptions.NAME, "card-auth", token);
 
-            return isValid
-                ? card.CvutUsername
-                : null;
+            if (isValid)
+            {
+                
+                return card.CvutUsername;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
