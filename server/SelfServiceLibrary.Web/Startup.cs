@@ -47,6 +47,7 @@ using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
 using SelfServiceLibrary.Web.Policies;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace SelfServiceLibrary.Web
 {
@@ -79,6 +80,11 @@ namespace SelfServiceLibrary.Web
                 })
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
 
             // Id cards
             services.AddCardAuthentication(Configuration.GetSection("Identity"));
@@ -277,6 +283,8 @@ namespace SelfServiceLibrary.Web
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            app.UseForwardedHeaders();
 
             app.UseStaticFiles();
             app.UseRouting();

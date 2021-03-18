@@ -16,6 +16,14 @@ namespace SelfServiceLibrary.API.Controllers
         public BooksController(IssueService service) =>
             _service = service;
 
+        public record GetBookResponse(string Url);
+
+        [HttpGet("{serNumNFC}")]
+        public async Task<ActionResult<GetBookResponse>> Get(string serNumNFC)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Borrow a book from a library
         /// </summary>
