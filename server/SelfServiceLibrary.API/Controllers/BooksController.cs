@@ -26,6 +26,8 @@ namespace SelfServiceLibrary.API.Controllers
         /// <returns></returns>
         [HttpGet("{serNumNFC}")]
         [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<GetBookResponse>> Get(string serNumNFC)
         {
             var book = await _service.GetByNFC(serNumNFC);
@@ -33,30 +35,5 @@ namespace SelfServiceLibrary.API.Controllers
                 ? Ok(new GetBookResponse($"/books/{book.DepartmentNumber}"))
                 : NotFound();
         }
-
-        ///// <summary>
-        ///// Borrow a book from a library
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost("borrow")]
-        //public async Task<ActionResult<IssueDetailDTO>> Borrow([FromBody] NfcIssueCreateDTO[] issues)
-        //{
-        //    if (issues.Length == 0) return BadRequest();
-        //    if (string.IsNullOrEmpty(User.Identity?.Name)) return Unauthorized();
-
-        //    // await _service.Borrow(User.Identity.Name, issues);
-        //    throw new NotImplementedException();
-        //}
-
-        ///// <summary>
-        ///// Return a previously borrowed book
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost("return")]
-        //public async Task<IActionResult> Return([FromBody] NfcIssueReturnDTO[] issues)
-        //{
-        //    if (issues.Length == 0) return BadRequest();
-        //    throw new NotImplementedException();
-        //}
     }
 }
