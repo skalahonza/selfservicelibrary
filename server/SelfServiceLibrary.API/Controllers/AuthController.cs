@@ -20,6 +20,8 @@ namespace SelfServiceLibrary.API.Controllers
             _authenticator = authenticator;
 
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<ActionResult<CardLoginResponse>> Login([FromBody] CardLoginRequest data)
         {
             var token = await _authenticator.GetToken(data.CardNumber, data.Pin);
