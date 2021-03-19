@@ -7,7 +7,7 @@ using SelfServiceLibrary.Card.Authentication.Model;
 
 namespace SelfServiceLibrary.Card.Authentication.Providers
 {
-    public class CardLoginTokenProvider : TotpSecurityStampBasedTokenProvider<IdCard>        
+    public class CardLoginTokenProvider : TotpSecurityStampBasedTokenProvider<IdCard>
     {
         public const string NAME = "CardLoginTokenProvider";
 

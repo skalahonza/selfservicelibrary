@@ -31,5 +31,7 @@ namespace SelfServiceLibrary.Service.DTO.Book
         public string? IntStatus { get; set; }
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }
+        public string? NFCIdent { get; set; }
+        public string? QRIdent { get; set; }
     }
 }

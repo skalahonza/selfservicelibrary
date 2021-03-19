@@ -73,6 +73,13 @@ namespace SelfServiceLibrary.Service.Services
                 .ProjectTo<Book, BookDetailDTO>(_mapper)
                 .FirstOrDefaultAsync();
 
+        public Task<BookListDTO> GetByNFC(string serNumNFC) =>
+            _books
+                .AsQueryable()
+                .Where(x => x.NFCIdent == serNumNFC)
+                .ProjectTo<Book, BookListDTO>(_mapper)
+                .FirstOrDefaultAsync();
+
         public async Task<List<BookSearchDTO>> Fulltext(string searchedTerm)
         {
             // https://stackoverflow.com/questions/32194379/mongodb-text-search-with-sorting-in-c-sharp/32194762
@@ -155,7 +162,9 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(book => book.Status, MapStatus(row.IntStatus))
                     .Set(book => book.FormType, row.FormType)
                     .Set(book => book.StsLocal, row.StsLocal)
-                    .Set(book => book.StsUK, row.StsUK);
+                    .Set(book => book.StsUK, row.StsUK)
+                    .Set(book => book.NFCIdent, row.NFCIdent)
+                    .Set(book => book.QRIdent, row.QRIdent);
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
                 });
 

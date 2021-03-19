@@ -22,6 +22,7 @@ using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Model;
 using SelfServiceLibrary.Card.Authentication.Services;
+using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
 using SelfServiceLibrary.Persistence.Options;
@@ -93,7 +94,10 @@ namespace SelfServiceLibrary.API
             ConfigureSwagger(services);
 
             // Business logic
-            services.AddScoped<IssueService>();
+            services.AddScoped<BookService>();
+
+            // CSV
+            services.AddScoped<ICsvImporter, CsvImporter>();
 
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));

@@ -148,6 +148,16 @@ namespace SelfServiceLibrary.Persistence.Entities
         public bool StsUK { get; set; }
 
         /// <summary>
+        /// Sériové / výrobní číslo NFC tagu na publikaci
+        /// </summary>
+        public string? NFCIdent { get; set; }
+
+        /// <summary>
+        /// Číslo uvedené na QR kódu (?)
+        /// </summary>
+        public string? QRIdent { get; set; }
+
+        /// <summary>
         /// Full text search match score
         /// </summary>
         [BsonIgnoreIfNull]

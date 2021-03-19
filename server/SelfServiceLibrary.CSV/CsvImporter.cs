@@ -86,7 +86,9 @@ namespace SelfServiceLibrary.CSV
                     FormType = csv.GetField(25),
                     IntStatus = csv.GetField(26),
                     StsLocal = !string.IsNullOrEmpty(csv.GetField(30)),
-                    StsUK = !string.IsNullOrEmpty(csv.GetField(31))
+                    StsUK = !string.IsNullOrEmpty(csv.GetField(31)),
+                    NFCIdent = csv.GetField("NfcCode"),
+                    QRIdent = csv.GetField("QRCode"),
                 };
             }
         }
