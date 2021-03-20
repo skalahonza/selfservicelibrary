@@ -9,34 +9,34 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// <summary>
         /// Id v databázi
         /// </summary>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Id cannot be null
         public string Id { get; set; }
+#pragma warning restore CS8618 // Id cannot be null
 
         /// <summary>
         /// Evidenční-Číslo-Oddělení – Unikátní Číslo přiřazené naší katedrou (v současnosti GL-XXXXX, CMP-XXXXX)
         /// </summary>
-        public string DepartmentNumber { get; set; }
+        public string? DepartmentNumber { get; set; }
 
         /// <summary>
         /// Název knihy
         /// </summary>
-        public string BookName { get; set; }
+        public string? BookName { get; set; }
 
         /// <summary>
         /// Uživatelské jméno toho, komu byla kniha půjčena
         /// </summary>
-        public string IssuedTo { get; set; }
+        public string? IssuedTo { get; set; }
 
         /// <summary>
         /// Datum zapůjčení
         /// </summary>
-        public DateTime IssueDate { get; set; }
+        public DateTime? IssueDate { get; set; }
 
         /// <summary>
         /// Předpokládané datum vrácení
         /// </summary>
-        public DateTime ExpiryDate { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public DateTime? ExpiryDate { get; set; }
 
         /// <summary>
         /// Datum vrácení

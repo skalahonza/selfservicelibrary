@@ -48,6 +48,8 @@ using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
 using SelfServiceLibrary.Web.Policies;
 using Microsoft.AspNetCore.HttpOverrides;
+using SelfServiceLibrary.Persistence;
+using SelfServiceLibrary.Persistence.Extensions;
 
 namespace SelfServiceLibrary.Web
 {
@@ -245,27 +247,7 @@ namespace SelfServiceLibrary.Web
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
 
             // Persistence, MongoDB
-            services
-                .AddOptions<MongoDbOptions>()
-                .Bind(Configuration.GetSection("MongoDb"))
-                .ValidateDataAnnotations();
-            services.AddSingleton<IMongoClient, MongoClient>(x =>
-            {
-                var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
-                var client = new MongoClient(options.Value.ConnectionString);
-
-                // TODO create indexes
-                var database = client.GetDatabase(options.Value.DatabaseName);
-                var books = database.GetCollection<Book>(Book.COLLECTION_NAME);
-                books
-                    .Indexes
-                    .CreateOneAsync(new CreateIndexModel<Book>(Builders<Book>
-                        .IndexKeys
-                        .Text("$**")))
-                    .Wait();
-
-                return client;
-            });
+            services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
 
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));
@@ -276,8 +258,11 @@ namespace SelfServiceLibrary.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MongoDbContext dbContext)
         {
+            // database configuration, creating indexes, configuring primary keys
+            dbContext.EnsureIndexesExist().Wait();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -288,7 +273,6 @@ namespace SelfServiceLibrary.Web
             }
 
             app.UseForwardedHeaders();
-
             app.UseStaticFiles();
             app.UseRouting();
 

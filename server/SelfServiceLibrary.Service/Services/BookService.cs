@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-
+﻿
 using MongoDB.Driver;
 
+using SelfServiceLibrary.Persistence;
 using SelfServiceLibrary.Persistence.Entities;
-using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;
@@ -18,22 +17,20 @@ namespace SelfServiceLibrary.Service.Services
 {
     public class BookService
     {
-        private readonly IMongoCollection<Book> _books;
-        private readonly IMongoCollection<BookStatus> _statuses;
+        private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ICsvImporter _csv;
 
-        public BookService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper, ICsvImporter csv)
+        public BookService(MongoDbContext dbContext, IMapper mapper, ICsvImporter csv)
         {
-            var database = client.GetDatabase(options.Value.DatabaseName);
-            _books = database.GetCollection<Book>(Book.COLLECTION_NAME);
-            _statuses = database.GetCollection<BookStatus>(BookStatus.COLLECTION_NAME);
+            _dbContext = dbContext;
             _mapper = mapper;
             _csv = csv;
         }
 
         public Task<List<BookListDTO>> GetAll(int page, int pageSize) =>
-            _books
+            _dbContext
+                .Books
                 .AsQueryable()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -41,7 +38,8 @@ namespace SelfServiceLibrary.Service.Services
                 .ToListAsync();
 
         public Task<List<BookListDTO>> GetAll(int page, int pageSize, string publicationType) =>
-            _books
+            _dbContext
+                .Books
                 .AsQueryable()
                 .Where(x => x.PublicationType == publicationType)
                 .Skip((page - 1) * pageSize)
@@ -51,7 +49,8 @@ namespace SelfServiceLibrary.Service.Services
 
         public async Task<Dictionary<string, int>> GetPublicationTypes()
         {
-            var types = await _books
+            var types = await _dbContext
+                .Books
                 .Aggregate()
                 .Group(x => x.PublicationType, x => new
                 {
@@ -63,18 +62,20 @@ namespace SelfServiceLibrary.Service.Services
 
         public Task<long> GetTotalCount(bool estimated = true) =>
             estimated
-                ? _books.EstimatedDocumentCountAsync()
-                : _books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
+                ? _dbContext.Books.EstimatedDocumentCountAsync()
+                : _dbContext.Books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
 
         public Task<BookDetailDTO> GetDetail(string departmentNumber) =>
-            _books
+            _dbContext
+                .Books
                 .AsQueryable()
                 .Where(x => x.DepartmentNumber == departmentNumber)
                 .ProjectTo<Book, BookDetailDTO>(_mapper)
                 .FirstOrDefaultAsync();
 
         public Task<BookListDTO> GetByNFC(string serNumNFC) =>
-            _books
+            _dbContext
+                .Books
                 .AsQueryable()
                 .Where(x => x.NFCIdent == serNumNFC)
                 .ProjectTo<Book, BookListDTO>(_mapper)
@@ -87,7 +88,8 @@ namespace SelfServiceLibrary.Service.Services
             var P = Builders<Book>.Projection.MetaTextScore("TextMatchScore");
             var S = Builders<Book>.Sort.MetaTextScore("TextMatchScore");
 
-            var query = _books
+            var query = _dbContext
+                .Books
                 .Find(F)
                 .Project<Book>(P)
                 .Limit(100)
@@ -100,7 +102,7 @@ namespace SelfServiceLibrary.Service.Services
 
         public async Task ImportCsv(Stream csv)
         {
-            var statuses = (await _statuses.AsQueryable()
+            var statuses = (await _dbContext.BookStatuses.AsQueryable()
                 .ToListAsync())
                 .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
 
@@ -171,11 +173,11 @@ namespace SelfServiceLibrary.Service.Services
             // bulk insert books
             await foreach (var batch in writes.Batchify(1000))
             {
-                await _books.BulkWriteAsync(batch);
+                await _dbContext.Books.BulkWriteAsync(batch);
             }
 
             // insert new statuses
-            await _statuses.BulkWriteAsync(newStatuses.Select(x =>
+            await _dbContext.BookStatuses.BulkWriteAsync(newStatuses.Select(x =>
             {
                 var filter = Builders<BookStatus>.Filter.Where(status => status.Name == x.Name);
                 return new ReplaceOneModel<BookStatus>(filter, x) { IsUpsert = true };
@@ -183,6 +185,6 @@ namespace SelfServiceLibrary.Service.Services
         }
 
         public Task DeleteAll() =>
-            _books.DeleteManyAsync(Builders<Book>.Filter.Empty);
+            _dbContext.Books.DeleteManyAsync(Builders<Book>.Filter.Empty);
     }
 }

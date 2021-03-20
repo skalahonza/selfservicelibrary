@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+using SelfServiceLibrary.Persistence;
 using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
@@ -20,25 +21,21 @@ namespace SelfServiceLibrary.Service.Services
 {
     public class IssueService
     {
-        private readonly IMongoCollection<Issue> _issues;
-        private readonly IMongoCollection<Book> _books;
-        private readonly IMongoCollection<User> _users;
+        private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public IssueService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper)
+        public IssueService(MongoDbContext dbContext, IMapper mapper)
         {
-            var database = client.GetDatabase(options.Value.DatabaseName);
-            _issues = database.GetCollection<Issue>(Issue.COLLECTION_NAME);
-            _books = database.GetCollection<Book>(Book.COLLECTION_NAME);
-            _users = database.GetCollection<User>(User.COLLECTION_NAME);
+            _dbContext = dbContext;
             _mapper = mapper;
         }
 
         public Task<long> GetTotalCount() =>
-            _issues.EstimatedDocumentCountAsync();
+            _dbContext.Issues.EstimatedDocumentCountAsync();
 
         public Task<List<IssueListlDTO>> GetAll(int page, int pageSize) =>
-            _issues
+            _dbContext
+                .Issues
                 .AsQueryable()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -46,7 +43,8 @@ namespace SelfServiceLibrary.Service.Services
                 .ToListAsync();
 
         public Task<List<IssueListlDTO>> GetAll(string username) =>
-            _issues
+            _dbContext
+                .Issues
                 .AsQueryable()
                 .Where(x => x.IssuedTo == username)
                 .OrderBy(x => x.IsReturned).ThenBy(x => x.ExpiryDate)
@@ -54,7 +52,8 @@ namespace SelfServiceLibrary.Service.Services
                 .ToListAsync();
 
         public Task<List<IssueListlDTO>> GetAll(BookDetailDTO book) =>
-            _issues
+            _dbContext
+                .Issues
                 .AsQueryable()
                 .Where(x => x.DepartmentNumber == book.DepartmentNumber)
                 .OrderByDescending(x => x.IssueDate)
@@ -62,7 +61,8 @@ namespace SelfServiceLibrary.Service.Services
                 .ToListAsync();
 
         public Task<List<IssueListlDTO>> GetByIds(IEnumerable<string> ids) =>
-            _issues
+            _dbContext
+                .Issues
                 .AsQueryable()
                 .Where(x => ids.Contains(x.Id))
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
@@ -76,14 +76,14 @@ namespace SelfServiceLibrary.Service.Services
         /// <returns>Issue details.</returns>
         public async Task<IssueDetailDTO> Borrow(string username, IssueCreateDTO issue)
         {
-            var book = await _books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
+            var book = await _dbContext.Books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
                 // TODO handle not found                
             }
 
             // try to mark the book as borrowed
-            var result = await _books.UpdateOneAsync(
+            var result = await _dbContext.Books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber && x.IsAvailable,
                 Builders<Book>.Update.Set(x => x.IsAvailable, false));
             if (result.ModifiedCount == 0)
@@ -100,16 +100,16 @@ namespace SelfServiceLibrary.Service.Services
             };
             entity = _mapper.Map(issue, entity);
             entity = _mapper.Map(book, entity);
-            await _issues.InsertOneAsync(entity);
+            await _dbContext.Issues.InsertOneAsync(entity);
 
             // link issue to a user
-            await _users.UpdateOneAsync(
+            await _dbContext.Users.UpdateOneAsync(
                 x => x.Username == username,
                 Builders<User>.Update.AddToSet(x => x.IssueIds, entity.Id),
                 new UpdateOptions { IsUpsert = true });
 
             // link issue to a book
-            await _books.UpdateOneAsync(
+            await _dbContext.Books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber,
                 Builders<Book>.Update
                 .AddToSet(x => x.IssueIds, entity.Id)
@@ -126,13 +126,13 @@ namespace SelfServiceLibrary.Service.Services
         public async Task<IssueDetailDTO?> Return(string id)
         {
             var now = DateTime.UtcNow;
-            var issue = await _issues.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (issue == null)
             {
                 // TODO handle not found
             }
 
-            await _issues.UpdateOneAsync(
+            await _dbContext.Issues.UpdateOneAsync(
                 x => x.Id == id,
                 Builders<Issue>
                     .Update
@@ -140,14 +140,14 @@ namespace SelfServiceLibrary.Service.Services
                     .Set(x => x.ReturnDate, now));
 
             // mark book as available again
-            await _books.UpdateOneAsync(
+            await _dbContext.Books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber,
                 Builders<Book>.Update
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue.IsReturned, true)
                 .Set(x => x.CurrentIssue.ReturnDate, now));
 
-            return _mapper.Map<IssueDetailDTO>(await _issues.Find(x => x.Id == id).FirstAsync());
+            return _mapper.Map<IssueDetailDTO>(await _dbContext.Issues.Find(x => x.Id == id).FirstAsync());
         }
     }
 }

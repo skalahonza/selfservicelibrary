@@ -25,6 +25,8 @@ using SelfServiceLibrary.Card.Authentication.Services;
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
+using SelfServiceLibrary.Persistence;
+using SelfServiceLibrary.Persistence.Extensions;
 using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
@@ -104,15 +106,7 @@ namespace SelfServiceLibrary.API
             services.AddScoped<Service.Interfaces.IMapper, AutoMapperAdapter>();
 
             // Persistence, MongoDB
-            services
-                .AddOptions<MongoDbOptions>()
-                .Bind(Configuration.GetSection("MongoDb"))
-                .ValidateDataAnnotations();
-            services.AddSingleton<IMongoClient, MongoClient>(x =>
-            {
-                var options = x.GetRequiredService<IOptions<MongoDbOptions>>();
-                return new MongoClient(options.Value.ConnectionString);
-            });
+            services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
 
             // Id cards
             services.AddCardAuthentication(Configuration.GetSection("Identity"));            
@@ -128,8 +122,11 @@ namespace SelfServiceLibrary.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MongoDbContext dbContext)
         {
+            // database configuration, creating indexes, configuring primary keys
+            dbContext.EnsureIndexesExist().Wait();
+
             ConfigureSwagger(app);
 
             app.UseRouting();
