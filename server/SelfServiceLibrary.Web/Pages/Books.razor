@@ -55,73 +55,82 @@
                               ShowPageSizes="true"
                               CurrentPage="@currentPage[type]"
                               PageChanged="(e) => currentPage[type] = e.Page">
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
-                            <DisplayTemplate>
-                                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-                                <div>@context.Depended</div>
-                                <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
-                                    StsLocal
-                                </Check>
-                                <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
-                                    StsUK
-                                </Check>
-                            </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
-                            <DisplayTemplate>
-                                <div>@context.Name</div>
-                                <div>
-                                    <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Where(x => !string.IsNullOrEmpty(x)).Prepend(context.Author))
+                        <LoadingTemplate>
+                            <div class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
                                 </div>
-                                <div><Keywords Words="context.Keywords" /></div>
-                                <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
-                                    @{
+                            </div>
+                        </LoadingTemplate>
+                        <DataGridColumns>
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
+                                <DisplayTemplate>
+                                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                                    <div>@context.Depended</div>
+                                    <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
+                                        StsLocal
+                                    </Check>
+                                    <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
+                                        StsUK
+                                    </Check>
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
+                                <DisplayTemplate>
+                                    <div>@context.Name</div>
+                                    <div>
+                                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Where(x => !string.IsNullOrEmpty(x)).Prepend(context.Author))
+                                    </div>
+                                    <div><Keywords Words="context.Keywords" /></div>
+                                    <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
+                                        @{
                                         var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
-                                        @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
-                                    }
+                                            @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
+                                        }
 
-                                    @if (!string.IsNullOrEmpty(context.Note))
+                                        @if (!string.IsNullOrEmpty(context.Note))
                                     {
                                         <Tooltip Text="@context.Note" Placement="Placement.Top">
                                             <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
                                         </Tooltip>
                                     }
-                                </AuthorizeView>
-                            </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true" />
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
-                            <DisplayTemplate>
-                                @if (context.YearOfPublication.HasValue)
+                                    </AuthorizeView>
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true" />
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
+                                <DisplayTemplate>
+                                    @if (context.YearOfPublication.HasValue)
                                 {
                                     <div><Badge>Year: @context.YearOfPublication</Badge></div>
                                 }
-                                @if (context.Pages.HasValue)
+                                    @if (context.Pages.HasValue)
                                 {
                                     <div><Badge>Pages: @context.Pages</Badge></div>
                                 }
-                                @if (context.Publication.HasValue)
+                                    @if (context.Publication.HasValue)
                                 {
                                     <div><Badge>Edition: @context.Publication</Badge></div>
                                 }
-                            </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
-                            <DisplayTemplate>
-                                <div>
-                                    <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
-                                        <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
-                                            @(context.IsAvailable ? "Yes" : "No")
-                                        </div>
-                                    </Check>
-                                    <div><Badge Color="Color.Light">@context.FormType</Badge></div>
-                                    @if (context.StatusName != "Default")
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
+                                <DisplayTemplate>
+                                    <div>
+                                        <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
+                                            <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
+                                                @(context.IsAvailable ? "Yes" : "No")
+                                            </div>
+                                        </Check>
+                                        <div><Badge Color="Color.Light">@context.FormType</Badge></div>
+                                        @if (context.StatusName != "Default")
                                     {
                                         <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
                                     }
-                                </div>
-                            </DisplayTemplate>
-                        </DataGridColumn>
+                                    </div>
+                                </DisplayTemplate>
+                            </DataGridColumn>
+                        </DataGridColumns>
                     </DataGrid>
                 </TabPanel>
             }
