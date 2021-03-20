@@ -79,7 +79,7 @@
                                 <DisplayTemplate>
                                     <div>@context.Name</div>
                                     <div>
-                                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Where(x => !string.IsNullOrEmpty(x)).Prepend(context.Author))
+                                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
                                     </div>
                                     <div><Keywords Words="context.Keywords" /></div>
                                     <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">

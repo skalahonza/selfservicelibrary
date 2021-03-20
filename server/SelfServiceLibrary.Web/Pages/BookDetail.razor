@@ -23,18 +23,15 @@
 
         <h3>@book.Author <Badge Color="Color.Secondary">Author</Badge> </h3>
 
-        @if (book.CoAuthors.Any(x => !string.IsNullOrEmpty(x)))
+        @if (book.CoAuthors.Any())
         {
             <h4>@string.Join(", ", book.CoAuthors) <Badge Color="Color.Secondary">Co-Authors</Badge></h4>
         }
 
-        @if (book.Keywords.Any(x => !string.IsNullOrEmpty(x)))
+        @if (book.Keywords.Any())
         {
             <h5>Keywords</h5>
-            @foreach (var keyword in book.Keywords)
-            {
-                <Badge Color="Color.Info" Margin="Margin.Is1">@keyword</Badge>
-            }
+            <Keywords Words="book.Keywords" />
         }
 
         <h5>NFC: @book.NFCIdent</h5>

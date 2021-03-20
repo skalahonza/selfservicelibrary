@@ -1,4 +1,4 @@
-﻿@foreach (var keyword in Words.Where(x => !string.IsNullOrEmpty(x)))
+﻿@foreach (var keyword in Words)
 {
     <Badge Color="Color.Info" Margin="Margin.Is1">#@keyword</Badge>
 }

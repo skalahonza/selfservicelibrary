@@ -64,7 +64,7 @@ namespace SelfServiceLibrary.CSV
                 {
                     Name = csv.GetField(0),
                     Author = csv.GetField(1),
-                    CoAuthors = csv.GetField(2).Split(',').Select(x => x.Trim()).ToList(),
+                    CoAuthors = csv.GetField(2).Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToList(),
                     PublicationType = csv.GetField(3),
                     Depended = csv.GetField(4),
                     SystemNumber = csv.GetField(5),
@@ -81,7 +81,7 @@ namespace SelfServiceLibrary.CSV
                     MagazineYear = TryParseInt(csv.GetField(16)),
                     Conference = csv.GetField(17),
                     Price = TryParseDouble(csv.GetField(18)),
-                    Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).ToList(),
+                    Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToList(),
                     Note = csv.GetField(20),
                     FormType = csv.GetField(25),
                     IntStatus = csv.GetField(26),
