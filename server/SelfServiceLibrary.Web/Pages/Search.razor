@@ -47,8 +47,7 @@
                               Data="@items"
                               ShowPager="true"
                               ShowPageSizes="true"
-                              PagerPosition="DataGridPagerPosition.Top"
-                              PageSize="10">
+                              PagerPosition="DataGridPagerPosition.Top">
                         <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false">
                             <DisplayTemplate>
                                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
@@ -93,12 +92,6 @@
     private void OnSelectedTabChanged(string name)
     {
         selectedTab = name;
-        StateHasChanged();
-    }
-
-    private void OnSearchChanged(string value)
-    {
-        search = value;
     }
 
     private async Task Fulltext()
@@ -110,12 +103,14 @@
         if (result.Any())
         {
             searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
-            selectedTab = searchResults.OrderByDescending(x => x.Value.Count).FirstOrDefault().Key;
+            StateHasChanged();
+            selectedTab = searchResults.Aggregate((l, r) => l.Value.Count > r.Value.Count ? l : r).Key;
         }
         else
         {
             searchResults?.Clear();
             selectedTab = null;
         }
+        StateHasChanged();
     }
 }
