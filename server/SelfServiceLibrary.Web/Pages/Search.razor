@@ -102,6 +102,7 @@
 
         if (result.Any())
         {
+            selectedTab = null;
             searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
             StateHasChanged();
             selectedTab = searchResults.Aggregate((l, r) => l.Value.Count > r.Value.Count ? l : r).Key;
@@ -110,7 +111,7 @@
         {
             searchResults?.Clear();
             selectedTab = null;
+            StateHasChanged();
         }
-        StateHasChanged();
     }
 }
