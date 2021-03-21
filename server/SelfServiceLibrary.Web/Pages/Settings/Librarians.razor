@@ -1,0 +1,63 @@
+﻿@page "/settings/librarians"
+@attribute [Authorize(Policy = AdminPolicy.NAME)]
+@using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.Service.Services
+@using SelfServiceLibrary.Service.DTO.User
+@inject AdminService service
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light">
+    <BarBrand>
+        Librarian settings
+    </BarBrand>
+</Bar>
+
+<Container Fluid="true">
+    <DataGrid TItem="UserListDTO"
+              Data="@librarians" 
+              RowSelectable=@(_ => false)
+              Editable="true"
+              SortMode="DataGridSortMode.Multiple"
+              EditMode="DataGridEditMode.Inline"
+              RowInserted="@OnRowInserted"
+              RowRemoved="@OnRowRemoved">
+        <DataGridCommandColumn TItem="UserListDTO" Width="170px">
+            <NewCommandTemplate>
+                <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+            </NewCommandTemplate>
+            <EditCommandTemplate>
+            </EditCommandTemplate>
+            <SaveCommandTemplate>
+                <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+            </SaveCommandTemplate>
+            <DeleteCommandTemplate>
+                <Button Color="Color.Danger" Clicked="@context.Clicked">Delete</Button>
+            </DeleteCommandTemplate>
+            <CancelCommandTemplate>
+                <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+            </CancelCommandTemplate>
+        </DataGridCommandColumn>
+        <DataGridColumn TItem="UserListDTO" Field="@nameof(UserListDTO.Username)" Caption="Username" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
+    </DataGrid>
+</Container>
+
+@code {
+    private List<UserListDTO> librarians = new List<UserListDTO>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        librarians = await service.GetAll();
+    }
+
+    private Task OnRowInserted(SavedRowItem<UserListDTO, Dictionary<string, object>> e)
+    {
+        return service.AddLibrarian(e.Item.Username);
+    }
+
+    private Task OnRowRemoved(UserListDTO item)
+    {
+        return service.RemoveLibrarian(item.Username);
+    }
+}

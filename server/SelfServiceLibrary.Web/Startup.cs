@@ -237,6 +237,7 @@ namespace SelfServiceLibrary.Web
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(LibrarianPolicy.NAME, LibrarianPolicy.Build);
+                options.AddPolicy(AdminPolicy.NAME, AdminPolicy.Build);
             });
 
             // Business logic
@@ -245,6 +246,7 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<IssueService>();
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
+            services.AddScoped<AdminService>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));

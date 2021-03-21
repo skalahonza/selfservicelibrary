@@ -61,6 +61,14 @@
                     </BarDropdown>
                 </BarItem>
             </AuthorizeView>
+            <AuthorizeView Policy="@AdminPolicy.NAME">
+                <BarItem>
+                    <BarLink To="/settings/librarians">
+                        <BarIcon IconName="IconName.List" />
+                        Librarians
+                    </BarLink>
+                </BarItem>
+            </AuthorizeView>
         </BarStart>
         <BarEnd>
             <AuthorizeView>
