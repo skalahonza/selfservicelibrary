@@ -4,8 +4,6 @@ namespace SelfServiceLibrary.Persistence.Entities
 {
     public class Issue
     {
-        public const string COLLECTION_NAME = "issues";
-
         /// <summary>
         /// Id v databázi
         /// </summary>

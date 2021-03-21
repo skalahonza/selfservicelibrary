@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.Domain.Entities
+﻿namespace CVUT.Usermap.Model
 {
     public class Department
     {

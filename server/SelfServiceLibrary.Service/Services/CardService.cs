@@ -2,12 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Options;
-
 using MongoDB.Driver;
 
+using SelfServiceLibrary.Persistence;
 using SelfServiceLibrary.Persistence.Entities;
-using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Card;
 using SelfServiceLibrary.Service.Interfaces;
 
@@ -15,20 +13,20 @@ namespace SelfServiceLibrary.Service.Services
 {
     public class CardService : ICardService
     {
-        private readonly IMongoCollection<User> _users;
+        private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public CardService(IOptions<MongoDbOptions> options, IMongoClient client, IMapper mapper)
+        public CardService(MongoDbContext dbContext, IMapper mapper)
         {
-            var database = client.GetDatabase(options.Value.DatabaseName);
-            _users = database.GetCollection<User>(User.COLLECTION_NAME);
+            _dbContext = dbContext;
             _mapper = mapper;
         }
 
         public async Task<bool> Add(string username, AddCardDTO card)
         {
             var toAdd = _mapper.Map<IdCard>(card);
-            var result = await _users
+            var result = await _dbContext
+                .Users
                 .UpdateOneAsync(x => x.Username == username,
                 Builders<User>.Update.AddToSet(x => x.Cards, toAdd),
                 new UpdateOptions { IsUpsert = true });
@@ -37,7 +35,8 @@ namespace SelfServiceLibrary.Service.Services
 
         public async Task<List<CardListDTO>> GetAll(string username)
         {
-            var cards = await _users
+            var cards = await _dbContext
+                .Users
                 .Find(x => x.Username == username)
                 .Project(x => x.Cards)
                 .FirstOrDefaultAsync();
@@ -51,7 +50,8 @@ namespace SelfServiceLibrary.Service.Services
             var builder = Builders<User>.Filter;
             var filter = builder.Eq(x => x.Username, username) & builder.ElemMatch(x => x.Cards, x => x.Number == cardNumber);
 
-            var result = await _users
+            var result = await _dbContext
+                .Users
                 .UpdateOneAsync(filter,
                 Builders<User>.Update.PullFilter(x => x.Cards, x => x.Number == cardNumber));
 

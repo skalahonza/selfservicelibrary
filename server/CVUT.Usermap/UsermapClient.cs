@@ -1,7 +1,8 @@
 ﻿
+using CVUT.Usermap.Model;
+
 using Pathoschild.Http.Client;
 
-using SelfServiceLibrary.Domain.Entities;
 using SelfServiceLibrary.Service.Interfaces;
 
 using System;

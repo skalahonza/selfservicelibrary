@@ -42,6 +42,12 @@ namespace SelfServiceLibrary.Persistence
                 cm.AutoMap();
                 cm.MapIdMember(c => c.Name);
             });
+
+            BsonClassMap.RegisterClassMap<User>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapIdMember(c => c.Username);
+            });
         }
 
         /// <summary>
