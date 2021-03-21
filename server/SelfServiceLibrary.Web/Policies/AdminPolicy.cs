@@ -1,6 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 
+using SelfServiceLibrary.Domain.Enums;
+
 namespace SelfServiceLibrary.Web.Policies
 {
     public static class AdminPolicy
@@ -10,6 +12,7 @@ namespace SelfServiceLibrary.Web.Policies
         public static void Build(AuthorizationPolicyBuilder policy)
         {
             policy.RequireAuthenticatedUser();
+            policy.RequireRole(nameof(Role.Admin));
         }
     }
 }

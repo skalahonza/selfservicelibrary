@@ -2,8 +2,6 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 
-using AutoMapper;
-
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -20,16 +18,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 using MongoDB.Driver;
-
-using Newtonsoft.Json.Linq;
 
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
-using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;
 using SelfServiceLibrary.Service.Validation;
@@ -42,7 +36,6 @@ using System.Security.Claims;
 using Pathoschild.Http.Client;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
-using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
@@ -50,6 +43,9 @@ using SelfServiceLibrary.Web.Policies;
 using Microsoft.AspNetCore.HttpOverrides;
 using SelfServiceLibrary.Persistence;
 using SelfServiceLibrary.Persistence.Extensions;
+using Microsoft.Extensions.Options;
+using SelfServiceLibrary.Web.Options;
+using SelfServiceLibrary.Domain.Enums;
 
 namespace SelfServiceLibrary.Web
 {
@@ -146,6 +142,8 @@ namespace SelfServiceLibrary.Web
 
                                     // refresh USERMAP roles
                                     var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
+                                    var adminOptions = context.HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<AdminOptions>>();
+                                    var librarianService = context.HttpContext.RequestServices.GetRequiredService<LibrarianService>();
                                     var info = await zuul.CheckToken(response.AccessToken);
                                     var user = await usermap.Get(info.UserName, response.AccessToken);
                                     var claims = user
@@ -155,7 +153,17 @@ namespace SelfServiceLibrary.Web
                                         .Append(new Claim(ClaimTypes.Name, user.Username))
                                         .Append(new Claim(ClaimTypes.Email, user.PreferredEmail))
                                         .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
-                                        .Append(new Claim(ClaimTypes.Surname, user.LastName));
+                                        .Append(new Claim(ClaimTypes.Surname, user.LastName))
+                                        .ToList();
+
+                                    if (await librarianService.IsLibrarian(user.Username))
+                                    {
+                                        claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Librarian)));
+                                    }
+                                    if (adminOptions.CurrentValue.Admins.Contains(user.Username))
+                                    {
+                                        claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
+                                    }
 
                                     var claimsToRefresh = new HashSet<string>
                                     {
@@ -209,6 +217,8 @@ namespace SelfServiceLibrary.Web
                         {
                             var zuul = context.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
                             var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
+                            var adminOptions = context.HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<AdminOptions>>();
+                            var librarianService = context.HttpContext.RequestServices.GetRequiredService<LibrarianService>();
 
                             var info = await zuul.CheckToken(context.AccessToken);
                             var user = await usermap.Get(info.UserName, context.AccessToken);
@@ -221,7 +231,17 @@ namespace SelfServiceLibrary.Web
                                 .Append(new Claim(ClaimTypes.Name, user.Username))
                                 .Append(new Claim(ClaimTypes.Email, user.PreferredEmail))
                                 .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
-                                .Append(new Claim(ClaimTypes.Surname, user.LastName));
+                                .Append(new Claim(ClaimTypes.Surname, user.LastName))
+                                .ToList();
+
+                            if(await librarianService.IsLibrarian(user.Username))
+                            {
+                                claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Librarian)));
+                            }
+                            if (adminOptions.CurrentValue.Admins.Contains(user.Username))
+                            {
+                                claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
+                            }
 
                             context.Identity.AddClaims(claims);
 
@@ -234,6 +254,7 @@ namespace SelfServiceLibrary.Web
                 });
 
             // Authorization
+            services.AddOptions<AdminOptions>().Bind(Configuration).ValidateDataAnnotations();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(LibrarianPolicy.NAME, LibrarianPolicy.Build);
@@ -246,14 +267,14 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<IssueService>();
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
-            services.AddScoped<AdminService>();
+            services.AddScoped<LibrarianService>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
 
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));
-            services.AddScoped<Service.Interfaces.IMapper, AutoMapperAdapter>();
+            services.AddScoped<IMapper, AutoMapperAdapter>();
 
             // CSV
             services.AddScoped<ICsvImporter, CsvImporter>();

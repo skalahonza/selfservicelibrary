@@ -15,12 +15,12 @@ using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Service.Services
 {
-    public class AdminService
+    public class LibrarianService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public AdminService(MongoDbContext dbContext, IMapper mapper)
+        public LibrarianService(MongoDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -29,12 +29,17 @@ namespace SelfServiceLibrary.Service.Services
         private Task<UpdateResult> AddRole(string username, Role role) =>
             _dbContext
                 .Users
-                .UpdateOneAsync(x => x.Username == username, Builders<User>.Update.AddToSet(x => x.Roles, role));
+                .UpdateOneAsync(
+                    x => x.Username == username,
+                    Builders<User>.Update.AddToSet(x => x.Roles, role),
+                    new UpdateOptions { IsUpsert = true });
 
         private Task<UpdateResult> RemoveRole(string username, Role role) =>
             _dbContext
                 .Users
-                .UpdateOneAsync(x => x.Username == username, Builders<User>.Update.Pull(x => x.Roles, role));
+                .UpdateOneAsync(
+                    x => x.Username == username,
+                    Builders<User>.Update.Pull(x => x.Roles, role));
 
         public Task<List<UserListDTO>> GetAll() =>
             _dbContext
