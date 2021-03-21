@@ -1,12 +1,9 @@
 ﻿
-using Microsoft.Extensions.Options;
-
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.Persistence;
 using SelfServiceLibrary.Persistence.Entities;
-using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Extensions;
@@ -30,8 +27,10 @@ namespace SelfServiceLibrary.Service.Services
             _mapper = mapper;
         }
 
-        public Task<long> GetTotalCount() =>
-            _dbContext.Issues.EstimatedDocumentCountAsync();
+        public Task<long> GetTotalCount(bool estimated = true) =>
+            estimated
+                ? _dbContext.Issues.EstimatedDocumentCountAsync()
+                : _dbContext.Issues.CountDocumentsAsync(Builders<Issue>.Filter.Empty);
 
         public Task<List<IssueListlDTO>> GetAll(int page, int pageSize) =>
             _dbContext
@@ -57,14 +56,6 @@ namespace SelfServiceLibrary.Service.Services
                 .AsQueryable()
                 .Where(x => x.DepartmentNumber == book.DepartmentNumber)
                 .OrderByDescending(x => x.IssueDate)
-                .ProjectTo<Issue, IssueListlDTO>(_mapper)
-                .ToListAsync();
-
-        public Task<List<IssueListlDTO>> GetByIds(IEnumerable<string> ids) =>
-            _dbContext
-                .Issues
-                .AsQueryable()
-                .Where(x => ids.Contains(x.Id))
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
