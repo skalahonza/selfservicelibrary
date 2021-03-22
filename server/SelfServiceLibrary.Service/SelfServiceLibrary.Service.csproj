@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj" />
   </ItemGroup>
 
 </Project>

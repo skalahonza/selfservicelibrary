@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Domain.Enums;
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.DAL.Entities;
+using SelfServiceLibrary.DAL.Enums;
 using SelfServiceLibrary.Service.DTO.User;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;

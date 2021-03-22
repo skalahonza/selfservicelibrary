@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,7 +8,6 @@ using CsvHelper.Configuration;
 
 using Microsoft.Extensions.Logging;
 
-using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
 

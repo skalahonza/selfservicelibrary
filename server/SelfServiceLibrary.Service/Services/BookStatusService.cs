@@ -2,13 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Options;
-
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Entities;
-using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Service.DTO.BookStatus;
 using SelfServiceLibrary.Service.Extensions;
 using SelfServiceLibrary.Service.Interfaces;

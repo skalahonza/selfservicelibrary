@@ -3,8 +3,6 @@ using CVUT.Usermap.Model;
 
 using Pathoschild.Http.Client;
 
-using SelfServiceLibrary.Service.Interfaces;
-
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;

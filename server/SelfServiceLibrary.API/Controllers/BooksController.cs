@@ -1,11 +1,8 @@
-﻿
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Services;
 
 namespace SelfServiceLibrary.API.Controllers

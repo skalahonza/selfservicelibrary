@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SelfServiceLibrary.Service.DTO.Issue
+﻿namespace SelfServiceLibrary.Service.DTO.Issue
 {
 
     public class NfcIssueReturnDTO

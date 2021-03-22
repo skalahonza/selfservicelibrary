@@ -41,11 +41,11 @@ using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
 using SelfServiceLibrary.Web.Policies;
 using Microsoft.AspNetCore.HttpOverrides;
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Extensions;
 using Microsoft.Extensions.Options;
 using SelfServiceLibrary.Web.Options;
-using SelfServiceLibrary.Domain.Enums;
+using SelfServiceLibrary.DAL.Enums;
+using SelfServiceLibrary.DAL.Extensions;
+using SelfServiceLibrary.DAL;
 
 namespace SelfServiceLibrary.Web
 {

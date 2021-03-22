@@ -3,19 +3,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.DAL.Options;
 
-namespace SelfServiceLibrary.Persistence.Extensions
+namespace SelfServiceLibrary.DAL.Extensions
 {
     public static class DependencyInjectionExtensions
     {
         public static IServiceCollection AddMongoDbPersistence(this IServiceCollection services, IConfiguration configuration)
         {
-            MongoDbContext.ConfigureTables();
-
             services
                 .AddOptions<MongoDbOptions>()
                 .Bind(configuration)

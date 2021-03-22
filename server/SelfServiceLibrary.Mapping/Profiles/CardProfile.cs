@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Service.DTO.Card;
 
 namespace SelfServiceLibrary.Mapping.Profiles

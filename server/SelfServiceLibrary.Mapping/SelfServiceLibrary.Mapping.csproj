@@ -14,8 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SelfServiceLibrary.Domain\SelfServiceLibrary.Domain.csproj" />
-    <ProjectReference Include="..\SelfServiceLibrary.Persistence\SelfServiceLibrary.Persistence.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />
   </ItemGroup>
 

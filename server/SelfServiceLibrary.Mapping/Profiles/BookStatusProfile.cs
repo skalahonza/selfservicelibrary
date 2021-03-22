@@ -1,7 +1,7 @@
 ﻿
 using AutoMapper;
 
-using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Service.DTO.BookStatus;
 
 namespace SelfServiceLibrary.Mapping.Profiles

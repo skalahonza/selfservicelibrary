@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-using SelfServiceLibrary.Persistence.Entities;
 using SelfServiceLibrary.Service.DTO.Book;
 
 namespace SelfServiceLibrary.Service.Interfaces

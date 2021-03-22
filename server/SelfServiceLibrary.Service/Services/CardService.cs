@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Service.DTO.Card;
 using SelfServiceLibrary.Service.Interfaces;
 

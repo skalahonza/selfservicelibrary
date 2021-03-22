@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SelfServiceLibrary.Persistence.Options
+namespace SelfServiceLibrary.DAL.Options
 {
     public class MongoDbOptions
     {

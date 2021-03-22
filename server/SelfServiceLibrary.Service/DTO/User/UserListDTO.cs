@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using SelfServiceLibrary.Domain.Enums;
+using SelfServiceLibrary.DAL.Enums;
 
 namespace SelfServiceLibrary.Service.DTO.User
 {

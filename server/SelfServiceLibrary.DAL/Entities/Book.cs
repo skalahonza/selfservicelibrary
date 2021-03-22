@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SelfServiceLibrary.Persistence.Entities
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace SelfServiceLibrary.DAL.Entities
 {
     public class Book
     {
@@ -44,6 +46,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// Evidenční-Číslo-Oddělení – Unikátní Číslo přiřazené naší katedrou (v současnosti GL-XXXXX, CMP-XXXXX)
         /// </summary>
 #pragma warning disable CS8618 // Database id cannot be empty
+        [BsonId]
         public string DepartmentNumber { get; set; }
 #pragma warning restore CS8618 // Database id cannot be empty
 
@@ -155,6 +158,7 @@ namespace SelfServiceLibrary.Persistence.Entities
         /// <summary>
         /// Full text search match score
         /// </summary>
+        [BsonIgnoreIfNull]
         public double? TextMatchScore { get; set; }
 
         #region Related entities

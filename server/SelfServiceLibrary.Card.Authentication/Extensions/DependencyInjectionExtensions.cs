@@ -3,7 +3,6 @@ using System;
 
 using AspNetCore.Identity.Mongo;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

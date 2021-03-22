@@ -2,8 +2,8 @@
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Entities;
+using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.DTO.Issue;
 using SelfServiceLibrary.Service.Extensions;

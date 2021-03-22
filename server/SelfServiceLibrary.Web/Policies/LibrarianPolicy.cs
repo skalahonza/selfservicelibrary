@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 
-using SelfServiceLibrary.Domain.Enums;
+using SelfServiceLibrary.DAL.Enums;
 
 namespace SelfServiceLibrary.Web.Policies
 {

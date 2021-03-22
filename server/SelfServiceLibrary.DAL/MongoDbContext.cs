@@ -5,10 +5,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
-using SelfServiceLibrary.Persistence.Entities;
-using SelfServiceLibrary.Persistence.Options;
+using SelfServiceLibrary.DAL.Entities;
+using SelfServiceLibrary.DAL.Options;
 
-namespace SelfServiceLibrary.Persistence
+namespace SelfServiceLibrary.DAL
 {
     public class MongoDbContext
     {
@@ -27,28 +27,6 @@ namespace SelfServiceLibrary.Persistence
         public IMongoCollection<BookStatus> BookStatuses { get; }
         public IMongoCollection<Issue> Issues { get; }
         public IMongoCollection<User> Users { get; }
-
-        public static void ConfigureTables()
-        {
-            BsonClassMap.RegisterClassMap<Book>(cm =>
-            {
-                cm.AutoMap();
-                cm.MapIdMember(c => c.DepartmentNumber);
-                cm.MapMember(c => c.TextMatchScore).SetIgnoreIfNull(true);
-            });
-
-            BsonClassMap.RegisterClassMap<BookStatus>(cm =>
-            {
-                cm.AutoMap();
-                cm.MapIdMember(c => c.Name);
-            });
-
-            BsonClassMap.RegisterClassMap<User>(cm =>
-            {
-                cm.AutoMap();
-                cm.MapIdMember(c => c.Username);
-            });
-        }
 
         /// <summary>
         /// This method should only be called at application startup and is responsible for DB configuration (primary keys etc) and asserting that the indexes exist.

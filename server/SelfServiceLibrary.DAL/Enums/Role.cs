@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.Domain.Enums
+﻿namespace SelfServiceLibrary.DAL.Enums
 {
     public enum Role
     {

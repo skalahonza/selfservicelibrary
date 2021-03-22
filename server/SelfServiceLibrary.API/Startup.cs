@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Reflection;
 
-using AspNetCore.Identity.Mongo;
-
 using AutoMapper;
 
 using FluentValidation.AspNetCore;
@@ -12,22 +10,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-
-using MongoDB.Driver;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.Card.Authentication.Extensions;
-using SelfServiceLibrary.Card.Authentication.Model;
-using SelfServiceLibrary.Card.Authentication.Services;
 using SelfServiceLibrary.CSV;
+using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.DAL.Extensions;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
-using SelfServiceLibrary.Persistence;
-using SelfServiceLibrary.Persistence.Extensions;
-using SelfServiceLibrary.Persistence.Options;
 using SelfServiceLibrary.Service.DTO.Book;
 using SelfServiceLibrary.Service.Interfaces;
 using SelfServiceLibrary.Service.Services;

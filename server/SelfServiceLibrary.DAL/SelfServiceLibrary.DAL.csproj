@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
@@ -16,10 +16,6 @@
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="5.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SelfServiceLibrary.Domain\SelfServiceLibrary.Domain.csproj" />
   </ItemGroup>
 
 </Project>

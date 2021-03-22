@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SelfServiceLibrary.Persistence.Entities
+namespace SelfServiceLibrary.DAL.Entities
 {
     public class Issue
     {
