@@ -26,6 +26,6 @@
     <ProjectReference Include="..\SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
-    <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.BL.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj" />
   </ItemGroup>
 </Project>

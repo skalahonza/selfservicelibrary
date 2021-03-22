@@ -7,9 +7,9 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["SelfServiceLibrary.API/SelfServiceLibrary.API.csproj", "SelfServiceLibrary.API/"]
-COPY ["SelfServiceLibrary.Service/SelfServiceLibrary.Service.csproj", "SelfServiceLibrary.Service/"]
-COPY ["SelfServiceLibrary.Persistence/SelfServiceLibrary.Persistence.csproj", "SelfServiceLibrary.Persistence/"]
-COPY ["SelfServiceLibrary.Domain/SelfServiceLibrary.Domain.csproj", "SelfServiceLibrary.Domain/"]
+COPY ["SelfServiceLibrary.BL/SelfServiceLibrary.BL.csproj", "SelfServiceLibrary.BL/"]
+COPY ["SelfServiceLibrary.DAL/SelfServiceLibrary.DAL.csproj", "SelfServiceLibrary.DAL/"]
+COPY ["SelfServiceLibrary.CSV/SelfServiceLibrary.CSV.csproj", "SelfServiceLibrary.CSV/"]
 COPY ["SelfServiceLibrary.Mapping/SelfServiceLibrary.Mapping.csproj", "SelfServiceLibrary.Mapping/"]
 COPY ["SelfServiceLibrary.Card.Authentication/SelfServiceLibrary.Card.Authentication.csproj", "SelfServiceLibrary.Card.Authentication/"]
 RUN dotnet restore "SelfServiceLibrary.API/SelfServiceLibrary.API.csproj"

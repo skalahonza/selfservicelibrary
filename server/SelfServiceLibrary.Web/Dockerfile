@@ -9,9 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["SelfServiceLibrary.Web/SelfServiceLibrary.Web.csproj", "SelfServiceLibrary.Web/"]
 COPY ["CVUT.Auth/CVUT.Auth.csproj", "CVUT.Auth/"]
-COPY ["SelfServiceLibrary.Service/SelfServiceLibrary.Service.csproj", "SelfServiceLibrary.Service/"]
-COPY ["SelfServiceLibrary.Persistence/SelfServiceLibrary.Persistence.csproj", "SelfServiceLibrary.Persistence/"]
-COPY ["SelfServiceLibrary.Domain/SelfServiceLibrary.Domain.csproj", "SelfServiceLibrary.Domain/"]
+COPY ["SelfServiceLibrary.BL/SelfServiceLibrary.BL.csproj", "SelfServiceLibrary.BL/"]
+COPY ["SelfServiceLibrary.DAL/SelfServiceLibrary.DAL.csproj", "SelfServiceLibrary.DAL/"]
 COPY ["CVUT.Usermap/CVUT.Usermap.csproj", "CVUT.Usermap/"]
 COPY ["SelfServiceLibrary.CSV/SelfServiceLibrary.CSV.csproj", "SelfServiceLibrary.CSV/"]
 COPY ["SelfServiceLibrary.Mapping/SelfServiceLibrary.Mapping.csproj", "SelfServiceLibrary.Mapping/"]
