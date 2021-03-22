@@ -2,7 +2,7 @@
 
 using MongoDB.Driver.Linq;
 
-namespace SelfServiceLibrary.Service.Interfaces
+namespace SelfServiceLibrary.BL.Interfaces
 {
     public interface IMapper
     {

@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SelfServiceLibrary.Service.Services;
+using SelfServiceLibrary.BL.Services;
 
 namespace SelfServiceLibrary.API.Controllers
 {

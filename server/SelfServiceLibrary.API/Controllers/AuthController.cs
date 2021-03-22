@@ -4,7 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.API.Controllers
 {

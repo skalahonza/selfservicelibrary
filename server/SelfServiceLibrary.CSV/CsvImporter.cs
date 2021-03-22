@@ -8,8 +8,8 @@ using CsvHelper.Configuration;
 
 using Microsoft.Extensions.Logging;
 
-using SelfServiceLibrary.Service.DTO.Book;
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.CSV
 {

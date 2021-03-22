@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SelfServiceLibrary.Service.DTO.Issue
+namespace SelfServiceLibrary.BL.DTO.Issue
 {
     public class NfcIssueCreateDTO
     {

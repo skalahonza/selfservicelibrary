@@ -1,9 +1,9 @@
 ﻿
 using FluentValidation;
 
-using SelfServiceLibrary.Service.DTO.Book;
+using SelfServiceLibrary.BL.DTO.Book;
 
-namespace SelfServiceLibrary.Service.Validation
+namespace SelfServiceLibrary.BL.Validation
 {
     public class BookEditDTOValidator : AbstractValidator<BookEditDTO>
     {

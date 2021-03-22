@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 using MongoDB.Driver;
 
+using SelfServiceLibrary.BL.DTO.Card;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
-using SelfServiceLibrary.Service.DTO.Card;
-using SelfServiceLibrary.Service.Interfaces;
 
-namespace SelfServiceLibrary.Service.Services
+namespace SelfServiceLibrary.BL.Services
 {
     public class CardService : ICardService
     {

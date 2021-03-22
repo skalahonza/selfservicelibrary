@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 
+using SelfServiceLibrary.BL.DTO.Card;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Card.Authentication.Model;
-using SelfServiceLibrary.Service.DTO.Card;
-using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Card.Authentication.Services
 {

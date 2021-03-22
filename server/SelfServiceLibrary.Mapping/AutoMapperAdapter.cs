@@ -5,7 +5,7 @@ using AutoMapper.QueryableExtensions;
 
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.Mapping
 {

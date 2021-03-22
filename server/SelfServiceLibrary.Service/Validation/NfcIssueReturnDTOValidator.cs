@@ -1,11 +1,10 @@
 ﻿
 using FluentValidation;
 
-using SelfServiceLibrary.Service.DTO.Issue;
+using SelfServiceLibrary.BL.DTO.Issue;
 
-namespace SelfServiceLibrary.Service.Validation
+namespace SelfServiceLibrary.BL.Validation
 {
-
     public class NfcIssueReturnDTOValidator : AbstractValidator<NfcIssueReturnDTO>
     {
         public NfcIssueReturnDTOValidator()

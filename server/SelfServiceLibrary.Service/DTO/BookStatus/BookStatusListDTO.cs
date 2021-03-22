@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.Service.DTO.BookStatus
+﻿namespace SelfServiceLibrary.BL.DTO.BookStatus
 {
     public class BookStatusListDTO
     {

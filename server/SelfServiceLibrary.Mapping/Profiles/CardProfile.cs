@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
+using SelfServiceLibrary.BL.DTO.Card;
 using SelfServiceLibrary.DAL.Entities;
-using SelfServiceLibrary.Service.DTO.Card;
 
 namespace SelfServiceLibrary.Mapping.Profiles
 {

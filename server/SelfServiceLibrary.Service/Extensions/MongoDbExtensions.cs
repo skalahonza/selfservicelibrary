@@ -2,9 +2,9 @@
 
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.BL.Interfaces;
 
-namespace SelfServiceLibrary.Service.Extensions
+namespace SelfServiceLibrary.BL.Extensions
 {
     public static class MongoDbExtensions
     {

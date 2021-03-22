@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SelfServiceLibrary.Service.Extensions
+namespace SelfServiceLibrary.BL.Extensions
 {
     public static class IAsyncEnumerableExtensions
     {
@@ -27,7 +27,7 @@ namespace SelfServiceLibrary.Service.Extensions
                 }
             }
 
-            if(index > 0)
+            if (index > 0)
             {
                 Array.Resize(ref batch, index);
                 yield return batch;

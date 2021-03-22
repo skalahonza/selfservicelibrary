@@ -24,9 +24,6 @@ using MongoDB.Driver;
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
-using SelfServiceLibrary.Service.Interfaces;
-using SelfServiceLibrary.Service.Services;
-using SelfServiceLibrary.Service.Validation;
 using System.Text;
 using System;
 using CVUT.Usermap;
@@ -46,6 +43,9 @@ using SelfServiceLibrary.Web.Options;
 using SelfServiceLibrary.DAL.Enums;
 using SelfServiceLibrary.DAL.Extensions;
 using SelfServiceLibrary.DAL;
+using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.BL.Validation;
 
 namespace SelfServiceLibrary.Web
 {

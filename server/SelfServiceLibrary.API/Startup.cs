@@ -14,16 +14,16 @@ using Microsoft.OpenApi.Models;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Options;
+using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.BL.Validation;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Extensions;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
-using SelfServiceLibrary.Service.DTO.Book;
-using SelfServiceLibrary.Service.Interfaces;
-using SelfServiceLibrary.Service.Services;
-using SelfServiceLibrary.Service.Validation;
 
 namespace SelfServiceLibrary.API
 {
@@ -95,7 +95,7 @@ namespace SelfServiceLibrary.API
 
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));
-            services.AddScoped<Service.Interfaces.IMapper, AutoMapperAdapter>();
+            services.AddScoped<BL.Interfaces.IMapper, AutoMapperAdapter>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));

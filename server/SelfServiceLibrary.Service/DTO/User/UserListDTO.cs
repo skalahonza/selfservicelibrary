@@ -2,7 +2,7 @@
 
 using SelfServiceLibrary.DAL.Enums;
 
-namespace SelfServiceLibrary.Service.DTO.User
+namespace SelfServiceLibrary.BL.DTO.User
 {
     public class UserListDTO
     {

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using SelfServiceLibrary.API.Options;
-using SelfServiceLibrary.Service.Interfaces;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.API.Handlers
 {

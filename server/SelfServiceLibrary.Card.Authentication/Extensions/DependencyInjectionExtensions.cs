@@ -6,9 +6,9 @@ using AspNetCore.Identity.Mongo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Card.Authentication.Model;
 using SelfServiceLibrary.Card.Authentication.Services;
-using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Card.Authentication.Extensions
 {

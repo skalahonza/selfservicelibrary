@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 using MongoDB.Driver;
 
+using SelfServiceLibrary.BL.DTO.BookStatus;
+using SelfServiceLibrary.BL.Extensions;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
-using SelfServiceLibrary.Service.DTO.BookStatus;
-using SelfServiceLibrary.Service.Extensions;
-using SelfServiceLibrary.Service.Interfaces;
 
-namespace SelfServiceLibrary.Service.Services
+namespace SelfServiceLibrary.BL.Services
 {
     public class BookStatusService
     {

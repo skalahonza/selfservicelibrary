@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-using SelfServiceLibrary.Service.DTO.Book;
+using SelfServiceLibrary.BL.DTO.Book;
 
-namespace SelfServiceLibrary.Service.Interfaces
+namespace SelfServiceLibrary.BL.Interfaces
 {
     public interface ICsvImporter
     {

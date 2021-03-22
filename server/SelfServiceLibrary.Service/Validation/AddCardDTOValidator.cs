@@ -2,10 +2,9 @@
 using FluentValidation;
 
 using System.Linq;
+using SelfServiceLibrary.BL.DTO.Card;
 
-using SelfServiceLibrary.Service.DTO.Card;
-
-namespace SelfServiceLibrary.Service.Validation
+namespace SelfServiceLibrary.BL.Validation
 {
     public class AddCardDTOValidator : AbstractValidator<AddCardDTO>
     {

@@ -1,8 +1,8 @@
 ﻿@page "/settings/librarians"
 @attribute [Authorize(Policy = AdminPolicy.NAME)]
 @using SelfServiceLibrary.Web.Policies
-@using SelfServiceLibrary.Service.Services
-@using SelfServiceLibrary.Service.DTO.User
+@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.DTO.User
 @inject LibrarianService service
 
 <Bar Breakpoint="Breakpoint.Desktop"

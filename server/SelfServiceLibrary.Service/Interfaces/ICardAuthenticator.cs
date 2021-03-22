@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-namespace SelfServiceLibrary.Service.Interfaces
+namespace SelfServiceLibrary.BL.Interfaces
 {
-
     public interface ICardAuthenticator
     {
         Task<string?> Authenticate(string cardNumber, string? pin);

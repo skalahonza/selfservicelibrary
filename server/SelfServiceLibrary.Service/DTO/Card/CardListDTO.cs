@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.Service.DTO.Card
+﻿namespace SelfServiceLibrary.BL.DTO.Card
 {
     public class CardListDTO
     {

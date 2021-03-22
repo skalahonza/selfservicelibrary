@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Extensions;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.DAL.Enums;
-using SelfServiceLibrary.Service.DTO.User;
-using SelfServiceLibrary.Service.Extensions;
-using SelfServiceLibrary.Service.Interfaces;
 
-namespace SelfServiceLibrary.Service.Services
+namespace SelfServiceLibrary.BL.Services
 {
     public class LibrarianService
     {

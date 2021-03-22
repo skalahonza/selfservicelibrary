@@ -2,9 +2,9 @@
 
 using Microsoft.AspNetCore.Identity;
 
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Card.Authentication.Model;
 using SelfServiceLibrary.Card.Authentication.Providers;
-using SelfServiceLibrary.Service.Interfaces;
 
 namespace SelfServiceLibrary.Card.Authentication.Services
 {

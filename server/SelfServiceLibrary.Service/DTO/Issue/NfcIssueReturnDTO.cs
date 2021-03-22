@@ -1,6 +1,5 @@
-﻿namespace SelfServiceLibrary.Service.DTO.Issue
+﻿namespace SelfServiceLibrary.BL.DTO.Issue
 {
-
     public class NfcIssueReturnDTO
     {
 #pragma warning disable CS8618 // Enforced by validation

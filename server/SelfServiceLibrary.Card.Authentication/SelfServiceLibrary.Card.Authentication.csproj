@@ -15,7 +15,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.Service.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Service\SelfServiceLibrary.BL.csproj" />
   </ItemGroup>
 
 </Project>

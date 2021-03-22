@@ -2,19 +2,19 @@
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
+using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.BL.DTO.Issue;
+using SelfServiceLibrary.BL.Extensions;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
-using SelfServiceLibrary.Service.DTO.Book;
-using SelfServiceLibrary.Service.DTO.Issue;
-using SelfServiceLibrary.Service.Extensions;
-using SelfServiceLibrary.Service.Interfaces;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SelfServiceLibrary.Service.Services
+namespace SelfServiceLibrary.BL.Services
 {
     public class IssueService
     {

@@ -1,8 +1,8 @@
 ﻿@page "/my-issues"
 @attribute [Authorize]
 
-@using SelfServiceLibrary.Service.Services
-@using SelfServiceLibrary.Service.DTO.Issue
+@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.DTO.Issue
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IssueService issueService
 @inject AuthenticationStateProvider AuthenticationStateProvider

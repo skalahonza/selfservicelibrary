@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using SelfServiceLibrary.Service.DTO.Card;
+using SelfServiceLibrary.BL.DTO.Card;
 
-namespace SelfServiceLibrary.Service.Interfaces
+namespace SelfServiceLibrary.BL.Interfaces
 {
     public interface ICardService
     {
