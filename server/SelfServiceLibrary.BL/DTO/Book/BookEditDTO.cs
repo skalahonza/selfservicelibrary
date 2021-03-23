@@ -1,4 +1,6 @@
-﻿namespace SelfServiceLibrary.BL.DTO.Book
+﻿using System;
+
+namespace SelfServiceLibrary.BL.DTO.Book
 {
     public class BookEditDTO
     {
@@ -22,5 +24,7 @@
         public string? ISBNorISSN { get; set; }
         public string? NFCIdent { get; set; }
         public string? BarCode { get; set; }
+        public bool StsLocal { get; set; }
+        public bool StsUK { get; set; }
     }
 }

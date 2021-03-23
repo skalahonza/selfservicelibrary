@@ -121,6 +121,11 @@ namespace SelfServiceLibrary.DAL.Entities
         public DateTime? Entered { get; set; }
 
         /// <summary>
+        /// Vloženo kým - Kým byl záznam o publikaci vložen (doplnit automaticky při vložení)
+        /// </summary>
+        public string? EnteredBy { get; set; }
+
+        /// <summary>
         /// Určuje zda je kniha k zapůjčení
         /// </summary>
         public bool IsAvailable { get; set; }

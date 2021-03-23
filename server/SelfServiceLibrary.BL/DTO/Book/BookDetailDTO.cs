@@ -28,6 +28,10 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? MagazineNumber { get; set; }
         public int? MagazineYear { get; set; }
         public string? ISBNorISSN { get; set; }
+        public bool StsLocal { get; set; }
+        public bool StsUK { get; set; }
+        public DateTime? Entered { get; set; }
+        public string? EnteredBy { get; set; }
 
         public string? CurrentIssueIssuedTo { get; set; }
         public DateTime? CurrentIssueIssueDate { get; set; }
