@@ -15,19 +15,25 @@
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
     <BarBrand>
-        @DepartmentNumber
+        Book detail
     </BarBrand>
-    <BarEnd>
-        <BarItem>
-            @book?.StatusName
-        </BarItem>
-    </BarEnd>
 </Bar>
 
 <Container Fluid="true">
     @if (book != null)
     {
+        <Row>
+            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                <h1>Publication ID: <b>@DepartmentNumber</b></h1>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop" class="text-right">
+                <h2>IntStatus: <b>@book.StatusName</b></h2>
+            </Column>
+        </Row>
+
+
         <AuthorizeView>
+            <Divider />
             <div class="float-right">
                 <Button Disabled="@(!book.IsAvailable || !book.StatusCanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
                 <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
@@ -39,6 +45,7 @@
             <Button Disabled="@(!edit)" Color="Color.Success">Save</Button>
             <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
         </AuthorizeView>
+
 
         <AuthorizeView>
             <Divider />
