@@ -34,6 +34,13 @@ namespace SelfServiceLibrary.CSV
             return null;
         }
 
+        private static decimal? TryParseDecimal(string? value)
+        {
+            if (decimal.TryParse(value, out var number))
+                return number;
+            return null;
+        }
+
         public async IAsyncEnumerable<BookImportCsvDTO> ImportBooks(Stream stream)
         {
             using var reader = new StreamReader(stream);
@@ -78,7 +85,7 @@ namespace SelfServiceLibrary.CSV
                     MagazineNumber = csv.GetField(15),
                     MagazineYear = TryParseInt(csv.GetField(16)),
                     Conference = csv.GetField(17),
-                    Price = TryParseDouble(csv.GetField(18)),
+                    Price = TryParseDecimal(csv.GetField(18)),
                     Keywords = csv.GetField(19).Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToList(),
                     Note = csv.GetField(20),
                     FormType = csv.GetField(25),

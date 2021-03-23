@@ -47,6 +47,21 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
 
+        public async Task<Dictionary<string, int>> GetFormTypes()
+        {
+            var types = await _dbContext
+                .Books
+                .Aggregate()
+                .Group(x => x.FormType, x => new
+                {
+                    Type = x.Key,
+                    Count = x.Count()
+                }).ToListAsync();
+            return types
+                .Where(x => !string.IsNullOrEmpty(x.Type))
+                .ToDictionary(x => x.Type, x => x.Count);
+        }
+
         public async Task<Dictionary<string, int>> GetPublicationTypes()
         {
             var types = await _dbContext

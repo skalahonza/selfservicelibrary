@@ -24,7 +24,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? MagazineNumber { get; set; }
         public int? MagazineYear { get; set; }
         public string? Conference { get; set; }
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
         public List<string> Keywords { get; set; } = new List<string>();
         public string? Note { get; set; }
         public string? FormType { get; set; }

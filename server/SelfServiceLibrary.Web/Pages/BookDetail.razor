@@ -1,14 +1,17 @@
 ﻿@page "/books/{departmentNumber}"
 
-@using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.Issue
+@using SelfServiceLibrary.BL.Interfaces
+@using SelfServiceLibrary.BL.Services
 @using Microsoft.AspNetCore.Components.Authorization
+@using SelfServiceLibrary.Web.Policies
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject BookService bookService
 @inject IssueService issueService
+@inject IMapper mapper
 
-<Bar Breakpoint="Breakpoint.Desktop" 
+<Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
     <BarBrand>
@@ -37,28 +40,315 @@
         <h5>NFC: @book.NFCIdent</h5>
 
         <AuthorizeView>
-            <Authorized>
-                <BarItem>
-                    <Button Disabled="@(!book.IsAvailable)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-                    <Button Disabled="@(book.IsAvailable)" Color="Color.Primary" >Return</Button>
-                </BarItem>
-            </Authorized>
+            <Button Disabled="@(!book.IsAvailable)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+            <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
         </AuthorizeView>
 
-        <br />
-        <h3>History</h3>
+        <Divider />
 
-        <DataGrid RowSelectable=@(_ => false)
-                  TItem="IssueListlDTO"
-                  Data="@issues"
-                  ShowPager="true"
-                  PagerPosition="DataGridPagerPosition.Top"
-                  PageSize="10">
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
-        </DataGrid>
+        <AuthorizeView Policy="@LibrarianPolicy.NAME">
+            <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Light">Edit</Button>
+            <Button Disabled="@(!edit)" Color="Color.Success">Save</Button>
+        </AuthorizeView>
+
+        <Validations Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@editBook">
+            <Fields>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Publication type</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.PublicationType" ReadOnly="isReadonly" list="types">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                        <datalist id="types">
+                            @foreach (var type in bookTypes)
+                            {
+                                <option>@type</option>
+                            }
+                        </datalist>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Form type</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.FormType" ReadOnly="isReadonly" list="formTypes">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                        <datalist id="formTypes">
+                            @foreach (var type in formTypes)
+                            {
+                                <option>@type</option>
+                            }
+                        </datalist>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Depended</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.Depended" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+            </Fields>
+
+            <Divider />
+
+            <Validation>
+                <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    <TextEdit @bind-Text="@editBook.Name" ReadOnly="isReadonly">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+            <Fields>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <FieldLabel>Author</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.Author" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+
+                <!-- TODO CO-AUTHORS-->
+            </Fields>
+
+            <!-- TODO KEYWORDS-->
+
+            <Validation>
+                <Field>
+                    <FieldLabel>Conference</FieldLabel>
+                    <TextEdit @bind-Text="@editBook.Conference" ReadOnly="isReadonly">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+            <Validation>
+                <Field>
+                    <FieldLabel>Note</FieldLabel>
+                    <MemoEdit @bind-Text="@editBook.Note" ReadOnly="isReadonly" Rows="5">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </MemoEdit>
+                </Field>
+            </Validation>
+
+            <Divider />
+
+            <Fields>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                        <FieldLabel>Year of publication</FieldLabel>
+                        <NumericEdit TValue="int?" @bind-Value="@editBook.YearOfPublication" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </NumericEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                        <FieldLabel>Publication</FieldLabel>
+                        <NumericEdit TValue="int?" @bind-Value="@editBook.Publication" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </NumericEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                        <FieldLabel>Pages</FieldLabel>
+                        <NumericEdit TValue="int?" @bind-Value="@editBook.Pages" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </NumericEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                        <FieldLabel>Price</FieldLabel>
+                        <Addons>
+                            <Addon AddonType="AddonType.Start">
+                                <AddonLabel>CZK</AddonLabel>
+                            </Addon>
+                            <Addon AddonType="AddonType.Body">
+                                <NumericEdit TValue="decimal?" @bind-Value="@editBook.Price" ReadOnly="isReadonly">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericEdit>
+                            </Addon>
+                        </Addons>
+                    </Field>
+                </Validation>
+            </Fields>
+
+            <Fields>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <FieldLabel>Magazine number</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.MagazineNumber" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <FieldLabel>Magazine year</FieldLabel>
+                        <NumericEdit TValue="int?" @bind-Value="@editBook.MagazineYear" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </NumericEdit>
+                    </Field>
+                </Validation>
+            </Fields>
+
+            <Fields>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>ISBN/ISSN</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.ISBNorISSN" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Country of publication</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.CountryOfPublication" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Publisher</FieldLabel>
+                        <TextEdit @bind-Text="@editBook.Publisher" ReadOnly="isReadonly">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+            </Fields>
+
+            @if (!book.IsAvailable)
+            {
+                <Divider />
+
+                <Fields>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Issued to</FieldLabel>
+                        <TextEdit @bind-Text="@book.CurrentIssueIssuedTo" ReadOnly="true" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Issued since</FieldLabel>
+                        <DateEdit TValue="DateTime?" Date="@book.CurrentIssueIssueDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                    </Field>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                        <FieldLabel>Issued till</FieldLabel>
+                        <DateEdit TValue="DateTime?" Date="@book.CurrentIssueExpiryDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                    </Field>
+                </Fields>
+            }
+
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Divider />
+
+                <Fields>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>Department number</FieldLabel>
+                            <TextEdit @bind-Text="@book.DepartmentNumber" ReadOnly="true">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Evidenční číslo oddělení</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>System number</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.SystemNumber" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Systémové číslo</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>FEL number</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.FelNumber" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Evidenční číslo FEL</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>Bar code</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.BarCode" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Čárový kód</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                </Fields>
+
+                <Divider />
+                <h3>History</h3>
+
+                <DataGrid RowSelectable=@(_ => false)
+                          TItem="IssueListlDTO"
+                          Data="@issues"
+                          ShowPager="true"
+                          PagerPosition="DataGridPagerPosition.Top"
+                          PageSize="10">
+                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+                </DataGrid>
+            </AuthorizeView>
+        </Validations>
     }
     else
     {
@@ -70,16 +360,27 @@
 
 
 @code {
+    private bool edit = false;
+    private bool isReadonly => !edit;
     private BookDetailDTO book = new BookDetailDTO();
+    private BookEditDTO editBook = new BookEditDTO();
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+    private List<string> bookTypes = new List<string>();
+    private List<string> formTypes = new List<string>();
 
     [Parameter]
     public string DepartmentNumber { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        formTypes = (await bookService.GetFormTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
+        bookTypes = (await bookService.GetPublicationTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
         book = await bookService.GetDetail(DepartmentNumber);
-        issues = await issueService.GetAll(book);
+        if (book != null)
+        {
+            editBook = mapper.Map<BookEditDTO>(book);
+            issues = await issueService.GetAll(book);
+        }
     }
 
     private async Task Borrow()
@@ -92,6 +393,5 @@
         });
         book.IsAvailable = false;
         issues = await issueService.GetAll(book);
-        // StateHasChanged();
     }
 }

@@ -14,6 +14,7 @@ namespace SelfServiceLibrary.Mapping.Profiles
             CreateMap<Book, BookListDTO>();
             CreateMap<Book, BookSearchDTO>();
             CreateMap<Book, BookDetailDTO>();
+            CreateMap<BookDetailDTO, BookEditDTO>();
         }
     }
 }

@@ -103,7 +103,7 @@ namespace SelfServiceLibrary.DAL.Entities
         /// <summary>
         /// Cena – Cena publikace (pokud je uvedena) v CZK
         /// </summary>
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
 
         /// <summary>
         /// Klíčová-Slova – Klíčová charakterizující publikaci
