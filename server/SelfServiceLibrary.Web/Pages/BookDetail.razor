@@ -17,39 +17,31 @@
     <BarBrand>
         @DepartmentNumber
     </BarBrand>
+    <BarEnd>
+        <BarItem>
+            @book?.StatusName
+        </BarItem>
+    </BarEnd>
 </Bar>
 
 <Container Fluid="true">
     @if (book != null)
     {
-        <h2>@book.Name <Badge Color="Color.Primary">@book.PublicationType</Badge></h2>
-
-        <h3>@book.Author <Badge Color="Color.Secondary">Author</Badge> </h3>
-
-        @if (book.CoAuthors.Any())
-        {
-            <h4>@string.Join(", ", book.CoAuthors) <Badge Color="Color.Secondary">Co-Authors</Badge></h4>
-        }
-
-        @if (book.Keywords.Any())
-        {
-            <h5>Keywords</h5>
-            <Keywords Words="book.Keywords" />
-        }
-
-        <h5>NFC: @book.NFCIdent</h5>
-
         <AuthorizeView>
-            <Button Disabled="@(!book.IsAvailable)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-            <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
+            <div class="float-right">
+                <Button Disabled="@(!book.IsAvailable || !book.StatusCanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+                <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
+            </div>
         </AuthorizeView>
-
-        <Divider />
 
         <AuthorizeView Policy="@LibrarianPolicy.NAME">
             <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Light">Edit</Button>
             <Button Disabled="@(!edit)" Color="Color.Success">Save</Button>
             <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+        </AuthorizeView>
+
+        <AuthorizeView>
+            <Divider />
         </AuthorizeView>
 
         <Validations Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@editBook">
@@ -276,121 +268,121 @@
                 </Fields>
             }
 
-        <AuthorizeView Policy="@LibrarianPolicy.NAME">
-            <Divider />
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Divider />
 
-            <Fields>
-                <Validation>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
-                        <FieldLabel>Department number</FieldLabel>
-                        <TextEdit @bind-Text="@book.DepartmentNumber" ReadOnly="true">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                            <ChildContent>
-                                <FieldHelp>Evidenční číslo oddělení</FieldHelp>
-                            </ChildContent>
-                        </TextEdit>
-                    </Field>
-                </Validation>
-                <Validation>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
-                        <FieldLabel>System number</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.SystemNumber" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                            <ChildContent>
-                                <FieldHelp>Systémové číslo</FieldHelp>
-                            </ChildContent>
-                        </TextEdit>
-                    </Field>
-                </Validation>
-                <Validation>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
-                        <FieldLabel>FEL number</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.FelNumber" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                            <ChildContent>
-                                <FieldHelp>Evidenční číslo FEL</FieldHelp>
-                            </ChildContent>
-                        </TextEdit>
-                    </Field>
-                </Validation>
-                <Validation>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
-                        <FieldLabel>Bar code</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.BarCode" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                            <ChildContent>
-                                <FieldHelp>Čárový kód</FieldHelp>
-                            </ChildContent>
-                        </TextEdit>
-                    </Field>
-                </Validation>
-            </Fields>
+                <Fields>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>Department number</FieldLabel>
+                            <TextEdit @bind-Text="@book.DepartmentNumber" ReadOnly="true">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Evidenční číslo oddělení</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>System number</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.SystemNumber" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Systémové číslo</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>FEL number</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.FelNumber" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Evidenční číslo FEL</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                            <FieldLabel>Bar code</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.BarCode" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                                <ChildContent>
+                                    <FieldHelp>Čárový kód</FieldHelp>
+                                </ChildContent>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                </Fields>
 
-            <Divider />
-            <Fields>
-                <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                    <FieldLabel>Entered at</FieldLabel>
-                    <DateEdit TValue="DateTime?" Date="@book.Entered" InputMode="DateInputMode.DateTime" ReadOnly="true" />
-                </Field>
-                <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                    <FieldLabel>Entered by</FieldLabel>
-                    <TextEdit Text="@book.EnteredBy" ReadOnly="true" />
-                </Field>
-            </Fields>
-            <Fields>
-                <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                    <Check TValue="bool" @bind-Checked="@editBook.StsLocal" ReadOnly="isReadonly" Disabled="isReadonly">StsCheck</Check>
-                </Field>
-                <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                    <Check TValue="bool" @bind-Checked="@editBook.StsUK" ReadOnly="isReadonly" Disabled="isReadonly">StsUK</Check>
-                </Field>
-            </Fields>
-            <Fields>
-                <Validation>
+                <Divider />
+                <Fields>
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                        <FieldLabel>NFC</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                        </TextEdit>
+                        <FieldLabel>Entered at</FieldLabel>
+                        <DateEdit TValue="DateTime?" Date="@book.Entered" InputMode="DateInputMode.DateTime" ReadOnly="true" />
                     </Field>
-                </Validation>
-                <Validation>
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                        <FieldLabel>QR</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                        </TextEdit>
+                        <FieldLabel>Entered by</FieldLabel>
+                        <TextEdit Text="@book.EnteredBy" ReadOnly="true" />
                     </Field>
-                </Validation>
-            </Fields>
+                </Fields>
+                <Fields>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <Check TValue="bool" @bind-Checked="@editBook.StsLocal" ReadOnly="isReadonly" Disabled="isReadonly">StsCheck</Check>
+                    </Field>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <Check TValue="bool" @bind-Checked="@editBook.StsUK" ReadOnly="isReadonly" Disabled="isReadonly">StsUK</Check>
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                            <FieldLabel>NFC code</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                            <FieldLabel>QR code</FieldLabel>
+                            <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                </Fields>
 
-            <Divider />
-            <h3>History</h3>
+                <Divider />
+                <h3>History</h3>
 
-            <DataGrid RowSelectable=@(_ => false)
-                      TItem="IssueListlDTO"
-                      Data="@issues"
-                      ShowPager="true"
-                      PagerPosition="DataGridPagerPosition.Top"
-                      PageSize="10">
-                <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
-                <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
-                <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
-                <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
-            </DataGrid>
-        </AuthorizeView>
+                <DataGrid RowSelectable=@(_ => false)
+                          TItem="IssueListlDTO"
+                          Data="@issues"
+                          ShowPager="true"
+                          PagerPosition="DataGridPagerPosition.Top"
+                          PageSize="10">
+                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+                </DataGrid>
+            </AuthorizeView>
         </Validations>
     }
     else

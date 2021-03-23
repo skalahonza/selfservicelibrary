@@ -36,5 +36,9 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? CurrentIssueIssuedTo { get; set; }
         public DateTime? CurrentIssueIssueDate { get; set; }
         public DateTime? CurrentIssueExpiryDate { get; set; }
+
+        public string? StatusName { get; set; }
+        public bool StatusIsVissible { get; set; }
+        public bool StatusCanBeBorrowed { get; set; }
     }
 }
