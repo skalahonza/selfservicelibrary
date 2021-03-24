@@ -36,7 +36,7 @@
             <Divider />
             <div class="float-right">
                 <Button Disabled="@(!book.IsAvailable || !book.StatusCanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-                <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
+                <Button Disabled="@(book.IsAvailable || context.User.Identity.Name != book.CurrentIssueIssuedTo)" Color="Color.Primary" Clicked="Return">Return</Button>
             </div>
         </AuthorizeView>
 
@@ -433,8 +433,19 @@
             DepartmentNumber = book.DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
         });
-        book.IsAvailable = false;
+        book = await bookService.GetDetail(DepartmentNumber);
         issues = await issueService.GetAll(book);
+    }
+
+    private async Task Return()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if(state.User.Identity.Name == book.CurrentIssueIssuedTo)
+        {
+            await issueService.Return(book.CurrentIssueId);
+            book = await bookService.GetDetail(DepartmentNumber);
+            issues = await issueService.GetAll(book);
+        }
     }
 
     private async Task Update()

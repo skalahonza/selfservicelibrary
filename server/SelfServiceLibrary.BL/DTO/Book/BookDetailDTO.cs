@@ -34,6 +34,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public DateTime? Entered { get; set; }
         public string? EnteredBy { get; set; }
 
+        public string? CurrentIssueId { get; set; }
         public string? CurrentIssueIssuedTo { get; set; }
         public DateTime? CurrentIssueIssueDate { get; set; }
         public DateTime? CurrentIssueExpiryDate { get; set; }

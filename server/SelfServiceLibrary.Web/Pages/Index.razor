@@ -7,15 +7,19 @@
     <JumbotronSubtitle>
         Online Self service library for university departments.
     </JumbotronSubtitle>
-    <Divider></Divider>
+    <Divider />
+    <p>
+        We use official <a href="https://auth.fit.cvut.cz/" target="_blank">CVUT authorization server</a>.
+        We do not store your password anywhere. All user's personal data are fetched from <a href="https://usermap.cvut.cz/search" target="_blank">USERMAP</a>.
+        If you decide to borrow a book your first and last name will be stored together with your contact information.
+        You can always export everything the system knows about and once you returned all the books you can request an information deletion.
+    </p>
     <AuthorizeView>
         <NotAuthorized>
             <Paragraph>
                 <p>
-                    You can begin by logging in with your university credentials. We use
-                    official <a href="https://auth.fit.cvut.cz/" target="_blank">CVUT authorization server</a>.
-                    We do not store your password or personal information anywhere.
-                </p>      
+                    You can begin by logging in with your university credentials.
+                </p>
                 <a href="/login" class="btn btn-primary">Login with CVUT</a>
             </Paragraph>
         </NotAuthorized>
