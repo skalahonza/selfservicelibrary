@@ -10,7 +10,6 @@ namespace SelfServiceLibrary.Mapping.Profiles
         public BookProfile()
         {
             CreateMap<BookAddDTO, Book>(MemberList.Source);
-            CreateMap<BookEditDTO, Book>(MemberList.Source);
             CreateMap<Book, BookListDTO>();
             CreateMap<Book, BookSearchDTO>();
             CreateMap<Book, BookDetailDTO>();

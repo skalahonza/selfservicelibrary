@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SelfServiceLibrary.BL.DTO.Book
+﻿namespace SelfServiceLibrary.BL.DTO.Book
 {
     public class BookEditDTO
     {

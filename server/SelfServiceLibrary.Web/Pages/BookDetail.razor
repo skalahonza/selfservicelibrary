@@ -41,8 +41,8 @@
         </AuthorizeView>
 
         <AuthorizeView Policy="@LibrarianPolicy.NAME">
-            <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Light">Edit</Button>
-            <Button Disabled="@(!edit)" Color="Color.Success">Save</Button>
+            <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
+            <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
             <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
         </AuthorizeView>
 
@@ -51,7 +51,7 @@
             <Divider />
         </AuthorizeView>
 
-        <Validations Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@editBook">
+        <Validations @ref="validations" Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@editBook">
             <Fields>
                 <Validation>
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
@@ -402,6 +402,7 @@
 
 
 @code {
+    Validations validations;
     private bool edit = false;
     private bool isReadonly => !edit;
     private BookDetailDTO book = new BookDetailDTO();
@@ -437,8 +438,18 @@
         issues = await issueService.GetAll(book);
     }
 
+    private async Task Update()
+    {
+        await bookService.Update(book.DepartmentNumber, editBook);
+        book = await bookService.GetDetail(DepartmentNumber);
+        editBook = mapper.Map<BookEditDTO>(book);
+        edit = false;
+        validations.ClearAll();
+    }
+
     private void Cancel()
     {
+        validations.ClearAll();
         editBook = mapper.Map<BookEditDTO>(book);
         edit = false;
     }
