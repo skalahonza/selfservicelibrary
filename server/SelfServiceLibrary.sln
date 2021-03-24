@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Mapping.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Card.Authentication", "SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj", "{20FFBAB3-FB8A-4C53-952D-4135F6AEDCC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfServiceLibrary.DAL", "SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj", "{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.DAL", "SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj", "{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -17,10 +17,10 @@
     <BarMenu>
         <BarStart>
             <BarItem>
+                <Button Color="Color.Success" Clicked="@(() => addBookModal.Show())">Add</Button>
+            </BarItem>
+            <BarItem>
                 <Inline>
-                    <Field>
-                        <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
-                    </Field>
                     <Field Margin="Margin.Is3.OnX.OnTablet">
                         <Label>Import CSV</Label>
                     </Field>
@@ -28,6 +28,9 @@
                         <InputFile OnChange="@OnInputFileChange" accept=".csv, .txt" multiple>Import CSV</InputFile>
                     </Field>
                 </Inline>
+            </BarItem>
+            <BarItem>
+                <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
             </BarItem>
         </BarStart>
     </BarMenu>
@@ -84,16 +87,16 @@
                                     <div><Keywords Words="context.Keywords" /></div>
                                     <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
                                         @{
-                                        var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
+                                            var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
                                             @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
                                         }
 
                                         @if (!string.IsNullOrEmpty(context.Note))
-                                    {
-                                        <Tooltip Text="@context.Note" Placement="Placement.Top">
-                                            <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
-                                        </Tooltip>
-                                    }
+                                        {
+                                            <Tooltip Text="@context.Note" Placement="Placement.Top">
+                                                <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
+                                            </Tooltip>
+                                        }
                                     </AuthorizeView>
                                 </DisplayTemplate>
                             </DataGridColumn>
@@ -101,17 +104,17 @@
                             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="true" Caption="Publication">
                                 <DisplayTemplate>
                                     @if (context.YearOfPublication.HasValue)
-                                {
-                                    <div><Badge>Year: @context.YearOfPublication</Badge></div>
-                                }
+                                    {
+                                        <div><Badge>Year: @context.YearOfPublication</Badge></div>
+                                    }
                                     @if (context.Pages.HasValue)
-                                {
-                                    <div><Badge>Pages: @context.Pages</Badge></div>
-                                }
+                                    {
+                                        <div><Badge>Pages: @context.Pages</Badge></div>
+                                    }
                                     @if (context.Publication.HasValue)
-                                {
-                                    <div><Badge>Edition: @context.Publication</Badge></div>
-                                }
+                                    {
+                                        <div><Badge>Edition: @context.Publication</Badge></div>
+                                    }
                                 </DisplayTemplate>
                             </DataGridColumn>
                             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
@@ -124,9 +127,9 @@
                                         </Check>
                                         <div><Badge Color="Color.Light">@context.FormType</Badge></div>
                                         @if (context.StatusName != "Default")
-                                    {
-                                        <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
-                                    }
+                                        {
+                                            <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
+                                        }
                                     </div>
                                 </DisplayTemplate>
                             </DataGridColumn>
@@ -137,6 +140,8 @@
         </Content>
     </Tabs>
 </Container>
+
+<AddBookDialog @ref="addBookModal" />
 
 <style>
     th {
@@ -149,6 +154,8 @@
 </style>
 
 @code {
+    private AddBookDialog addBookModal;
+
     private string selectedPublicationType;
 
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();

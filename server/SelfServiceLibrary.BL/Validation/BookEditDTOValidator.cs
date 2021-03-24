@@ -9,6 +9,7 @@ namespace SelfServiceLibrary.BL.Validation
     {
         public BookEditDTOValidator()
         {
+            RuleFor(x => x.PublicationType).NotEmpty().Length(1, 100);
             RuleFor(x => x.Name).Length(0, 100);
         }
     }

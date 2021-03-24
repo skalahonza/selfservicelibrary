@@ -9,9 +9,10 @@ namespace SelfServiceLibrary.BL.Validation
     {
         public BookAddDTOValidator()
         {
-            RuleFor(x => x.DepartmentNumber).NotEmpty().Length(0, 100);
-            RuleFor(x => x.Name).NotEmpty().Length(0, 100);
-            RuleFor(x => x.Author).NotEmpty().Length(0, 100);
+            RuleFor(x => x.DepartmentNumber).NotEmpty().Length(1, 100);
+            RuleFor(x => x.PublicationType).NotEmpty().Length(1, 100);
+            RuleFor(x => x.EnteredBy).NotEmpty().Length(1, 100);
+            RuleFor(x => x.Entered).NotEmpty();
         }
     }
 }

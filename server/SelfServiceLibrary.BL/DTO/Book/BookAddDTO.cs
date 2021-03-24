@@ -1,9 +1,12 @@
-﻿namespace SelfServiceLibrary.BL.DTO.Book
+﻿using System;
+
+namespace SelfServiceLibrary.BL.DTO.Book
 {
     public class BookAddDTO
     {
-        public string? Name { get; set; }
-        public string? Author { get; set; }
         public string? DepartmentNumber { get; set; }
+        public string? PublicationType { get; set; }
+        public string? EnteredBy { get; set; }
+        public DateTime? Entered { get; set; }
     }
 }

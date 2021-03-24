@@ -126,9 +126,9 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? EnteredBy { get; set; }
 
         /// <summary>
-        /// Určuje zda je kniha k zapůjčení
+        /// Určuje zda je kniha volná (nikdo si ji nepůjčil)
         /// </summary>
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get; set; } = true;
 
         /// <summary>
         /// Stav knihy

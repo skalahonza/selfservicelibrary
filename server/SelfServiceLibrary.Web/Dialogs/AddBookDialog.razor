@@ -1,0 +1,90 @@
+﻿@using SelfServiceLibrary.BL.DTO.Book
+@using SelfServiceLibrary.BL.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject BookService bookService
+@inject NavigationManager uriHelper
+
+<Modal @ref="modalRef">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Add book</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Validations Mode="ValidationMode.Auto" Model="@book" @ref="validations">
+                <Validation>
+                    <Field>
+                        <FieldLabel>Department number</FieldLabel>
+                        <TextEdit @bind-Text="@book.DepartmentNumber" Placeholder="GL-00xxx">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                            <ChildContent>
+                                <FieldHelp>Evidenční číslo oddělení</FieldHelp>
+                            </ChildContent>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+                <Validation>
+                    <Field>
+                        <FieldLabel>Publication type</FieldLabel>
+                        <TextEdit @bind-Text="@book.PublicationType"  list="types">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                        <datalist id="types">
+                            @foreach (var type in bookTypes)
+                            {
+                                <option>@type</option>
+                            }
+                        </datalist>
+                    </Field>
+                </Validation>
+            </Validations>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="@Create">Save</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private Modal modalRef;
+    private Validations validations;
+
+    private BookAddDTO book = new BookAddDTO();
+    private List<string> bookTypes = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        bookTypes = (await bookService.GetPublicationTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
+    }
+
+    private async Task Create()
+    {
+        if (validations.ValidateAll())
+        {
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            book.Entered = DateTime.UtcNow;
+            book.EnteredBy = state.User.Identity.Name;
+            await bookService.Create(book);
+
+            uriHelper.NavigateTo($"books/{book.DepartmentNumber}");
+            HideModal();
+        }
+    }
+
+    public void Show() =>
+        modalRef.Show();
+
+    private void HideModal()
+    {
+        modalRef.Hide();
+        book = new BookAddDTO();
+    }
+}

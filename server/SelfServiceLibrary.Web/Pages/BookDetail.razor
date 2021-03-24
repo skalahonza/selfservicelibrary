@@ -279,19 +279,18 @@
                 <Divider />
 
                 <Fields>
-                    <Validation>
-                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
-                            <FieldLabel>Department number</FieldLabel>
-                            <TextEdit @bind-Text="@book.DepartmentNumber" ReadOnly="true">
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                                <ChildContent>
-                                    <FieldHelp>Evidenční číslo oddělení</FieldHelp>
-                                </ChildContent>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
+                        <FieldLabel>Department number</FieldLabel>
+                        <TextEdit @bind-Text="@book.DepartmentNumber" ReadOnly="true">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                            <ChildContent>
+                                <FieldHelp>Evidenční číslo oddělení</FieldHelp>
+                            </ChildContent>
+                        </TextEdit>
+                    </Field>
+
                     <Validation>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
                             <FieldLabel>System number</FieldLabel>
@@ -440,11 +439,14 @@
 
     private async Task Update()
     {
-        await bookService.Update(book.DepartmentNumber, editBook);
-        book = await bookService.GetDetail(DepartmentNumber);
-        editBook = mapper.Map<BookEditDTO>(book);
-        edit = false;
-        validations.ClearAll();
+        if (validations.ValidateAll())
+        {
+            await bookService.Update(book.DepartmentNumber, editBook);
+            book = await bookService.GetDetail(DepartmentNumber);
+            editBook = mapper.Map<BookEditDTO>(book);
+            edit = false;
+            validations.ClearAll();
+        }
     }
 
     private void Cancel()

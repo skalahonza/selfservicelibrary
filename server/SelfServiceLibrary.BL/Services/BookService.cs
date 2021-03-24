@@ -115,6 +115,15 @@ namespace SelfServiceLibrary.BL.Services
             return _mapper.Map<List<BookSearchDTO>>(results);
         }
 
+        public Task Create(BookAddDTO data)
+        {
+            // TODO check uniqueness
+
+            return _dbContext
+                .Books
+                .InsertOneAsync(_mapper.Map<Book>(data));
+        }
+
         public Task Update(string departmentNumber, BookEditDTO data)
         {
             var update = Builders<Book>.Update
