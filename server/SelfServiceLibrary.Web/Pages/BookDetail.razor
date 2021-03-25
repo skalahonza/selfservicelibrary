@@ -60,6 +60,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Druh publikace</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                         <datalist id="types">
                             @foreach (var type in bookTypes)
@@ -76,6 +81,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Fyzický stav nebo podoba knihy</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                         <datalist id="formTypes">
                             @foreach (var type in formTypes)
@@ -92,6 +102,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Dependováno – Fyzická část knihovny, kde je publikace uložena.</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                     </Field>
                 </Validation>
@@ -106,6 +121,11 @@
                         <Feedback>
                             <ValidationError />
                         </Feedback>
+                        <ChildContent>
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Název knihy</FieldHelp>
+                            </AuthorizeView>
+                        </ChildContent>
                     </TextEdit>
                 </Field>
             </Validation>
@@ -117,6 +137,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>První / hlavní autor, u sborníku většinou editor</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                     </Field>
                 </Validation>
@@ -133,6 +158,11 @@
                         <Feedback>
                             <ValidationError />
                         </Feedback>
+                        <ChildContent>
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Konference – Z jaké konference je (sborník)</FieldHelp>
+                            </AuthorizeView>
+                        </ChildContent>
                     </TextEdit>
                 </Field>
             </Validation>
@@ -143,6 +173,11 @@
                         <Feedback>
                             <ValidationError />
                         </Feedback>
+                        <ChildContent>
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Poznámka</FieldHelp>
+                            </AuthorizeView>
+                        </ChildContent>
                     </MemoEdit>
                 </Field>
             </Validation>
@@ -157,6 +192,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Rok vydání publikace</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </NumericEdit>
                     </Field>
                 </Validation>
@@ -167,6 +207,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Pořadové číslo vydání (verze)</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </NumericEdit>
                     </Field>
                 </Validation>
@@ -177,6 +222,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Počet stran</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </NumericEdit>
                     </Field>
                 </Validation>
@@ -192,9 +242,13 @@
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
+
                                 </NumericEdit>
                             </Addon>
                         </Addons>
+                        <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                            <FieldHelp>Cena v korunách českých</FieldHelp>
+                        </AuthorizeView>
                     </Field>
                 </Validation>
             </Fields>
@@ -207,6 +261,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Číslo časopisu</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                     </Field>
                 </Validation>
@@ -217,6 +276,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Ročník časopisu</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </NumericEdit>
                     </Field>
                 </Validation>
@@ -240,6 +304,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Země kde byla publikace vydána</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                     </Field>
                 </Validation>
@@ -250,6 +319,11 @@
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
+                            <ChildContent>
+                                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                    <FieldHelp>Kdo publikaci vydal (nakladatel)</FieldHelp>
+                                </AuthorizeView>
+                            </ChildContent>
                         </TextEdit>
                     </Field>
                 </Validation>
@@ -257,21 +331,30 @@
 
             @if (!book.IsAvailable)
             {
-                <AuthorizeView>
+                <AuthorizeView Context="none">
                     <Divider />
 
                     <Fields>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
                             <FieldLabel>Issued to</FieldLabel>
                             <TextEdit @bind-Text="@book.CurrentIssueIssuedTo" ReadOnly="true" />
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Zapůjčeno komu</FieldHelp>
+                            </AuthorizeView>
                         </Field>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
                             <FieldLabel>Issued since</FieldLabel>
                             <DateEdit TValue="DateTime?" Date="@book.CurrentIssueIssueDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Zapůjčeno od</FieldHelp>
+                            </AuthorizeView>
                         </Field>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
                             <FieldLabel>Issued till</FieldLabel>
                             <DateEdit TValue="DateTime?" Date="@book.CurrentIssueExpiryDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <FieldHelp>Zapůjčeno do</FieldHelp>
+                            </AuthorizeView>
                         </Field>
                     </Fields>
                 </AuthorizeView>
@@ -339,10 +422,12 @@
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                         <FieldLabel>Entered at</FieldLabel>
                         <DateEdit TValue="DateTime?" Date="@book.Entered" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                        <FieldHelp>Vloženo</FieldHelp>
                     </Field>
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                         <FieldLabel>Entered by</FieldLabel>
                         <TextEdit Text="@book.EnteredBy" ReadOnly="true" />
+                        <FieldHelp>Vloženo kým</FieldHelp>
                     </Field>
                 </Fields>
                 <Fields>

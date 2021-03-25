@@ -13,7 +13,7 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? Name { get; set; }
 
         /// <summary>
-        /// První / hlavní autor, u sborníku většinou edito
+        /// První / hlavní autor, u sborníku většinou editor
         /// </summary>
         public string? Author { get; set; }
 
@@ -23,12 +23,12 @@ namespace SelfServiceLibrary.DAL.Entities
         public List<string> CoAuthors { get; set; } = new List<string>();
 
         /// <summary>
-        /// Druh-Publikace – Typ publikace podle knihovny (GL, CMP, …)
+        /// Druh publikace – Typ publikace podle knihovny (GL, CMP, …)
         /// </summary>
         public string? PublicationType { get; set; }
 
         /// <summary>
-        /// Deponováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
+        /// Dependováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
         /// </summary>
         public string? Depended { get; set; }
 
@@ -56,7 +56,7 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? BarCode { get; set; }
 
         /// <summary>
-        /// Rok-Vydání – Rok vydání publikace
+        /// Rok vydání – Rok vydání publikace
         /// </summary>
         public int? YearOfPublication { get; set; }
 
