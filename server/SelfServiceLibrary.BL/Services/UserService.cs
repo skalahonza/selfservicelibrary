@@ -15,56 +15,52 @@ using SelfServiceLibrary.DAL.Enums;
 
 namespace SelfServiceLibrary.BL.Services
 {
-    public class LibrarianService
+    public class UserService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public LibrarianService(MongoDbContext dbContext, IMapper mapper)
+        public UserService(MongoDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
 
-        private Task<UpdateResult> AddRole(string username, Role role) =>
-            _dbContext
+        public async Task<bool> AddRole(string username, Role role) =>
+            (await _dbContext
                 .Users
                 .UpdateOneAsync(
                     x => x.Username == username,
                     Builders<User>.Update.AddToSet(x => x.Roles, role),
-                    new UpdateOptions { IsUpsert = true });
+                    new UpdateOptions { IsUpsert = true })) switch
+            {
+                { MatchedCount: 1, ModifiedCount: 0 } => false, // user was already in a role
+                _ => true
+            };
 
-        private Task<UpdateResult> RemoveRole(string username, Role role) =>
-            _dbContext
+        public async Task<bool> RemoveRole(string username, Role role) =>
+            (await _dbContext
                 .Users
                 .UpdateOneAsync(
                     x => x.Username == username,
-                    Builders<User>.Update.Pull(x => x.Roles, role));
+                    Builders<User>.Update.Pull(x => x.Roles, role))) switch
+            {
+                { MatchedCount: 1, ModifiedCount: 0 } => false, // user was not in a role
+                _ => true
+            };
 
-        public Task<List<UserListDTO>> GetAll() =>
+        public Task<List<UserListDTO>> GetAll(Role role) =>
             _dbContext
                 .Users
                 .AsQueryable()
-                .Where(x => x.Roles.Contains(Role.Librarian))
+                .Where(x => x.Roles.Contains(role))
                 .ProjectTo<User, UserListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<bool> IsLibrarian(string username) =>
+        public Task<bool> IsInRole(string username, Role role) =>
             _dbContext
                 .Users
-                .Find(x => x.Username == username && x.Roles.Contains(Role.Librarian))
+                .Find(x => x.Username == username && x.Roles.Contains(role))
                 .AnyAsync();
-
-        public Task AddLibrarian(string username)
-        {
-            // TODO handle user not found
-            return AddRole(username, Role.Librarian);
-        }
-
-        public Task RemoveLibrarian(string username)
-        {
-            // TODO handle user not found
-            return RemoveRole(username, Role.Librarian);
-        }
     }
 }

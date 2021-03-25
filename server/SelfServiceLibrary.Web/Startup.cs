@@ -143,7 +143,7 @@ namespace SelfServiceLibrary.Web
                                     // refresh USERMAP roles
                                     var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
                                     var adminOptions = context.HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<AdminOptions>>();
-                                    var librarianService = context.HttpContext.RequestServices.GetRequiredService<LibrarianService>();
+                                    var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
                                     var info = await zuul.CheckToken(response.AccessToken);
                                     var user = await usermap.Get(info.UserName, response.AccessToken);
                                     var claims = user
@@ -156,7 +156,7 @@ namespace SelfServiceLibrary.Web
                                         .Append(new Claim(ClaimTypes.Surname, user.LastName))
                                         .ToList();
 
-                                    if (await librarianService.IsLibrarian(user.Username))
+                                    if (await userService.IsInRole(user.Username, Role.Librarian))
                                     {
                                         claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Librarian)));
                                     }
@@ -218,7 +218,7 @@ namespace SelfServiceLibrary.Web
                             var zuul = context.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
                             var usermap = context.HttpContext.RequestServices.GetRequiredService<UsermapClient>();
                             var adminOptions = context.HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<AdminOptions>>();
-                            var librarianService = context.HttpContext.RequestServices.GetRequiredService<LibrarianService>();
+                            var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
 
                             var info = await zuul.CheckToken(context.AccessToken);
                             var user = await usermap.Get(info.UserName, context.AccessToken);
@@ -234,7 +234,7 @@ namespace SelfServiceLibrary.Web
                                 .Append(new Claim(ClaimTypes.Surname, user.LastName))
                                 .ToList();
 
-                            if(await librarianService.IsLibrarian(user.Username))
+                            if (await userService.IsInRole(user.Username, Role.Librarian))
                             {
                                 claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Librarian)));
                             }
@@ -267,7 +267,7 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<IssueService>();
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
-            services.AddScoped<LibrarianService>();
+            services.AddScoped<UserService>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
