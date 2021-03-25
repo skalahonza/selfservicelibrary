@@ -302,12 +302,6 @@ namespace SelfServiceLibrary.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Blazorise
-            app
-                .ApplicationServices
-                .UseBootstrapProviders()
-                .UseFontAwesomeIcons();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

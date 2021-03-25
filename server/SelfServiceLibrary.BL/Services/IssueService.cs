@@ -6,6 +6,7 @@ using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 
@@ -65,12 +66,13 @@ namespace SelfServiceLibrary.BL.Services
         /// <param name="issue">Issue details.</param>
         /// <param name="username">To whom will the book be issued.</param>
         /// <returns>Issue details.</returns>
-        public async Task<IssueDetailDTO> Borrow(string username, IssueCreateDTO issue)
+        public async Task<BorrowResponse> Borrow(string username, IssueCreateDTO issue)
         {
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
-                // TODO handle not found                
+                // handle not found
+                return new BorrowResponse(new BookNotFound());
             }
 
             // try to mark the book as borrowed
@@ -79,7 +81,8 @@ namespace SelfServiceLibrary.BL.Services
                 Builders<Book>.Update.Set(x => x.IsAvailable, false));
             if (result.ModifiedCount == 0)
             {
-                // TODO handle book was already taken
+                // handle book was already taken
+                return new BorrowResponse(new BookAlreadyBorrowed());
             }
 
             // create issue document
@@ -106,7 +109,7 @@ namespace SelfServiceLibrary.BL.Services
                 .AddToSet(x => x.IssueIds, entity.Id)
                 .Set(x => x.CurrentIssue, entity));
 
-            return _mapper.Map<IssueDetailDTO>(entity);
+            return new BorrowResponse(_mapper.Map<IssueDetailDTO>(entity));
         }
 
         /// <summary>
@@ -114,13 +117,14 @@ namespace SelfServiceLibrary.BL.Services
         /// </summary>
         /// <param name="id">Id of the issue document</param>
         /// <returns></returns>
-        public async Task<IssueDetailDTO?> Return(string id)
+        public async Task<ReturnResponse> Return(string id)
         {
             var now = DateTime.UtcNow;
             var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (issue == null)
             {
-                // TODO handle not found
+                // handle not found
+                return new ReturnResponse(new IssueNotFound());
             }
 
             await _dbContext.Issues.UpdateOneAsync(
@@ -131,14 +135,18 @@ namespace SelfServiceLibrary.BL.Services
                     .Set(x => x.ReturnDate, now));
 
             // mark book as available again
-            await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == issue.DepartmentNumber,
+            var result = await _dbContext.Books.UpdateOneAsync(
+                x => x.DepartmentNumber == issue.DepartmentNumber && !x.IsAvailable,
                 Builders<Book>.Update
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue.IsReturned, true)
                 .Set(x => x.CurrentIssue.ReturnDate, now));
 
-            return _mapper.Map<IssueDetailDTO>(await _dbContext.Issues.Find(x => x.Id == id).FirstAsync());
+            return result switch
+            {
+                { ModifiedCount: 1 } => new ReturnResponse(new BookReturned()),
+                { ModifiedCount: 0 } => new ReturnResponse(new BookAlreadyReturned())
+            };
         }
     }
 }

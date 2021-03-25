@@ -400,7 +400,11 @@
 </Container>
 
 
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+
+
 @code {
+    SnackbarStack snackbarStack;
     Validations validations;
     private bool edit = false;
     private bool isReadonly => !edit;
@@ -428,23 +432,40 @@
     private async Task Borrow()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        await issueService.Borrow(state.User.Identity.Name, new IssueCreateDTO
+        var result = await issueService.Borrow(state.User.Identity.Name, new IssueCreateDTO
         {
             DepartmentNumber = book.DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
         });
-        book = await bookService.GetDetail(DepartmentNumber);
-        issues = await issueService.GetAll(book);
+
+        await result.Match(
+            async ok =>
+            {
+                book = await bookService.GetDetail(DepartmentNumber);
+                issues = await issueService.GetAll(book);
+                await snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success);
+            },
+            notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
+            alreadyBorrowed => snackbarStack.PushAsync("The book has already been borrowed.", SnackbarColor.Danger)
+            );
     }
 
     private async Task Return()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if(state.User.Identity.Name == book.CurrentIssueIssuedTo)
+        if (state.User.Identity.Name == book.CurrentIssueIssuedTo)
         {
-            await issueService.Return(book.CurrentIssueId);
-            book = await bookService.GetDetail(DepartmentNumber);
-            issues = await issueService.GetAll(book);
+            var result = await issueService.Return(book.CurrentIssueId);
+            await result.Match(
+                    async ok =>
+                    {
+                        book = await bookService.GetDetail(DepartmentNumber);
+                        issues = await issueService.GetAll(book);
+                        await snackbarStack.PushAsync("Book returned.", SnackbarColor.Success);
+                    },
+                    notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
+                    alreadyBorrowed => snackbarStack.PushAsync("The book has already been returned.", SnackbarColor.Danger)
+                );
         }
     }
 
