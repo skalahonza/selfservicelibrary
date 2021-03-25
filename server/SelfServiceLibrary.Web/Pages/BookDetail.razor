@@ -257,22 +257,24 @@
 
             @if (!book.IsAvailable)
             {
-                <Divider />
+                <AuthorizeView>
+                    <Divider />
 
-                <Fields>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
-                        <FieldLabel>Issued to</FieldLabel>
-                        <TextEdit @bind-Text="@book.CurrentIssueIssuedTo" ReadOnly="true" />
-                    </Field>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
-                        <FieldLabel>Issued since</FieldLabel>
-                        <DateEdit TValue="DateTime?" Date="@book.CurrentIssueIssueDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
-                    </Field>
-                    <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
-                        <FieldLabel>Issued till</FieldLabel>
-                        <DateEdit TValue="DateTime?" Date="@book.CurrentIssueExpiryDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
-                    </Field>
-                </Fields>
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                            <FieldLabel>Issued to</FieldLabel>
+                            <TextEdit @bind-Text="@book.CurrentIssueIssuedTo" ReadOnly="true" />
+                        </Field>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                            <FieldLabel>Issued since</FieldLabel>
+                            <DateEdit TValue="DateTime?" Date="@book.CurrentIssueIssueDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                        </Field>
+                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
+                            <FieldLabel>Issued till</FieldLabel>
+                            <DateEdit TValue="DateTime?" Date="@book.CurrentIssueExpiryDate" InputMode="DateInputMode.DateTime" ReadOnly="true" />
+                        </Field>
+                    </Fields>
+                </AuthorizeView>
             }
 
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
