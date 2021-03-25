@@ -33,6 +33,7 @@ namespace SelfServiceLibrary.BL.Services
             _dbContext
                 .Books
                 .AsQueryable()
+                .OrderBy(x => x.DepartmentNumber)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ProjectTo<Book, BookListDTO>(_mapper)
@@ -42,6 +43,7 @@ namespace SelfServiceLibrary.BL.Services
             _dbContext
                 .Books
                 .AsQueryable()
+                .OrderBy(x => x.DepartmentNumber)
                 .Where(x => x.PublicationType == publicationType)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
