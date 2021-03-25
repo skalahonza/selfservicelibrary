@@ -20,7 +20,7 @@
 
 <Container Fluid="true">
     <DataGrid TItem="BookStatusListDTO"
-              Data="@items" 
+              Data="@items"
               RowSelectable=@(_ => false)
               Editable="true"
               SortMode="DataGridSortMode.Multiple"
@@ -45,7 +45,7 @@
                 <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
             </CancelCommandTemplate>
         </DataGridCommandColumn>
-        <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true"/>
+        <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
         <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Can be borrowed" Editable="true" Filterable="false">
             <DisplayTemplate>
                 <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
@@ -59,7 +59,10 @@
     </DataGrid>
 </Container>
 
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+
 @code {
+    SnackbarStack snackbarStack;
     private List<BookStatusListDTO> items = new List<BookStatusListDTO>();
 
     protected override async Task OnInitializedAsync()
@@ -69,7 +72,15 @@
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
-        await _bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
+        var result = await _bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
+        await result.Match(
+                ok => snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success),
+                async alreadyExisted =>
+                {
+                    items = await _bookStatusService.GetAll();
+                    await snackbarStack.PushAsync("Such book status already exists.", SnackbarColor.Danger);
+                }
+            );
     }
 
     private async Task OnRowUpdated(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)

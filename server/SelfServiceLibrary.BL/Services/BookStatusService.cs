@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using SelfServiceLibrary.BL.DTO.BookStatus;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 
@@ -30,8 +31,18 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<BookStatus, BookStatusListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task Create(BookStatusCreateDTO bookStatus) =>
-            _dbContext.BookStatuses.InsertOneAsync(_mapper.Map<BookStatus>(bookStatus)); // TODO handle duplicity
+        public async Task<CreateStatusResponse> Create(BookStatusCreateDTO bookStatus)
+        {
+            try
+            {
+                await _dbContext.BookStatuses.InsertOneAsync(_mapper.Map<BookStatus>(bookStatus));
+                return new CreateStatusResponse(new StatusCreated());
+            }
+            catch(MongoWriteException ex) when (ex.Message.Contains("duplicate key"))
+            {
+                return new CreateStatusResponse(new StatusAlreadyExisted());
+            }
+        }
 
         public async Task Update(string name, BookStatusUpdateDTO bookStatus)
         {
