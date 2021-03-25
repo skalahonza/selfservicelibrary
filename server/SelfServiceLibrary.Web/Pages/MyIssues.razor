@@ -44,12 +44,12 @@
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Top"
               PageSize="10">
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="#" Sortable="false">
+        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
             <DisplayTemplate>
                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
             </DisplayTemplate>
         </DataGridColumn>
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
+        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Ident" Sortable="true" Filterable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />

@@ -43,7 +43,7 @@
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Top"
               PageSize="10">
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="#" Sortable="false">
+        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
             <DisplayTemplate>
                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
             </DisplayTemplate>
