@@ -30,7 +30,7 @@
                 <Validation>
                     <Field>
                         <FieldLabel>Publication type</FieldLabel>
-                        <TextEdit @bind-Text="@book.PublicationType"  list="types">
+                        <TextEdit @bind-Text="@book.PublicationType" list="types">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -52,7 +52,10 @@
     </ModalContent>
 </Modal>
 
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+
 @code {
+    private SnackbarStack snackbarStack;
     private Modal modalRef;
     private Validations validations;
 
@@ -72,10 +75,16 @@
 
             book.Entered = DateTime.UtcNow;
             book.EnteredBy = state.User.Identity.Name;
-            await bookService.Create(book);
-
-            uriHelper.NavigateTo($"books/{book.DepartmentNumber}");
-            HideModal();
+            var result = await bookService.Create(book);
+            await result.Match(
+                ok =>
+                {
+                    uriHelper.NavigateTo($"books/{book.DepartmentNumber}");
+                    HideModal();
+                    return Task.CompletedTask;
+                },
+                conflict => snackbarStack.PushAsync("Such book already exists.", SnackbarColor.Danger)
+                );
         }
     }
 

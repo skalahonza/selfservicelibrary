@@ -4,6 +4,7 @@ using MongoDB.Driver;
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 
@@ -80,6 +81,9 @@ namespace SelfServiceLibrary.BL.Services
                 ? _dbContext.Books.EstimatedDocumentCountAsync()
                 : _dbContext.Books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
 
+        public Task<bool> Exists(string departmentNumber) =>
+            _dbContext.Books.Find(x => x.DepartmentNumber == departmentNumber).AnyAsync();
+
         public Task<BookDetailDTO> GetDetail(string departmentNumber) =>
             _dbContext
                 .Books
@@ -115,13 +119,17 @@ namespace SelfServiceLibrary.BL.Services
             return _mapper.Map<List<BookSearchDTO>>(results);
         }
 
-        public Task Create(BookAddDTO data)
+        public async Task<CreateBookResponse> Create(BookAddDTO data)
         {
-            // TODO check uniqueness
-
-            return _dbContext
-                .Books
-                .InsertOneAsync(_mapper.Map<Book>(data));
+            try
+            {
+                await _dbContext.Books.InsertOneAsync(_mapper.Map<Book>(data));
+                return new CreateBookResponse(new BookCreated());
+            }
+            catch (MongoWriteException ex) when (ex.Message.Contains("duplicate key"))
+            {
+                return new CreateBookResponse(new BookAlreadyExists());
+            }
         }
 
         public Task Update(string departmentNumber, BookEditDTO data)
