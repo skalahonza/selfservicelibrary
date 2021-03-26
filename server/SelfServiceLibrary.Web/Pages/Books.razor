@@ -156,6 +156,7 @@
 </style>
 
 @code {
+    private const string AllTab = "All";
     private AddBookDialog addBookModal;
 
     private string selectedPublicationType;
@@ -167,10 +168,10 @@
     protected override async Task OnInitializedAsync()
     {
         publicationTypes = await bookService.GetPublicationTypes();
+        publicationTypes[AllTab] = (int)await bookService.GetTotalCount();
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
         currentPage = publicationTypes.ToDictionary(x => x.Key, _ => 1);
-        if (publicationTypes.Any())
-            selectedPublicationType = publicationTypes.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+        selectedPublicationType = AllTab;
     }
 
     private async Task DeleteAll()
@@ -186,7 +187,9 @@
             var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
             var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
 
-            books[publicationType] = await bookService.GetAll(e.Page, e.PageSize, publicationType);
+            books[publicationType] = publicationType == AllTab
+                ? await bookService.GetAll(e.Page, e.PageSize)
+                : await bookService.GetAll(e.Page, e.PageSize, publicationType);
             StateHasChanged();
         }
     }
