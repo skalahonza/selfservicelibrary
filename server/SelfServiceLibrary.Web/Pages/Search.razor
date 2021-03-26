@@ -84,6 +84,7 @@
 </style>
 
 @code{
+    private const string AllTab = "All";
     private string selectedTab;
     private string search;
 
@@ -104,8 +105,9 @@
         {
             selectedTab = null;
             searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
+            searchResults[AllTab] = result;
             StateHasChanged();
-            selectedTab = searchResults.Aggregate((l, r) => l.Value.Count > r.Value.Count ? l : r).Key;
+            selectedTab = AllTab;
         }
         else
         {
