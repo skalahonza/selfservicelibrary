@@ -25,13 +25,13 @@
     @if (book != null)
     {
         <Row>
-            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
                 <h1>Publication ID: <b>@DepartmentNumber</b></h1>
             </Column>
-            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is3.OnDesktop">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is2">
-                    IntStatus
+                        <b>IntStatus </b>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is10">
                         <Select TValue="string" @bind-SelectedValue="@editBook.StatusName" ReadOnly="isReadonly" Disabled="isReadonly">
