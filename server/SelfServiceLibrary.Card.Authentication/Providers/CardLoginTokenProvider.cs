@@ -4,28 +4,47 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 using SelfServiceLibrary.Card.Authentication.Model;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace SelfServiceLibrary.Card.Authentication.Providers
 {
-    public class CardLoginTokenProvider : TotpSecurityStampBasedTokenProvider<IdCard>
+    public class CardLoginTokenProvider : DataProtectorTokenProvider<IdCard>
     {
         public const string NAME = "CardLoginTokenProvider";
+        private readonly IMongoCollection<IdCard> _cards;
+
+        public CardLoginTokenProvider(
+            IDataProtectionProvider dataProtectionProvider,
+            IOptions<DataProtectionTokenProviderOptions> options,
+            ILogger<DataProtectorTokenProvider<IdCard>> logger,
+            IMongoClient client)
+            : base(dataProtectionProvider, options, logger)
+        {
+            var database = client.GetDatabase("default");
+            _cards = database.GetCollection<IdCard>("cards");
+        }
 
         public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<IdCard> manager, IdCard user) =>
             Task.FromResult(false);
 
-        /// <summary>
-        /// Returns a constant, provider and user unique modifier used for entropy in generated tokens from user information.
-        /// </summary>
-        /// <param name="purpose">The purpose the token will be generated for.</param>
-        /// <param name="manager">The <see cref="UserManager{TUser}" /> that can be used to retrieve user properties.</param>
-        /// <param name="user">The user a token should be generated for.</param>
-        /// <returns>
-        /// The <see cref="Task" /> that represents the asynchronous operation, containing a constant modifier for the specified 
-        /// <paramref name="user" /> and <paramref name="purpose" />.
-        /// </returns>
-        public override Task<string> GetUserModifierAsync(string purpose, UserManager<IdCard> manager, IdCard user) =>
-            // enrich entropy with username of the card owner
-            Task.FromResult("Totp:" + purpose + ":" + user.Id + user.CvutUsername);
+        public override async Task<string> GenerateAsync(string purpose, UserManager<IdCard> manager, IdCard user)
+        {
+            var token = await base.GenerateAsync(purpose, manager, user);
+            await _cards.UpdateOneAsync(x => x.Id == user.Id, Builders<IdCard>.Update.AddToSet(x => x.Otps, token));
+            return token;
+        }
+
+        public override async Task<bool> ValidateAsync(string purpose, string token, UserManager<IdCard> manager, IdCard user)
+        {
+            if(await _cards.Find(x => x.Id == user.Id && x.Otps.Contains(token)).AnyAsync())
+            {
+                await _cards.UpdateOneAsync(x => x.Id == user.Id, Builders<IdCard>.Update.Pull(x => x.Otps, token));
+                return true;
+            }
+            return false;
+        }
     }
 }

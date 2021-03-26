@@ -1,4 +1,6 @@
-﻿using AspNetCore.Identity.Mongo.Model;
+﻿using System.Collections.Generic;
+
+using AspNetCore.Identity.Mongo.Model;
 
 namespace SelfServiceLibrary.Card.Authentication.Model
 {
@@ -13,6 +15,11 @@ namespace SelfServiceLibrary.Card.Authentication.Model
         {
             CvutUsername = cvutUsername;
         }
+
+        /// <summary>
+        /// One time passwords.
+        /// </summary>
+        public HashSet<string> Otps { get; set; } = new HashSet<string>();
 
 #pragma warning disable CS8618 // Enforced by validation.
         public string CvutUsername { get; set; }
