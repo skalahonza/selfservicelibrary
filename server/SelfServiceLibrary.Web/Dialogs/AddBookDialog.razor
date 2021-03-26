@@ -1,4 +1,6 @@
-﻿@using SelfServiceLibrary.BL.DTO.Book
+﻿@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.DAL.Enums
+@using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.Services
 @using Microsoft.AspNetCore.Components.Authorization
 
@@ -59,12 +61,15 @@
     private Modal modalRef;
     private Validations validations;
 
+    private ISet<Role> roles;
     private BookAddDTO book = new BookAddDTO();
     private List<string> bookTypes = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
-        bookTypes = (await bookService.GetPublicationTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        roles = state.User.Claims.GetRoles();
+        bookTypes = (await bookService.GetPublicationTypes(roles)).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
     }
 
     private async Task Create()

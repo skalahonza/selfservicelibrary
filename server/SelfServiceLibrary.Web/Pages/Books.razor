@@ -1,8 +1,11 @@
 ﻿@page "/books"
 @using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Book
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager uriHelper
 @inject BookService bookService
 @inject IssueService issueService
@@ -161,14 +164,18 @@
 
     private string selectedPublicationType;
 
+    private ISet<Role> roles;
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
     private Dictionary<string, List<BookListDTO>> books = new Dictionary<string, List<BookListDTO>>();
     private Dictionary<string, int> currentPage = new Dictionary<string, int>();
 
     protected override async Task OnInitializedAsync()
     {
-        publicationTypes = await bookService.GetPublicationTypes();
-        publicationTypes[AllTab] = (int)await bookService.GetTotalCount();
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        roles = state.User.Claims.GetRoles();
+
+        publicationTypes = await bookService.GetPublicationTypes(roles);
+        publicationTypes[AllTab] = (int)await bookService.GetTotalCount(roles);
         books = publicationTypes.ToDictionary(x => x.Key, _ => new List<BookListDTO>());
         currentPage = publicationTypes.ToDictionary(x => x.Key, _ => 1);
         selectedPublicationType = AllTab;
@@ -188,8 +195,8 @@
             var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
 
             books[publicationType] = publicationType == AllTab
-                ? await bookService.GetAll(e.Page, e.PageSize)
-                : await bookService.GetAll(e.Page, e.PageSize, publicationType);
+                ? await bookService.GetAll(e.Page, e.PageSize, roles)
+                : await bookService.GetAll(e.Page, e.PageSize, roles, publicationType);
             StateHasChanged();
         }
     }

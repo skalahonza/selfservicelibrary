@@ -24,5 +24,7 @@
         public string? BarCode { get; set; }
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }
+
+        public string? StatusName { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/books/{departmentNumber}"
-
+@using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.BL.DTO.Book
+@using SelfServiceLibrary.BL.DTO.BookStatus
 @using SelfServiceLibrary.BL.DTO.Issue
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.Services
@@ -8,6 +9,7 @@
 @using SelfServiceLibrary.Web.Policies
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject BookService bookService
+@inject BookStatusService bookStatusService
 @inject IssueService issueService
 @inject IMapper mapper
 
@@ -26,16 +28,27 @@
             <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                 <h1>Publication ID: <b>@DepartmentNumber</b></h1>
             </Column>
-            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop" class="text-right">
-                <h2>IntStatus: <b>@book.StatusName</b></h2>
+            <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2">
+                    IntStatus
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10">
+                        <Select TValue="string" @bind-SelectedValue="@editBook.StatusName" ReadOnly="isReadonly" Disabled="isReadonly">
+                            @foreach (var status in statuses)
+                            {
+                                <SelectItem Value="status.Name">@status.Name</SelectItem>
+                            }
+                        </Select>
+                    </FieldBody>
+                </Field>
             </Column>
         </Row>
-
 
         <AuthorizeView>
             <Divider />
             <div class="float-right">
-                <Button Disabled="@(!book.IsAvailable || !book.StatusCanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+                <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
                 <Button Disabled="@(book.IsAvailable || context.User.Identity.Name != book.CurrentIssueIssuedTo)" Color="Color.Primary" Clicked="Return">Return</Button>
             </div>
         </AuthorizeView>
@@ -498,6 +511,7 @@
     private BookDetailDTO book = new BookDetailDTO();
     private BookEditDTO editBook = new BookEditDTO();
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+    private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
     private List<string> bookTypes = new List<string>();
     private List<string> formTypes = new List<string>();
 
@@ -506,13 +520,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        formTypes = (await bookService.GetFormTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
-        bookTypes = (await bookService.GetPublicationTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var roles = state.User.Claims.GetRoles();
+
         book = await bookService.GetDetail(DepartmentNumber);
         if (book != null)
         {
+            formTypes = (await bookService.GetFormTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
+            bookTypes = (await bookService.GetPublicationTypes(roles)).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
             editBook = mapper.Map<BookEditDTO>(book);
             issues = await issueService.GetAll(book);
+            statuses = await bookStatusService.GetAll();
         }
     }
 

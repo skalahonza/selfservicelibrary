@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using SelfServiceLibrary.BL.DTO.BookStatus;
+
 namespace SelfServiceLibrary.BL.DTO.Book
 {
     public class BookDetailDTO
@@ -39,8 +41,6 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public DateTime? CurrentIssueIssueDate { get; set; }
         public DateTime? CurrentIssueExpiryDate { get; set; }
 
-        public string? StatusName { get; set; }
-        public bool StatusIsVissible { get; set; }
-        public bool StatusCanBeBorrowed { get; set; }
+        public BookStatusListDTO Status { get; set; } = new BookStatusListDTO();
     }
 }

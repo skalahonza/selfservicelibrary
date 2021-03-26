@@ -62,5 +62,12 @@ namespace SelfServiceLibrary.BL.Services
                 .Users
                 .Find(x => x.Username == username && x.Roles.Contains(role))
                 .AnyAsync();
+
+        public Task<HashSet<Role>> GetRoles(string username) =>
+            _dbContext
+                .Users
+                .Find(x => x.Username == username)
+                .Project(x => x.Roles)
+                .FirstOrDefaultAsync();
     }
 }

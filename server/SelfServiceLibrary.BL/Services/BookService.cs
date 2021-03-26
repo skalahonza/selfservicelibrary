@@ -7,6 +7,8 @@ using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
+using SelfServiceLibrary.DAL.Enums;
+using SelfServiceLibrary.DAL.Queries;
 
 using System;
 using System.Collections.Generic;
@@ -29,20 +31,22 @@ namespace SelfServiceLibrary.BL.Services
             _csv = csv;
         }
 
-        public Task<List<BookListDTO>> GetAll(int page, int pageSize) =>
+        public Task<List<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles) =>
             _dbContext
                 .Books
                 .AsQueryable()
+                .OnlyVisible(userRoles)
                 .OrderBy(x => x.DepartmentNumber)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<List<BookListDTO>> GetAll(int page, int pageSize, string publicationType) =>
+        public Task<List<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles, string publicationType) =>
             _dbContext
                 .Books
                 .AsQueryable()
+                .OnlyVisible(userRoles)
                 .OrderBy(x => x.DepartmentNumber)
                 .Where(x => x.PublicationType == publicationType)
                 .Skip((page - 1) * pageSize)
@@ -65,11 +69,12 @@ namespace SelfServiceLibrary.BL.Services
                 .ToDictionary(x => x.Type, x => x.Count);
         }
 
-        public async Task<Dictionary<string, int>> GetPublicationTypes()
+        public async Task<Dictionary<string, int>> GetPublicationTypes(ISet<Role> userRoles)
         {
             var types = await _dbContext
                 .Books
                 .Aggregate()
+                .Match(Builders<Book>.Filter.OnlyVisible(userRoles))
                 .Group(x => x.PublicationType, x => new
                 {
                     Type = x.Key,
@@ -78,10 +83,8 @@ namespace SelfServiceLibrary.BL.Services
             return types.ToDictionary(x => x.Type, x => x.Count);
         }
 
-        public Task<long> GetTotalCount(bool estimated = true) =>
-            estimated
-                ? _dbContext.Books.EstimatedDocumentCountAsync()
-                : _dbContext.Books.CountDocumentsAsync(Builders<Book>.Filter.Empty);
+        public Task<long> GetTotalCount(ISet<Role> userRoles) =>
+            _dbContext.Books.CountDocumentsAsync(Builders<Book>.Filter.OnlyVisible(userRoles));
 
         public Task<bool> Exists(string departmentNumber) =>
             _dbContext.Books.Find(x => x.DepartmentNumber == departmentNumber).AnyAsync();
@@ -134,7 +137,7 @@ namespace SelfServiceLibrary.BL.Services
             }
         }
 
-        public Task Update(string departmentNumber, BookEditDTO data)
+        public async Task Update(string departmentNumber, BookEditDTO data)
         {
             var update = Builders<Book>.Update
                 .Set(x => x.Name, data.Name)
@@ -158,9 +161,10 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.NFCIdent, data.NFCIdent)
                 .Set(x => x.BarCode, data.BarCode)
                 .Set(x => x.StsLocal, data.StsLocal)
-                .Set(x => x.StsUK, data.StsUK);
+                .Set(x => x.StsUK, data.StsUK)
+                .Set(x => x.Status, await _dbContext.BookStatuses.Find(x => x.Name == data.StatusName).FirstOrDefaultAsync());
 
-            return _dbContext
+            await _dbContext
                 .Books
                 .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
         }
