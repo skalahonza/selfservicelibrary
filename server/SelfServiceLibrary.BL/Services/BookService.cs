@@ -25,9 +25,9 @@ namespace SelfServiceLibrary.BL.Services
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ICsvImporter _csv;
+        private readonly ICsvService _csv;
 
-        public BookService(MongoDbContext dbContext, IMapper mapper, ICsvImporter csv)
+        public BookService(MongoDbContext dbContext, IMapper mapper, ICsvService csv)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -292,6 +292,17 @@ namespace SelfServiceLibrary.BL.Services
                 var filter = Builders<BookStatus>.Filter.Where(status => status.Name == x.Name);
                 return new ReplaceOneModel<BookStatus>(filter, x) { IsUpsert = true };
             }));
+        }
+
+        public Task ExportCsv(Stream csv, bool leaveOpen = false)
+        {
+            var books = _dbContext
+                .Books
+                .AsQueryable()
+                .ProjectTo<Book, BookCsvDTO>(_mapper)
+                .AsAsyncEnumerable();
+
+            return _csv.ExportBooks(books, csv, leaveOpen);
         }
 
         public Task DeleteAll() =>

@@ -277,7 +277,7 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<IMapper, AutoMapperAdapter>();
 
             // CSV
-            services.AddScoped<ICsvImporter, CsvImporter>();
+            services.AddScoped<ICsvService, CsvHelperAdapter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

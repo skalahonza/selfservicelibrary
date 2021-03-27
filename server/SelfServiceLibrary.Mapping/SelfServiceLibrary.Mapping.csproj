@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
   </ItemGroup>
 
 </Project>

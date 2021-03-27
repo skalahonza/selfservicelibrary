@@ -91,7 +91,7 @@ namespace SelfServiceLibrary.API
             services.AddScoped<BookService>();
 
             // CSV
-            services.AddScoped<ICsvImporter, CsvImporter>();
+            services.AddScoped<ICsvService, CsvHelperAdapter>();
 
             // Mapping
             services.AddAutoMapper(typeof(BookProfile));
