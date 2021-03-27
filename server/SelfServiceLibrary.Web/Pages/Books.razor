@@ -270,16 +270,6 @@
         }
     }
 
-    private async Task OnInputFileChange(InputFileChangeEventArgs e)
-    {
-        // 5 Megabytes = 5242880 Bytes
-        foreach (var file in e.GetMultipleFiles())
-        {
-            await bookService.ImportCsv(file.OpenReadStream(5242880));
-        }
-        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
-    }
-
     private async Task OnChanged(FileChangedEventArgs e)
     {
         // 5 Megabytes = 5242880 Bytes

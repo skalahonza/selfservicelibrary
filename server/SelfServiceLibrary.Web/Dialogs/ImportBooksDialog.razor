@@ -1,0 +1,62 @@
+﻿@using SelfServiceLibrary.BL.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject BookService bookService
+@inject NavigationManager uriHelper
+
+<Modal @ref="modalRef">
+    <ModalContent IsCentered="true" Size="ModalSize.Large">
+        <ModalHeader>
+            <ModalTitle>Import books</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <FileEdit Filter=".csv, .txt" Changed="@OnChanged" Multiple="true" />
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Disabled="@(files.Length == 0 || isUploading)" Loading="@isUploading" Color="Color.Success" Clicked="@Import">Import</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+
+@code {
+    private SnackbarStack snackbarStack = new SnackbarStack();
+    private Modal? modalRef;
+    private IFileEntry[] files = Array.Empty<IFileEntry>();
+    private bool isUploading;
+
+    private void OnChanged(FileChangedEventArgs e)
+    {
+        files = e.Files;
+    }
+
+    private async Task Import()
+    {
+        isUploading = true;
+        // 5 Megabytes = 5242880 Bytes
+        foreach (var file in files)
+        {
+            try
+            {
+                await bookService.ImportCsv(file.OpenReadStream(5242880));
+                await snackbarStack.PushAsync($"File {file.Name} imported.", SnackbarColor.Success);
+            }
+            catch (Exception ex)
+            {
+                await snackbarStack.PushAsync($"Importing file {file.Name} failed: {ex.Message}", SnackbarColor.Danger);
+            }
+        }
+        isUploading = false;
+        HideModal();
+    }
+
+    public void Show() =>
+        modalRef?.Show();
+
+    private void HideModal() =>
+        modalRef?.Hide();
+}
