@@ -31,19 +31,6 @@
             <BarItem>
                 <Button Color="Color.Success" Clicked="@(() => addBookModal.Show())">Add</Button>
             </BarItem>
-            <BarItem>
-                <Inline>
-                    <Field Margin="Margin.Is3.OnX.OnTablet">
-                        <Label>Import CSV</Label>
-                    </Field>
-                    <Field>
-                        <FileEdit Filter=".csv, .txt" Changed="@OnChanged" Multiple="true"/>
-                    </Field>
-                </Inline>
-            </BarItem>
-            <BarItem>
-                <Button Color="Color.Danger" Clicked="@DeleteAll">Delete all !</Button>
-            </BarItem>
         </BarStart>
     </BarMenu>
 </Bar>

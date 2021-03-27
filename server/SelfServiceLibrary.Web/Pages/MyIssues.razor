@@ -13,28 +13,6 @@
     <BarBrand>
         My Issues
     </BarBrand>
-    <BarToggler />
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <Buttons>
-                    <Button Color="Color.Info">All</Button>
-                    <Button Color="Color.Primary">Active</Button>
-                    <Button Color="Color.Success">Returned</Button>
-                </Buttons>
-            </BarItem>
-            <BarItem>
-                <Addons Margin="Margin.Is3.OnX.OnTablet">
-                    <Addon AddonType="AddonType.Body">
-                        <TextEdit Placeholder="Algebra..." />
-                    </Addon>
-                    <Addon AddonType="AddonType.End">
-                        <Button Color="Color.Primary">Search</Button>
-                    </Addon>
-                </Addons>
-            </BarItem>
-        </BarStart>
-    </BarMenu>
 </Bar>
 
 <Container Fluid="true">
@@ -43,13 +21,13 @@
               Data="@issues"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Top"
-              PageSize="10">
+              ShowPageSizes="true">
         <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
             <DisplayTemplate>
                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
             </DisplayTemplate>
         </DataGridColumn>
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Ident" Sortable="true" Filterable="true" />
+        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
         <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
