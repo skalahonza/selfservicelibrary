@@ -1,10 +1,13 @@
 ﻿
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.Extensions;
+using SelfServiceLibrary.BL.Filters;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Responses;
+using SelfServiceLibrary.BL.ViewModels;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.DAL.Enums;
@@ -53,6 +56,65 @@ namespace SelfServiceLibrary.BL.Services
                 .Take(pageSize)
                 .ProjectTo<Book, BookListDTO>(_mapper)
                 .ToListAsync();
+
+        public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles, IBooksFilter filter, string? publicationType = null)
+        {
+            var query = _dbContext
+                .Books
+                .AsQueryable();
+
+            var builder = Builders<Book>.Filter;
+            var match = builder.OnlyVisible(userRoles);
+
+            if (!string.IsNullOrEmpty(filter.Departmentnumber))
+            {
+                //query = query.Where(x => x.DepartmentNumber.Contains(filter.Departmentnumber));
+                match &= builder.Regex(x => x.DepartmentNumber, filter.Departmentnumber);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                //query = query.Where(x => x.Name.Contains(filter.Name));
+                match &= builder.Regex(x => x.Name, filter.Name);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Author))
+            {
+                //query = query.Where(x => x.Author.Contains(filter.Author));
+                match &= builder.Regex(x => x.Author, filter.Author);
+            }
+
+            if (filter.IsAvailable.HasValue)
+            {
+                query = query.Where(x => x.IsAvailable == filter.IsAvailable.Value);
+            }
+
+            if (!string.IsNullOrEmpty(publicationType))
+            {
+                //query = query.Where(x => x.PublicationType == publicationType);
+                match &= builder.Regex(x => x.PublicationType, publicationType);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Status))
+            {
+                match &= builder.Eq(x => x.Status.Name, filter.Status);
+            }
+
+            query = query.Where(_ => match.Inject());
+
+            var count = await query
+                .ProjectTo<Book, BookListDTO>(_mapper)
+                .CountAsync();
+
+            var data = await query
+                .OrderBy(x => x.DepartmentNumber)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<Book, BookListDTO>(_mapper)
+                .ToListAsync();
+
+            return new PaginatedVM<BookListDTO>(count, data);
+        }
 
         public async Task<Dictionary<string, int>> GetFormTypes()
         {
