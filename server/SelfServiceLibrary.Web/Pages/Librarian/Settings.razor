@@ -1,6 +1,7 @@
 ﻿@page "/settings"
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
 @using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.DAL.Entities
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.BookStatus
@@ -19,65 +20,107 @@
 </Bar>
 
 <Container Fluid="true">
-    <DataGrid TItem="BookStatusListDTO"
-              Data="@items"
-              RowSelectable=@(_ => false)
-              Editable="true"
-              SortMode="DataGridSortMode.Multiple"
-              EditMode="DataGridEditMode.Inline"
-              RowInserted="@OnRowInserted"
-              RowUpdated="@OnRowUpdated"
-              RowRemoved="@OnRowRemoved">
-        <DataGridCommandColumn TItem="BookStatusListDTO" Width="170px">
-            <NewCommandTemplate>
-                <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
-            </NewCommandTemplate>
-            <EditCommandTemplate>
-                <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
-            </EditCommandTemplate>
-            <SaveCommandTemplate>
-                <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
-            </SaveCommandTemplate>
-            <DeleteCommandTemplate>
-                <Button Color="Color.Danger" Clicked="@context.Clicked">Delete</Button>
-            </DeleteCommandTemplate>
-            <CancelCommandTemplate>
-                <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
-            </CancelCommandTemplate>
-        </DataGridCommandColumn>
-        <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
-        <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Can be borrowed" Editable="true" Filterable="false">
-            <DisplayTemplate>
-                <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
-            </DisplayTemplate>
-        </DataGridCheckColumn>
-        <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Is vissible" Editable="true" Filterable="false">
-            <DisplayTemplate>
-                <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
-            </DisplayTemplate>
-        </DataGridCheckColumn>
-    </DataGrid>
+    <Card Margin="Margin.Is4.OnY">
+        <CardHeader>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is11">Book statuses</Column>
+                <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <DataGrid TItem="BookStatusListDTO"
+                      Data="@statuses"
+                      RowSelectable=@(_ => false)
+                      Editable="true"
+                      SortMode="DataGridSortMode.Multiple"
+                      EditMode="DataGridEditMode.Inline"
+                      ShowPager="true"
+                      PageSize="5"
+                      RowInserted="@OnRowInserted"
+                      RowUpdated="@OnRowUpdated"
+                      RowRemoved="@OnRowRemoved">
+                <DataGridCommandColumn TItem="BookStatusListDTO" Width="170px">
+                    <NewCommandTemplate>
+                        <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+                    </NewCommandTemplate>
+                    <EditCommandTemplate>
+                        <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
+                    </EditCommandTemplate>
+                    <SaveCommandTemplate>
+                        <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+                    </SaveCommandTemplate>
+                    <DeleteCommandTemplate>
+                        <Button Color="Color.Danger" Clicked="@context.Clicked" Disabled="!delete">Delete</Button>
+                    </DeleteCommandTemplate>
+                    <CancelCommandTemplate>
+                        <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+                    </CancelCommandTemplate>
+                </DataGridCommandColumn>
+                <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
+                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Can be borrowed" Editable="true" Filterable="false">
+                    <DisplayTemplate>
+                        <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
+                    </DisplayTemplate>
+                </DataGridCheckColumn>
+                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Is vissible" Editable="true" Filterable="false">
+                    <DisplayTemplate>
+                        <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
+                    </DisplayTemplate>
+                </DataGridCheckColumn>
+            </DataGrid>
+        </CardBody>
+    </Card>
+
+    <Card Margin="Margin.Is4.OnY">
+        <CardHeader>
+            Books
+        </CardHeader>
+        <CardBody>
+            <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
+            <Button Color="Color.Info">Import CSV</Button>
+            <Button Color="Color.Primary">Export CSV</Button>
+        </CardBody>
+    </Card>
+
+    <Card Margin="Margin.Is4.OnY">
+        <CardHeader>
+            Issues
+        </CardHeader>
+        <CardBody>
+            <Button Color="Color.Primary">Export CSV</Button>
+        </CardBody>
+    </Card>
 </Container>
 
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+<AddBookDialog @ref="addBookModal" />
 
 @code {
-    SnackbarStack snackbarStack;
-    private List<BookStatusListDTO> items = new List<BookStatusListDTO>();
+    private bool delete;
+    private SnackbarStack snackbarStack = new SnackbarStack();
+    private AddBookDialog? addBookModal;
+    private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync() =>
+            Reload();
+
+    private async Task Reload()
     {
-        items = await _bookStatusService.GetAll();
+        statuses = await _bookStatusService.GetAll();
+        var defaultStatus = statuses.FirstOrDefault(x => x.Name == BookStatus.DefaultName);
+        if (defaultStatus != null)
+            statuses.Remove(defaultStatus);
     }
+
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
         var result = await _bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
         await result.Match(
-                ok => snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success),
+                ok => snackbarStack.PushAsync("Book status created.", SnackbarColor.Success),
                 async alreadyExisted =>
                 {
-                    items = await _bookStatusService.GetAll();
+                    await Reload();
                     await snackbarStack.PushAsync("Such book status already exists.", SnackbarColor.Danger);
                 }
             );
@@ -85,11 +128,11 @@
 
     private async Task OnRowUpdated(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
-        await _bookStatusService.Update(e.Item.Name, _mapper.Map<BookStatusUpdateDTO>(e.Item));
+        await _bookStatusService.Update(e.Item.Name ?? string.Empty, _mapper.Map<BookStatusUpdateDTO>(e.Item));
     }
 
     private async Task OnRowRemoved(BookStatusListDTO model)
     {
-        await _bookStatusService.Remove(model.Name);
+        await _bookStatusService.Remove(model.Name ?? string.Empty);
     }
 }

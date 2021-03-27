@@ -4,8 +4,10 @@ namespace SelfServiceLibrary.DAL.Entities
 {
     public class BookStatus
     {
+        public const string DefaultName = "Default";
+
         [BsonId]
-        public string Name { get; set; } = "Default";
+        public string Name { get; set; } = DefaultName;
 
         public bool IsVissible { get; set; } = true;
 

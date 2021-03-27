@@ -1,7 +1,6 @@
 ﻿@page "/issues"
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Issue
-@using System.IO
 @inject IssueService issueService
 
 <Bar Breakpoint="Breakpoint.Desktop"
@@ -45,7 +44,7 @@
 </Container>
 
 @code {
-    private List<IssueListlDTO> issues;
+    private List<IssueListlDTO> issues = new List<IssueListlDTO>();
     private int? totalIssues;
 
     protected override async Task OnInitializedAsync()
