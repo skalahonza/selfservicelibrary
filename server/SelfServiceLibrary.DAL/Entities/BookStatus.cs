@@ -9,7 +9,7 @@ namespace SelfServiceLibrary.DAL.Entities
         [BsonId]
         public string Name { get; set; } = DefaultName;
 
-        public bool IsVissible { get; set; } = true;
+        public bool IsVisible { get; set; } = true;
 
         public bool CanBeBorrowed { get; set; } = true;
     }

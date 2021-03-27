@@ -2,9 +2,9 @@ Param
 (
     [parameter(Position=0, Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
     [String]$Downloadurl = 'http://cyber.felk.cvut.cz/novakpe/Skola/Knihovna/ToNewDB/',
-    [parameter(Position=1, Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+    [parameter(Position=1, Mandatory=$false,ValueFromPipelineByPropertyName=$true)]
     [alias('DownloadPath')]
-    [String]$DownloadToFolder = 'C:\Temp\test'
+    [String]$DownloadToFolder = '..\data'
 )
 
 function Join-UriParts ($base, $path)

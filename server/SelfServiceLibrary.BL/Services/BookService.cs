@@ -34,29 +34,6 @@ namespace SelfServiceLibrary.BL.Services
             _csv = csv;
         }
 
-        public Task<List<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles) =>
-            _dbContext
-                .Books
-                .AsQueryable()
-                .OnlyVisible(userRoles)
-                .OrderBy(x => x.DepartmentNumber)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ProjectTo<Book, BookListDTO>(_mapper)
-                .ToListAsync();
-
-        public Task<List<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles, string publicationType) =>
-            _dbContext
-                .Books
-                .AsQueryable()
-                .OnlyVisible(userRoles)
-                .OrderBy(x => x.DepartmentNumber)
-                .Where(x => x.PublicationType == publicationType)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ProjectTo<Book, BookListDTO>(_mapper)
-                .ToListAsync();
-
         public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, ISet<Role> userRoles, IBooksFilter filter, string? publicationType = null)
         {
             var query = _dbContext
@@ -243,19 +220,21 @@ namespace SelfServiceLibrary.BL.Services
             {
                 if (string.IsNullOrEmpty(intStatus))
                 {
+                    // default status
                     return new BookStatus();
                 }
                 else if (statuses.TryGetValue(intStatus, out var status))
                 {
-                    // find in existing statuses
+                    // found in existing statuses
                     return status;
                 }
                 else
                 {
+                    // not found in existing statuses
                     var newStatus = new BookStatus
                     {
                         Name = intStatus,
-                        IsVissible = true,
+                        IsVisible = true,
                         CanBeBorrowed = false
                     };
                     newStatuses.Add(newStatus);

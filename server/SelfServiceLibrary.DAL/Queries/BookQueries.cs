@@ -19,7 +19,7 @@ namespace SelfServiceLibrary.DAL.Queries
         public static IQueryable<Book> OnlyVisible(this IQueryable<Book> source, ISet<Role> userRoles) =>
             userRoles.Contains(Role.Librarian)
             ? source
-            : source.Where(x => x.Status.IsVissible);
+            : source.Where(x => x.Status.IsVisible);
 
         /// <summary>
         /// Librarian should see all books. Users without librarian role should only see Books where the visibility is set to true.
@@ -29,6 +29,6 @@ namespace SelfServiceLibrary.DAL.Queries
         public static FilterDefinition<Book> OnlyVisible(this FilterDefinitionBuilder<Book> builder, ISet<Role> userRoles) =>
             userRoles.Contains(Role.Librarian)
             ? builder.Empty
-            : builder.Eq(x => x.Status.IsVissible, true);
+            : builder.Eq(x => x.Status.IsVisible, true);
     }
 }

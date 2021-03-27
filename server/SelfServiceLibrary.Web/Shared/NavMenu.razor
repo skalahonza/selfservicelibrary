@@ -42,7 +42,7 @@
             </AuthorizeView>
             
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
-                <Divider DividerType="DividerType.TextContent" Text="Librarian" />
+                <Divider DividerType="DividerType.TextContent" Text="Librarian" Display="Display.None.Block.OnTablet"/>
                 <BarItem>
                     <BarLink To="/issues">
                         <BarIcon IconName="IconName.Bookmark" />
@@ -57,7 +57,7 @@
                 </BarItem>
             </AuthorizeView>
             <AuthorizeView Policy="@AdminPolicy.NAME">
-                <Divider DividerType="DividerType.TextContent" Text="Administrator" />
+                <Divider DividerType="DividerType.TextContent" Text="Administrator" Display="Display.None.Block.OnTablet" />
                 <BarItem>
                     <BarLink To="/librarians">
                         <BarIcon IconName="IconName.Users" />

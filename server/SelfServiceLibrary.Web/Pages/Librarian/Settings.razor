@@ -30,6 +30,7 @@
         <CardBody>
             <DataGrid TItem="BookStatusListDTO"
                       Data="@statuses"
+                      Responsive="true"
                       RowSelectable=@(_ => false)
                       Editable="true"
                       SortMode="DataGridSortMode.Multiple"
@@ -39,34 +40,34 @@
                       RowInserted="@OnRowInserted"
                       RowUpdated="@OnRowUpdated"
                       RowRemoved="@OnRowRemoved">
+                <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
+                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Borrow" Editable="true" Filterable="false">
+                    <DisplayTemplate>
+                        <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
+                    </DisplayTemplate>
+                </DataGridCheckColumn>
+                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Visible" Editable="true" Filterable="false">
+                    <DisplayTemplate>
+                        <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
+                    </DisplayTemplate>
+                </DataGridCheckColumn>
                 <DataGridCommandColumn TItem="BookStatusListDTO" Width="170px">
                     <NewCommandTemplate>
-                        <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+                        <Button Color="Color.Success" Clicked="@context.Clicked">+</Button>
                     </NewCommandTemplate>
                     <EditCommandTemplate>
-                        <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
+                        <Button Color="Color.Primary" Clicked="@context.Clicked"><Icon Name="IconName.Pen" /> Edit</Button>
                     </EditCommandTemplate>
                     <SaveCommandTemplate>
                         <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
                     </SaveCommandTemplate>
                     <DeleteCommandTemplate>
-                        <Button Color="Color.Danger" Clicked="@context.Clicked" Disabled="!delete">Delete</Button>
+                        <Button Color="Color.Danger" Clicked="@context.Clicked" Disabled="!delete"><Icon Name="IconName.Delete" /> Delete</Button>
                     </DeleteCommandTemplate>
                     <CancelCommandTemplate>
                         <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
                     </CancelCommandTemplate>
                 </DataGridCommandColumn>
-                <DataGridColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.Name)" Caption="Status" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
-                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.CanBeBorrowed)" Caption="Can be borrowed" Editable="true" Filterable="false">
-                    <DisplayTemplate>
-                        <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
-                    </DisplayTemplate>
-                </DataGridCheckColumn>
-                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Is vissible" Editable="true" Filterable="false">
-                    <DisplayTemplate>
-                        <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
-                    </DisplayTemplate>
-                </DataGridCheckColumn>
             </DataGrid>
         </CardBody>
     </Card>
