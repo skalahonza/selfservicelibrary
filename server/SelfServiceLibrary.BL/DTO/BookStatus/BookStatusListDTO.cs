@@ -4,7 +4,7 @@
     {
         public string? Name { get; set; }
 
-        public bool IsVissible { get; set; }
+        public bool IsVisible { get; set; }
 
         public bool CanBeBorrowed { get; set; }
     }
