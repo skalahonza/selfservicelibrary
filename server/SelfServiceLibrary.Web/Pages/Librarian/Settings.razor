@@ -46,9 +46,9 @@
                         <Check TValue="bool" Checked="context.CanBeBorrowed" Disabled="true" ReadOnly="true" />
                     </DisplayTemplate>
                 </DataGridCheckColumn>
-                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVissible)" Caption="Visible" Editable="true" Filterable="false">
+                <DataGridCheckColumn TItem="BookStatusListDTO" Field="@nameof(BookStatusListDTO.IsVisible)" Caption="Visible" Editable="true" Filterable="false">
                     <DisplayTemplate>
-                        <Check TValue="bool" Checked="context.IsVissible" Disabled="true" ReadOnly="true" />
+                        <Check TValue="bool" Checked="context.IsVisible" Disabled="true" ReadOnly="true" />
                     </DisplayTemplate>
                 </DataGridCheckColumn>
                 <DataGridCommandColumn TItem="BookStatusListDTO" Width="170px">
