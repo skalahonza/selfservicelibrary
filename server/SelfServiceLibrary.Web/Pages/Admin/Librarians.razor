@@ -1,4 +1,4 @@
-﻿@page "/settings/librarians"
+﻿@page "/librarians"
 @attribute [Authorize(Policy = AdminPolicy.NAME)]
 @using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.Web.Policies
@@ -10,7 +10,7 @@
      Background="Background.Light"
      ThemeContrast="ThemeContrast.Light">
     <BarBrand>
-        Librarian settings
+        Librarians
     </BarBrand>
 </Bar>
 
@@ -46,7 +46,7 @@
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
 
 @code {
-    SnackbarStack snackbarStack;
+    SnackbarStack? snackbarStack;
     private List<UserListDTO> librarians = new List<UserListDTO>();
 
     protected override async Task OnInitializedAsync()

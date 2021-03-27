@@ -40,7 +40,9 @@
                     </BarItem>
                 </Authorized>
             </AuthorizeView>
+            
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Divider DividerType="DividerType.TextContent" Text="Librarian" />
                 <BarItem>
                     <BarLink To="/issues">
                         <BarIcon IconName="IconName.Bookmark" />
@@ -48,23 +50,17 @@
                     </BarLink>
                 </BarItem>
                 <BarItem>
-                    <BarDropdown>
-                        <BarDropdownToggle>
-                            <BarIcon IconName="IconName.Edit" />
-                            Settings
-                        </BarDropdownToggle>
-                        <BarDropdownMenu>
-                            <BarDropdownItem To="/settings/status">
-                                Book statuses
-                            </BarDropdownItem>
-                        </BarDropdownMenu>
-                    </BarDropdown>
+                    <BarLink To="/settings">
+                        <BarIcon IconName="IconName.Edit" />
+                        Settings
+                    </BarLink>
                 </BarItem>
             </AuthorizeView>
             <AuthorizeView Policy="@AdminPolicy.NAME">
+                <Divider DividerType="DividerType.TextContent" Text="Administrator" />
                 <BarItem>
-                    <BarLink To="/settings/librarians">
-                        <BarIcon IconName="IconName.List" />
+                    <BarLink To="/librarians">
+                        <BarIcon IconName="IconName.Users" />
                         Librarians
                     </BarLink>
                 </BarItem>

@@ -13,23 +13,6 @@
     <BarToggler />
     <BarMenu>
         <BarStart>
-            <BarItem>
-                <Buttons>
-                    <Button Color="Color.Info">All</Button>
-                    <Button Color="Color.Primary">Active</Button>
-                    <Button Color="Color.Success">Returned</Button>
-                </Buttons>
-            </BarItem>
-            <BarItem>
-                <Addons Margin="Margin.Is3.OnX.OnTablet">
-                    <Addon AddonType="AddonType.Body">
-                        <TextEdit Placeholder="Algebra..." />
-                    </Addon>
-                    <Addon AddonType="AddonType.End">
-                        <Button Color="Color.Primary">Search</Button>
-                    </Addon>
-                </Addons>
-            </BarItem>
         </BarStart>
     </BarMenu>
 </Bar>
@@ -42,7 +25,7 @@
               TotalItems="@totalIssues"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Top"
-              PageSize="10">
+              ShowPageSizes="true">
         <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
             <DisplayTemplate>
                 <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
