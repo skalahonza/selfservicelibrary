@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.Web.Filters;
 using SelfServiceLibrary.Web.Policies;
 
 namespace SelfServiceLibrary.Web.Pages.Librarian
@@ -18,10 +19,10 @@ namespace SelfServiceLibrary.Web.Pages.Librarian
         public BooksCsvModel(BookService bookService) =>
             _bookService = bookService;
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGet([FromQuery] BooksFilter? filter)
         {
             var stream = new MemoryStream();
-            await _bookService.ExportCsv(stream, true);
+            await _bookService.ExportCsv(stream, filter ?? new BooksFilter(), true);
             stream.Position = 0;
             return File(stream, "text/csv", "books.csv");
         }

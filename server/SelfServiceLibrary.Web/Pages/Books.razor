@@ -32,14 +32,7 @@
         <Switch TValue="bool" @bind-Checked="@filterable">Filter</Switch>
     </Inline>
 
-    <Tabs SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged" Class="nav-fill">
-        <Items>
-            @foreach (var type in types)
-            {
-                <Tab Name="@type">@type <Badge Color="Color.Primary">@publicationTypes[type]</Badge></Tab>
-            }
-        </Items>
-    </Tabs>
+    <BadgedTabs Tabs="types" TabCounts="publicationTypes" SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged"/>
 
     <DataGrid @ref="dataGrid"
               RowSelectable=@(_ => false)
@@ -49,15 +42,11 @@
               ReadData="@OnReadData"
               Filterable="@filterable"
               ShowPager="true"
-              PagerPosition="DataGridPagerPosition.Top"
+              PagerPosition="DataGridPagerPosition.Bottom"
               ShowPageSizes="true"
               Responsive="true">
         <LoadingTemplate>
-            <div class="text-center">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
+            <Loading />
         </LoadingTemplate>
         <DataGridColumns>
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">

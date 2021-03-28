@@ -272,11 +272,12 @@ namespace SelfServiceLibrary.BL.Services
             }));
         }
 
-        public Task ExportCsv(Stream csv, bool leaveOpen = false)
+        public Task ExportCsv(Stream csv, IBooksFilter filter, bool leaveOpen = false)
         {
             var books = _dbContext
                 .Books
                 .AsQueryable()
+                .Filter(filter)
                 .ProjectTo<Book, BookCsvDTO>(_mapper)
                 .AsAsyncEnumerable();
 

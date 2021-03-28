@@ -1,13 +1,15 @@
 ﻿@page "/settings"
 
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
+@using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.DAL.Entities
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
-@inject BookStatusService _bookStatusService
+@inject BookService bookService
+@inject BookStatusService bookStatusService
 @inject IMapper _mapper
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -74,21 +76,36 @@
 
     <Card Margin="Margin.Is4.OnY">
         <CardHeader>
-            Books
+            <Column ColumnSize="ColumnSize.Is11">Books</Column>
+            <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
         </CardHeader>
         <CardBody>
             <Buttons Role="ButtonsRole.Toolbar">
                 <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
                 <Button Color="Color.Info" Clicked="@(() => importBooksModal?.Show())">Import CSV</Button>
-                <Button Color="Color.Primary" Type="ButtonType.Link" To="/csv/books" Target="Target.Blank">Export CSV</Button>
             </Buttons>
+            <Divider />
+            <Fields Label="Status">
+                <Column ColumnSize="ColumnSize.IsAuto">                    
+                    <Select TValue="string" @bind-SelectedValue="@filter.Status">
+                        <SelectItem Value="@("all")">All</SelectItem>
+                        @foreach (var status in statuses)
+                        {
+                            <SelectItem Value="@status.Name">@status.Name</SelectItem>
+                        }
+                    </Select>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="/csv/books" Target="Target.Blank">Export CSV</Button>
+                </Column>
+            </Fields>
             <Divider />
             <Dropdown>
                 <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
                     Delete all!
                 </DropdownToggle>
                 <DropdownMenu>
-                    <DropdownItem>Yes, I am sure</DropdownItem>
+                    <DropdownItem Clicked="DeleteAll">Yes, I am sure</DropdownItem>
                 </DropdownMenu>
             </Dropdown>
         </CardBody>
@@ -122,26 +139,28 @@
     private AddBookDialog? addBookModal;
     private ImportBooksDialog? importBooksModal;
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
+    private BooksFilter filter = new BooksFilter();
 
-    protected override Task OnInitializedAsync() =>
-            Reload();
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+
+    }
 
     private async Task Reload()
     {
-        statuses = await _bookStatusService.GetAll();
+        statuses = await bookStatusService.GetAll();
         var defaultStatus = statuses.FirstOrDefault(x => x.Name == BookStatus.DefaultName);
         if (defaultStatus != null)
             statuses.Remove(defaultStatus);
     }
 
-    private async Task DeleteAll()
-    {
-        // await bookService.DeleteAll();
-    }
+    private Task DeleteAll()
+        => bookService.DeleteAll();
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
-        var result = await _bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
+        var result = await bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
         await result.Match(
                 ok => snackbarStack.PushAsync("Book status created.", SnackbarColor.Success),
                 async alreadyExisted =>
@@ -154,11 +173,11 @@
 
     private async Task OnRowUpdated(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
-        await _bookStatusService.Update(e.Item.Name ?? string.Empty, _mapper.Map<BookStatusUpdateDTO>(e.Item));
+        await bookStatusService.Update(e.Item.Name ?? string.Empty, _mapper.Map<BookStatusUpdateDTO>(e.Item));
     }
 
     private async Task OnRowRemoved(BookStatusListDTO model)
     {
-        await _bookStatusService.Remove(model.Name ?? string.Empty);
+        await bookStatusService.Remove(model.Name ?? string.Empty);
     }
 }

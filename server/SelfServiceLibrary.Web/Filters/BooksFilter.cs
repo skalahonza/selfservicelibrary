@@ -7,6 +7,8 @@ namespace SelfServiceLibrary.Web.Filters
 {
     public record BooksFilter : IBooksFilter
     {
+        public BooksFilter() { }
+
         public BooksFilter(string publicationType) =>
             PublicationType = publicationType;
 
