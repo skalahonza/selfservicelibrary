@@ -134,6 +134,10 @@
             statuses.Remove(defaultStatus);
     }
 
+    private async Task DeleteAll()
+    {
+        // await bookService.DeleteAll();
+    }
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {

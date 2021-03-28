@@ -22,150 +22,147 @@
     <BarBrand>
         Books
     </BarBrand>
-    <BarToggler />
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <Switch TValue="bool" @bind-Checked="@filterable">Filter</Switch>
-            </BarItem>
-            <BarItem>
-                <Button Color="Color.Success" Clicked="@(() => addBookModal.Show())">Add</Button>
-            </BarItem>
-        </BarStart>
-    </BarMenu>
 </Bar>
 
 <Container Fluid="true">
-    <Tabs SelectedTab="@selectedPublicationType" SelectedTabChanged="OnSelectedTabChanged" Class="nav-fill">
+    <Inline>
+        <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
+            <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
+        </AuthorizeView>
+        <Switch TValue="bool" @bind-Checked="@filterable">Filter</Switch>
+    </Inline>
+
+    <Tabs SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged" Class="nav-fill">
         <Items>
-            @foreach (var (type, count) in publicationTypes.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value))
+            @foreach (var type in types)
             {
-                <Tab Name="@type">@type <Badge Color="Color.Primary">@count</Badge></Tab>
+                <Tab Name="@type">@type <Badge Color="Color.Primary">@publicationTypes[type]</Badge></Tab>
             }
         </Items>
-        <Content>
-            @foreach (var type in publicationTypes.OrderByDescending(x => x.Value).Select(x => x.Key))
-            {
-                <TabPanel Name="@type">
-                    <DataGrid @ref="dataGrids[type]"
-                              RowSelectable=@(_ => false)
-                              TItem="BookListDTO"
-                              Data="@books[type].Data"
-                              TotalItems="@books[type].Count"
-                              ReadData="@((e) => OnReadData(e,type))"
-                              Filterable="@filterable"
-                              ShowPager="true"
-                              PagerPosition="DataGridPagerPosition.Top"
-                              ShowPageSizes="true"
-                              CurrentPage="@currentPage[type]"
-                              PageChanged="(e) => currentPage[type] = e.Page">
-                        <LoadingTemplate>
-                            <div class="text-center">
-                                <div class="spinner-border" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </div>
-                        </LoadingTemplate>
-                        <DataGridColumns>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
-                                <DisplayTemplate>
-                                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-                                    <div>@context.Depended</div>
-                                    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="auth">
-                                        <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
-                                            StsLocal
-                                        </Check>
-                                        <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
-                                            StsUK
-                                        </Check>
-                                    </AuthorizeView>
-                                </DisplayTemplate>
-                            </DataGridColumn>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
-                                <DisplayTemplate>
-                                    <div>@context.Name</div>
-                                    <div>
-                                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
-                                    </div>
-                                    <div><Keywords Words="context.Keywords" /></div>
-                                    <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
-                                        @{
-                                            var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
-                                            @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
-                                        }
-
-                                        @if (!string.IsNullOrEmpty(context.Note))
-                                        {
-                                            <Tooltip Text="@context.Note" Placement="Placement.Top">
-                                                <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
-                                            </Tooltip>
-                                        }
-                                    </AuthorizeView>
-                                </DisplayTemplate>
-                                <FilterTemplate>
-                                    <TextEdit Role="TextRole.Search"
-                                              Text="@filter.Name"
-                                              TextChanged="@((value) => OnNameChanged(value))" />
-                                </FilterTemplate>
-                            </DataGridColumn>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true">
-                                <FilterTemplate>
-                                    <TextEdit Role="TextRole.Search"
-                                              Text="@filter.Author"
-                                              TextChanged="@((value) => OnAuthorChanged(value))" />
-                                </FilterTemplate>
-                            </DataGridColumn>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="false" Filterable="false" Caption="Publication">
-                                <DisplayTemplate>
-                                    @if (context.YearOfPublication.HasValue)
-                                    {
-                                        <div><Badge>Year: @context.YearOfPublication</Badge></div>
-                                    }
-                                    @if (context.Pages.HasValue)
-                                    {
-                                        <div><Badge>Pages: @context.Pages</Badge></div>
-                                    }
-                                    @if (context.Publication.HasValue)
-                                    {
-                                        <div><Badge>Edition: @context.Publication</Badge></div>
-                                    }
-                                </DisplayTemplate>
-                            </DataGridColumn>
-                            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
-                                <DisplayTemplate>
-                                    <div>
-                                        <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
-                                            <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
-                                                @(context.IsAvailable ? "Yes" : "No")
-                                            </div>
-                                        </Check>
-                                        <div><Badge Color="Color.Light">@context.FormType</Badge></div>
-                                        @if (context.StatusName != "Default")
-                                        {
-                                            <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
-                                        }
-                                    </div>
-                                </DisplayTemplate>
-                                <FilterTemplate>
-                                    <Switch TValue="bool?"
-                                            Checked="@filter.IsAvailable"
-                                            CheckedChanged="@OnIsAvailableChanged">
-                                        Only Available
-                                    </Switch>
-                                    <Select TValue="string" SelectedValue="@filter.Status" SelectedValueChanged="OnStatusChanged">
-                                        @foreach (var status in statuses)
-                                        {
-                                        <SelectItem Value="@status.Name">@status.Name</SelectItem>
-                                        }
-                                    </Select>
-                                </FilterTemplate>
-                            </DataGridColumn>
-                        </DataGridColumns>
-                    </DataGrid>
-                </TabPanel>
-            }
-        </Content>
     </Tabs>
+
+    <DataGrid @ref="dataGrid"
+              RowSelectable=@(_ => false)
+              TItem="BookListDTO"
+              Data="@books.Data"
+              TotalItems="@books.Count"
+              ReadData="@OnReadData"
+              Filterable="@filterable"
+              ShowPager="true"
+              PagerPosition="DataGridPagerPosition.Top"
+              ShowPageSizes="true"
+              Responsive="true">
+        <LoadingTemplate>
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </LoadingTemplate>
+        <DataGridColumns>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
+                <DisplayTemplate>
+                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                    <div>@context.Depended</div>
+                    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="auth">
+                        <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
+                            StsLocal
+                        </Check>
+                        <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
+                            StsUK
+                        </Check>
+                    </AuthorizeView>
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
+                <DisplayTemplate>
+                    <div>@context.Name</div>
+                    <div>
+                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
+                    </div>
+                    <div><Keywords Words="context.Keywords" /></div>
+                    <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
+                        @{
+                            var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };
+                            @string.Join(" / ", numbers.Select(x => $"{x.Item1}: {x.Item2.DashEmpty()}"))
+                        }
+
+                        @if (!string.IsNullOrEmpty(context.Note))
+                        {
+                            <Tooltip Text="@context.Note" Placement="Placement.Top">
+                                <Button Color="Color.Link" Size="Size.ExtraSmall" Disabled="true">Note</Button>
+                            </Tooltip>
+                        }
+                    </AuthorizeView>
+                </DisplayTemplate>
+                <FilterTemplate>
+                    <Addons>
+                        <Addon AddonType="AddonType.Start">
+                            <AddonLabel>Name</AddonLabel>
+                        </Addon>
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Role="TextRole.Search"
+                                      Text="@filter.Name"
+                                      TextChanged="@((value) => OnNameChanged(value))" />
+                        </Addon>
+                    </Addons>
+                </FilterTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true">
+                <FilterTemplate>
+                    <TextEdit Role="TextRole.Search"
+                              Text="@filter.Author"
+                              TextChanged="@((value) => OnAuthorChanged(value))" />
+                </FilterTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="false" Filterable="false" Caption="Publication">
+                <DisplayTemplate>
+                    @if (context.YearOfPublication.HasValue)
+                    {
+                        <div><Badge>Year: @context.YearOfPublication</Badge></div>
+                    }
+                    @if (context.Pages.HasValue)
+                    {
+                        <div><Badge>Pages: @context.Pages</Badge></div>
+                    }
+                    @if (context.Publication.HasValue)
+                    {
+                        <div><Badge>Edition: @context.Publication</Badge></div>
+                    }
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
+                <DisplayTemplate>
+                    <div>
+                        <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
+                            <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
+                                @(context.IsAvailable ? "Yes" : "No")
+                            </div>
+                        </Check>
+                        <div><Badge Color="Color.Light">@context.FormType</Badge></div>
+                        @if (context.StatusName != "Default")
+                        {
+                            <div><Badge Color="Color.Info">@context.StatusName</Badge></div>
+                        }
+                    </div>
+                </DisplayTemplate>
+                <FilterTemplate>
+                    <Switch TValue="bool?"
+                            Checked="@filter.IsAvailable"
+                            CheckedChanged="@OnIsAvailableChanged">
+                        Only Available
+                    </Switch>
+                    <Select TValue="string" SelectedValue="@filter.Status" SelectedValueChanged="OnStatusChanged">
+                        @foreach (var status in statuses)
+                        {
+                            <SelectItem Value="@status.Name">@status.Name</SelectItem>
+                        }
+                    </Select>
+                </FilterTemplate>
+            </DataGridColumn>
+        </DataGridColumns>
+    </DataGrid>
+
 </Container>
 
 <AddBookDialog @ref="addBookModal" />
@@ -183,93 +180,85 @@
 @code {
     private const string AllTab = "All";
     private AddBookDialog? addBookModal;
+    private DataGrid<BookListDTO> dataGrid = new DataGrid<BookListDTO>();
 
     private bool filterable;
-    private BooksFilter filter = new BooksFilter();
-    private string selectedPublicationType = AllTab;
+    private BooksFilter filter = new BooksFilter(AllTab);
 
-    private ISet<Role> roles = new HashSet<Role>();
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
-
-    private Dictionary<string, PaginatedVM<BookListDTO>> books = new Dictionary<string, PaginatedVM<BookListDTO>>();
-
-
-    private Dictionary<string, int> currentPage = new Dictionary<string, int>();
-    private Dictionary<string, DataGrid<BookListDTO>> dataGrids = new Dictionary<string, DataGrid<BookListDTO>>();
+    private List<string> types = new List<string>();
+    private PaginatedVM<BookListDTO> books = new PaginatedVM<BookListDTO>(0, new List<BookListDTO>());
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
 
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationStateProvider.GetAuthenticationStateAsync();
-        roles = state.User.Claims.GetRoles();
+        filter.UserRoles = state.User.Claims.GetRoles();
 
         statuses = await bookStatusService.GetAll();
-        publicationTypes = await bookService.GetPublicationTypes(roles);
-        publicationTypes[AllTab] = (int)await bookService.GetTotalCount(roles);
-        books = publicationTypes.ToDictionary(x => x.Key, _ => new PaginatedVM<BookListDTO>(0, new List<BookListDTO>()));
-        currentPage = publicationTypes.ToDictionary(x => x.Key, _ => 1);
-        dataGrids = publicationTypes.ToDictionary(x => x.Key, _ => new DataGrid<BookListDTO>());
-        selectedPublicationType = AllTab;
-    }
+        publicationTypes = await bookService.GetPublicationTypes(filter with { PublicationType = null });
+        publicationTypes[AllTab] = publicationTypes.Select(x => x.Value).Sum();
 
-    private async Task DeleteAll()
-    {
-        await bookService.DeleteAll();
-        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+        // precompute tabs order, so they don't change every time a filter is used
+        types = publicationTypes.OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
     }
 
     private async Task OnStatusChanged(string? value)
     {
         filter.Status = value;
-        await dataGrids[selectedPublicationType].Reload();
+        await dataGrid.Reload();
     }
 
     private async Task OnNameChanged(string value)
     {
         filter.Name = value;
-        await dataGrids[selectedPublicationType].Reload();
+        await dataGrid.Reload();
     }
 
     private async Task OnAuthorChanged(string value)
     {
         filter.Author = value;
-        await dataGrids[selectedPublicationType].Reload();
+        await dataGrid.Reload();
     }
 
     private async Task OnIsAvailableChanged(bool? value)
     {
         filter.IsAvailable = value.HasValue && value.Value ? true : null;
-        await dataGrids[selectedPublicationType].Reload();
-    }
-
-    private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e, string publicationType)
-    {
-        // refresh only visible datagrid
-        if (publicationType == selectedPublicationType || e.Page == 1)
-        {
-            var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
-            var vm = publicationType == AllTab
-                ? await bookService.GetAll(e.Page, e.PageSize, roles, filter)
-                : await bookService.GetAll(e.Page, e.PageSize, roles, filter, publicationType);
-
-            books[publicationType] = vm;
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnChanged(FileChangedEventArgs e)
-    {
-        // 5 Megabytes = 5242880 Bytes
-        foreach (var file in e.Files)
-        {
-            await bookService.ImportCsv(file.OpenReadStream(5242880));
-        }
-        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+        await dataGrid.Reload();
     }
 
     private async Task OnSelectedTabChanged(string name)
     {
-        selectedPublicationType = name;
-        await dataGrids[selectedPublicationType].Reload();
+        filter.PublicationType = name;
+        await dataGrid.Reload();
+    }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
+    {
+        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
+        // display all publication types when AllTab selected
+        var vm = await bookService.GetAll(e.Page, e.PageSize, filter with
+        {
+            PublicationType = filter.PublicationType == AllTab ? null : filter.PublicationType
+        });
+
+        books = vm;
+
+        // update tab counts
+        publicationTypes[AllTab] = 0;
+        var types = await bookService.GetPublicationTypes(filter with { PublicationType = null });
+        foreach (var type in publicationTypes.Select(x => x.Key))
+        {
+            if(types.TryGetValue(type, out var count))
+            {
+                publicationTypes[type] = count;
+                publicationTypes[AllTab] += count;
+            }
+            else if(type != AllTab)
+            {
+                publicationTypes[type] = 0;
+            }
+        }
+        StateHasChanged();
     }
 }
