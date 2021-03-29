@@ -100,8 +100,13 @@ namespace SelfServiceLibrary.BL.Services
             return types.ToDictionary(x => x.Type, x => x.Count);
         }
 
-        public Task<long> GetTotalCount(ISet<Role> userRoles) =>
-            _dbContext.Books.CountDocumentsAsync(Builders<Book>.Filter.OnlyVisible(userRoles));
+        public Task<int> GetTotalCount(IBooksFilter filter) =>
+            _dbContext
+                .Books
+                .AsQueryable()
+                .Filter(filter)
+                .AsMongoDbQueryable()
+                .CountAsync();
 
         public Task<bool> Exists(string departmentNumber) =>
             _dbContext.Books.Find(x => x.DepartmentNumber == departmentNumber).AnyAsync();

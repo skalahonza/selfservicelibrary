@@ -85,20 +85,10 @@
                 <Button Color="Color.Info" Clicked="@(() => importBooksModal?.Show())">Import CSV</Button>
             </Buttons>
             <Divider />
-            <Fields Label="Status">
-                <Column ColumnSize="ColumnSize.IsAuto">                    
-                    <Select TValue="string" @bind-SelectedValue="@filter.Status">
-                        <SelectItem Value="@("all")">All</SelectItem>
-                        @foreach (var status in statuses)
-                        {
-                            <SelectItem Value="@status.Name">@status.Name</SelectItem>
-                        }
-                    </Select>
-                </Column>
-                <Column ColumnSize="ColumnSize.IsAuto">
-                    <Button Color="Color.Primary" Type="ButtonType.Link" To="/csv/books" Target="Target.Blank">Export CSV</Button>
-                </Column>
-            </Fields>
+
+            <BookFilter Filter="filter" FilterChanged="FilerChagned"/>
+            <Text>Total items: @totalItems</Text>
+            <Button Color="Color.Primary" Type="ButtonType.Link" To="/csv/books" Target="Target.Blank">Export CSV</Button>
             <Divider />
             <Dropdown>
                 <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
@@ -108,15 +98,6 @@
                     <DropdownItem Clicked="DeleteAll">Yes, I am sure</DropdownItem>
                 </DropdownMenu>
             </Dropdown>
-        </CardBody>
-    </Card>
-
-    <Card Margin="Margin.Is4.OnY">
-        <CardHeader>
-            Issues
-        </CardHeader>
-        <CardBody>
-            <Button Color="Color.Primary">Export CSV</Button>
         </CardBody>
     </Card>
 </Container>
@@ -140,11 +121,12 @@
     private ImportBooksDialog? importBooksModal;
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
     private BooksFilter filter = new BooksFilter();
+    private int totalItems = 0;
 
     protected override async Task OnInitializedAsync()
     {
         await Reload();
-
+        totalItems = await bookService.GetTotalCount(filter);
     }
 
     private async Task Reload()
@@ -179,5 +161,11 @@
     private async Task OnRowRemoved(BookStatusListDTO model)
     {
         await bookStatusService.Remove(model.Name ?? string.Empty);
+    }
+
+    private async Task FilerChagned(BooksFilter filter)
+    {
+        this.filter = filter;
+        totalItems = await bookService.GetTotalCount(filter);
     }
 }

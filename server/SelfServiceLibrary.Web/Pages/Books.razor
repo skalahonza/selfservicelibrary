@@ -25,14 +25,14 @@
 </Bar>
 
 <Container Fluid="true">
-    <Inline>
-        <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
-            <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
-        </AuthorizeView>
-        <Switch TValue="bool" @bind-Checked="@filterable">Filter</Switch>
-    </Inline>
+    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
+        <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
+        <Divider />
+    </AuthorizeView>
 
-    <BadgedTabs Tabs="types" TabCounts="publicationTypes" SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged"/>
+    <BookFilter Filter="filter" FilterChanged="@((_) => dataGrid.Reload())" />
+
+    <BadgedTabs Tabs="types" TabCounts="publicationTypes" SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged" />
 
     <DataGrid @ref="dataGrid"
               RowSelectable=@(_ => false)
@@ -40,7 +40,6 @@
               Data="@books.Data"
               TotalItems="@books.Count"
               ReadData="@OnReadData"
-              Filterable="@filterable"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
               ShowPageSizes="true"
@@ -84,26 +83,8 @@
                         }
                     </AuthorizeView>
                 </DisplayTemplate>
-                <FilterTemplate>
-                    <Addons>
-                        <Addon AddonType="AddonType.Start">
-                            <AddonLabel>Name</AddonLabel>
-                        </Addon>
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit Role="TextRole.Search"
-                                      Text="@filter.Name"
-                                      TextChanged="@((value) => OnNameChanged(value))" />
-                        </Addon>
-                    </Addons>
-                </FilterTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true">
-                <FilterTemplate>
-                    <TextEdit Role="TextRole.Search"
-                              Text="@filter.Author"
-                              TextChanged="@((value) => OnAuthorChanged(value))" />
-                </FilterTemplate>
-            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true"/>
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="false" Filterable="false" Caption="Publication">
                 <DisplayTemplate>
                     @if (context.YearOfPublication.HasValue)
@@ -135,19 +116,6 @@
                         }
                     </div>
                 </DisplayTemplate>
-                <FilterTemplate>
-                    <Switch TValue="bool?"
-                            Checked="@filter.IsAvailable"
-                            CheckedChanged="@OnIsAvailableChanged">
-                        Only Available
-                    </Switch>
-                    <Select TValue="string" SelectedValue="@filter.Status" SelectedValueChanged="OnStatusChanged">
-                        @foreach (var status in statuses)
-                        {
-                            <SelectItem Value="@status.Name">@status.Name</SelectItem>
-                        }
-                    </Select>
-                </FilterTemplate>
             </DataGridColumn>
         </DataGridColumns>
     </DataGrid>
@@ -171,7 +139,6 @@
     private AddBookDialog? addBookModal;
     private DataGrid<BookListDTO> dataGrid = new DataGrid<BookListDTO>();
 
-    private bool filterable;
     private BooksFilter filter = new BooksFilter(AllTab);
 
     private Dictionary<string, int> publicationTypes = new Dictionary<string, int>();
@@ -190,30 +157,6 @@
 
         // precompute tabs order, so they don't change every time a filter is used
         types = publicationTypes.OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
-    }
-
-    private async Task OnStatusChanged(string? value)
-    {
-        filter.Status = value;
-        await dataGrid.Reload();
-    }
-
-    private async Task OnNameChanged(string value)
-    {
-        filter.Name = value;
-        await dataGrid.Reload();
-    }
-
-    private async Task OnAuthorChanged(string value)
-    {
-        filter.Author = value;
-        await dataGrid.Reload();
-    }
-
-    private async Task OnIsAvailableChanged(bool? value)
-    {
-        filter.IsAvailable = value.HasValue && value.Value ? true : null;
-        await dataGrid.Reload();
     }
 
     private async Task OnSelectedTabChanged(string name)

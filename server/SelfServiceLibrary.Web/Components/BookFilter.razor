@@ -1,0 +1,102 @@
+﻿@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Filters
+@using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.DAL.Enums
+@using SelfServiceLibrary.BL.Interfaces
+@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.ViewModels
+@using SelfServiceLibrary.BL.DTO.Book
+@using SelfServiceLibrary.BL.DTO.BookStatus
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject IMapper mapper
+@inject BookService bookService
+@inject BookStatusService bookStatusService
+
+<Fields>
+    <Field ColumnSize="ColumnSize.Is1.OnTablet">
+        <FieldLabel>Ident</FieldLabel>
+        <TextEdit Text="@Filter.Departmentnumber" TextChanged="IdentChanged" Role="TextRole.Search" />
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+        <FieldLabel>Name</FieldLabel>
+        <TextEdit Text="@Filter.Name" TextChanged="NameChanged" Role="TextRole.Search" />
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+        <FieldLabel>Author</FieldLabel>
+        <TextEdit Text="@Filter.Author" TextChanged="AuthorChanged" Role="TextRole.Search" />
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+        <FieldLabel>Status</FieldLabel>
+        <Select TValue="string" SelectedValue="@Filter.Status" SelectedValueChanged="StatusChanged">
+            <SelectItem Value="@("")">All</SelectItem>
+            @foreach (var status in statuses)
+            {
+                <SelectItem Value="@status.Name">@status.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is2.OnTablet">
+        <FieldLabel>Available only</FieldLabel>
+        <Switch TValue="bool?"
+                Checked="@Filter.IsAvailable"
+                CheckedChanged="@OnIsAvailableChanged">
+            Available only
+        </Switch>
+    </Field>
+</Fields>
+
+@code {
+    [Parameter]
+    public BooksFilter Filter { get; set; } = new BooksFilter();
+
+    [Parameter]
+    public EventCallback<BooksFilter> FilterChanged { get; set; }
+
+    private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        Filter.UserRoles = state.User.Claims.GetRoles();
+
+        statuses = await bookStatusService.GetAll();
+    }
+
+    private Task AnythingChanged() =>
+        FilterChanged.InvokeAsync(Filter);
+
+    private Task StatusChanged(string value)
+    {
+        Filter.Status = value;
+        return AnythingChanged();
+    }
+
+    private Task NameChanged(string value)
+    {
+        Filter.Name = value;
+        return AnythingChanged();
+    }
+
+    private Task AuthorChanged(string value)
+    {
+        Filter.Author = value;
+        return AnythingChanged();
+    }
+
+    private Task IdentChanged(string value)
+    {
+        Filter.Departmentnumber = value;
+        return AnythingChanged();
+    }
+
+    private Task OnIsAvailableChanged(bool? value)
+    {
+        Filter.IsAvailable = value.HasValue && value.Value ? true : null;
+        return AnythingChanged();
+    }
+}
