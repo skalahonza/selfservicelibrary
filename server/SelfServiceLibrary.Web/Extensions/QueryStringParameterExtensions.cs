@@ -49,7 +49,7 @@ namespace SelfServiceLibrary.Web.Extensions
                 throw new InvalidOperationException("The current url is not a valid URI. Url: " + navigationManager.Uri);
 
             // Fill the dictionary with the parameters of the component
-            Dictionary<string, StringValues> parameters = QueryHelpers.ParseQuery(uri.Query);
+            var parameters = QueryHelpers.ParseQuery(uri.Query);
             foreach (var property in GetProperties<T>())
             {
                 var parameterName = GetQueryStringParameterName(property);

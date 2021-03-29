@@ -106,6 +106,7 @@
     private IEnumerable<string> tabs => searchResults
         .Where(x => x.Key != AllTab)
         .OrderByDescending(x => x.Value.Count)
+        .ThenBy(x => x.Key)
         .Select(x => x.Key)
         .Prepend(AllTab);
 
@@ -129,13 +130,13 @@
         var types = await bookService.GetPublicationTypes(filter with { PublicationType = null });
         searchResults = types.ToDictionary(x => x.Key, _ => new List<BookSearchDTO>());
         searchResults[AllTab] = new List<BookSearchDTO>();
-        await Fulltext();
     }
 
-    public override Task SetParametersAsync(ParameterView parameters)
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
         this.SetParametersFromQueryString(uriHelper);
-        return base.SetParametersAsync(parameters);
+        await base.SetParametersAsync(parameters);
+        await Fulltext();
     }
 
     private ValueTask UpdateQuery()

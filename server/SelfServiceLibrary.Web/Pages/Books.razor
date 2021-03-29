@@ -156,6 +156,7 @@
     private IEnumerable<string> types => publicationTypes
        .Where(x => x.Key != AllTab)
        .OrderByDescending(x => x.Value)
+       .ThenBy(x => x.Key)
        .Select(x => x.Key)
        .Prepend(AllTab);
 
