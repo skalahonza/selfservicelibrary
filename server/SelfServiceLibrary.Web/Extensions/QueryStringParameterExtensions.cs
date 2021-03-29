@@ -76,7 +76,10 @@ namespace SelfServiceLibrary.Web.Extensions
                     newUri = QueryHelpers.AddQueryString(newUri, parameter.Key, value);
                 }
             }
-            return newUri;
+
+            // https://github.com/dotnet/aspnetcore/issues/16840
+            // replace the %20 to + before the signalR method invoked
+            return newUri.Replace("%20", "+");
         }
 
         public static ValueTask UpdateQueryString<T>(this T component, NavigationManager navigationManager, IJSRuntime jsRuntime)
