@@ -40,8 +40,7 @@
         </Select>
     </Field>
 
-    <Field ColumnSize="ColumnSize.Is2.OnTablet">
-        <FieldLabel>Available only</FieldLabel>
+    <Field ColumnSize="ColumnSize.Is2.OnTablet" Margin="Margin.IsAuto.OnAll">
         <Switch TValue="bool?"
                 Checked="@Filter.IsAvailable"
                 CheckedChanged="@OnIsAvailableChanged">

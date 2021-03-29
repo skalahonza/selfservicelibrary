@@ -30,6 +30,8 @@ namespace SelfServiceLibrary.Mapping.Profiles
                 .ForMember(x => x.StsUK, o => o.MapFrom(x => !string.IsNullOrEmpty(x.StsUK)))
                 .ForMember(x => x.Price, o => o.MapFrom(x => TryParseDecimal(x.Price)))
                 .ReverseMap()
+                .ForMember(x => x.StsLocal, o => o.MapFrom(x => x.StsLocal ? x.StsLocal.ToString() : string.Empty))
+                .ForMember(x => x.StsUK, o => o.MapFrom(x => x.StsUK ? x.StsUK.ToString() : string.Empty))
                 .ForMember(x => x.CoAuthors, o => o.MapFrom(x => string.Join(',', x.CoAuthors)))
                 .ForMember(x => x.Keywords, o => o.MapFrom(x => string.Join(',', x.Keywords)));
         }

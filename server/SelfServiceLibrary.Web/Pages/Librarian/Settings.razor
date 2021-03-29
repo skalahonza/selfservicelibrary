@@ -8,6 +8,7 @@
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Web
 @inject BookService bookService
 @inject BookStatusService bookStatusService
 @inject IMapper _mapper
@@ -76,8 +77,10 @@
 
     <Card Margin="Margin.Is4.OnY">
         <CardHeader>
-            <Column ColumnSize="ColumnSize.Is11">Books</Column>
-            <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is11">Books</Column>
+                <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
+            </Row>
         </CardHeader>
         <CardBody>
             <Buttons Role="ButtonsRole.Toolbar">
@@ -88,9 +91,9 @@
 
             <BookFilter Filter="filter" FilterChanged="FilerChagned"/>
             <Text>Total items: @totalItems</Text>
-            <Button Color="Color.Primary" Type="ButtonType.Link" To="/csv/books" Target="Target.Blank">Export CSV</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Link" To="@($"/csv/books{CsvQueryFilter()}")" Target="Target.Blank">Export CSV</Button>
             <Divider />
-            <Dropdown>
+            <Dropdown Disabled="!delete">
                 <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
                     Delete all!
                 </DropdownToggle>
@@ -167,5 +170,30 @@
     {
         this.filter = filter;
         totalItems = await bookService.GetTotalCount(filter);
+    }
+
+    private string CsvQueryFilter()
+    {
+        var queryString
+            = HttpUtility.ParseQueryString(string.Empty);
+
+        if(!string.IsNullOrEmpty(filter.Departmentnumber))
+            queryString.Add(nameof(filter.Departmentnumber), filter.Departmentnumber);
+
+        if (!string.IsNullOrEmpty(filter.Name))
+            queryString.Add(nameof(filter.Name), filter.Name);
+
+        if (!string.IsNullOrEmpty(filter.Author))
+            queryString.Add(nameof(filter.Author), filter.Author);
+
+        if (!string.IsNullOrEmpty(filter.Status))
+            queryString.Add(nameof(filter.Status), filter.Status);
+
+        if (filter.IsAvailable.HasValue)
+            queryString.Add(nameof(filter.IsAvailable), filter.IsAvailable.Value.ToString());
+
+        return queryString.Count == 0
+            ? string.Empty
+            : $"?{queryString}";
     }
 }
