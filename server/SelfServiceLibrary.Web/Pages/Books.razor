@@ -1,4 +1,5 @@
 ﻿@page "/books"
+@using SelfServiceLibrary.Web.Attributes
 @using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.Web.Policies
@@ -9,6 +10,7 @@
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime jsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager uriHelper
 @inject IMapper mapper
@@ -43,6 +45,10 @@
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
               ShowPageSizes="true"
+              PageSize="PageSize"
+              PageSizeChanged="PageSizeChanged"
+              CurrentPage="Page"
+              PageChanged="PageChanged"
               Responsive="true">
         <LoadingTemplate>
             <Loading />
@@ -84,7 +90,7 @@
                     </AuthorizeView>
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true"/>
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Caption="Main Author" Sortable="true" />
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="false" Filterable="false" Caption="Publication">
                 <DisplayTemplate>
                     @if (context.YearOfPublication.HasValue)
@@ -146,6 +152,15 @@
     private PaginatedVM<BookListDTO> books = new PaginatedVM<BookListDTO>(0, new List<BookListDTO>());
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
 
+    [QueryStringParameter]
+    public int Page { get; set; } = 1;
+
+    [QueryStringParameter]
+    public int PageSize { get; set; } = 5;
+
+    [QueryStringParameter]
+    public string? Type { get => filter.PublicationType; set => filter.PublicationType = value; }
+
     protected override async Task OnInitializedAsync()
     {
         var state = await authenticationStateProvider.GetAuthenticationStateAsync();
@@ -159,9 +174,33 @@
         types = publicationTypes.OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
     }
 
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        this.SetParametersFromQueryString(uriHelper);
+        return base.SetParametersAsync(parameters);
+    }
+
+    private ValueTask UpdateQuery()
+    {
+        return this.UpdateQueryString(uriHelper, jsRuntime);
+    }
+
+    private async Task PageSizeChanged(int value)
+    {
+        PageSize = value;
+        await UpdateQuery();
+    }
+
+    private async Task PageChanged(DataGridPageChangedEventArgs args)
+    {
+        Page = args.Page;
+        await UpdateQuery();
+    }
+
     private async Task OnSelectedTabChanged(string name)
     {
         filter.PublicationType = name;
+        await UpdateQuery();
         await dataGrid.Reload();
     }
 
@@ -181,12 +220,12 @@
         var types = await bookService.GetPublicationTypes(filter with { PublicationType = null });
         foreach (var type in publicationTypes.Select(x => x.Key))
         {
-            if(types.TryGetValue(type, out var count))
+            if (types.TryGetValue(type, out var count))
             {
                 publicationTypes[type] = count;
                 publicationTypes[AllTab] += count;
             }
-            else if(type != AllTab)
+            else if (type != AllTab)
             {
                 publicationTypes[type] = 0;
             }
