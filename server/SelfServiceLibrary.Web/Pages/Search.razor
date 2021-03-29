@@ -1,6 +1,10 @@
 ﻿@page "/search"
+@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Book
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject BookService bookService
 
 <Bar Breakpoint="Breakpoint.Desktop"
@@ -15,7 +19,7 @@
                 <form @onsubmit=Fulltext>
                     <Addons Margin="Margin.Is3.OnX.OnTablet">
                         <Addon AddonType="AddonType.Body">
-                            <TextEdit Placeholder="Algebra, genetics, algorithm"
+                            <TextEdit Placeholder="Algebra genetics algorithm"
                                       Role="TextRole.Search"
                                       @bind-Text="search" />
                         </Addon>
@@ -30,47 +34,46 @@
 </Bar>
 
 <Container Fluid="true">
-    <Tabs SelectedTab="@selectedTab"
-          SelectedTabChanged="@OnSelectedTabChanged">
-        <Items>
-            @foreach (var (type, items) in searchResults.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value.Count))
-            {
-                <Tab Name="@type">@type <Badge Color="Color.Primary">@items.Count</Badge></Tab>
-            }
-        </Items>
-        <Content>
-            @foreach (var (type, items) in searchResults.Select(x => (x.Key, x.Value)).OrderByDescending(x => x.Value.Count))
-            {
-                <TabPanel Name="@type">
-                    <DataGrid RowSelectable=@(_ => false)
-                              TItem="BookSearchDTO"
-                              Data="@items"
-                              ShowPager="true"
-                              ShowPageSizes="true"
-                              PagerPosition="DataGridPagerPosition.Top">
-                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false">
-                            <DisplayTemplate>
-                                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-                            </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
-                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
-                        <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Keywords)" Caption="Keywords" Sortable="false">
-                            <DisplayTemplate>
-                                <Keywords Words="context.Keywords" />
-                            </DisplayTemplate>
-                        </DataGridColumn>
-                        <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
-                            <DisplayTemplate>
-                                <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
-                            </DisplayTemplate>
-                        </DataGridCheckColumn>
-                    </DataGrid>
-                </TabPanel>
-            }
-        </Content>
-    </Tabs>
-    
+    <BadgedTabs Tabs="@tabs.ToList()"
+                TabCounts="@searchResults.ToDictionary(x => x.Key, x => x.Value.Count)"
+                SelectedTab="@selectedTab"
+                SelectedTabChanged="OnSelectedTabChanged" />
+
+    @if (!string.IsNullOrEmpty(selectedTab))
+    {
+        <DataGrid RowSelectable=@(_ => false)
+                  TItem="BookSearchDTO"
+                  Data="@searchResults[selectedTab]"
+                  ShowPager="true"
+                  ShowPageSizes="true"
+                  PagerPosition="DataGridPagerPosition.Bottom">
+            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.DepartmentNumber)" Caption="#" Sortable="false">
+                <DisplayTemplate>
+                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" />
+            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Author)" Caption="Author" Sortable="true" />
+            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Keywords)" Caption="Keywords" Sortable="false">
+                <DisplayTemplate>
+                    <Keywords Words="context.Keywords" />
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+        </DataGrid>
+    }
+    else if(false)
+    {
+        // Nothing found
+    }
+    else
+    {
+        // initial state
+    }
 </Container>
 
 <style>
@@ -85,35 +88,66 @@
 
 @code{
     private const string AllTab = "All";
-    private string selectedTab;
-    private string search;
+    private string? selectedTab = null;
+    private string? search;
 
-    private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>();
+    private DataGrid<BookListDTO> dataGrid = new DataGrid<BookListDTO>();
 
-    private void OnSelectedTabChanged(string name)
+    private BooksFilter filter = new BooksFilter(AllTab);
+    private IDictionary<string, List<BookSearchDTO>> searchResults = new Dictionary<string, List<BookSearchDTO>>
+    {
+        {AllTab, new List<BookSearchDTO>()}
+    };
+    private IEnumerable<string> tabs => searchResults
+        .Where(x => x.Key != AllTab)
+        .OrderByDescending(x => x.Value.Count)
+        .Select(x => x.Key)
+        .Prepend(AllTab);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        filter.UserRoles = state.User.Claims.GetRoles();
+
+        var types = await bookService.GetPublicationTypes(filter with { PublicationType = null });
+        searchResults = types.ToDictionary(x => x.Key, _ => new List<BookSearchDTO>());
+        searchResults[AllTab] = new List<BookSearchDTO>();
+        selectedTab = AllTab;
+    }
+
+    private Task OnSelectedTabChanged(string name)
     {
         selectedTab = name;
+        return dataGrid.Reload();
     }
 
     private async Task Fulltext()
     {
+        // search in all categories
         var result = string.IsNullOrEmpty(search)
             ? new List<BookSearchDTO>()
             : await bookService.Fulltext(search);
 
-        if (result.Any())
+        var previousTab = selectedTab;
+        selectedTab = AllTab;
+
+        var lookup = result.ToLookup(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
+        foreach(var tab in searchResults)
         {
-            selectedTab = null;
-            searchResults = result.GroupBy(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
-            searchResults[AllTab] = result;
-            StateHasChanged();
-            selectedTab = AllTab;
+            if(lookup.TryGetValue(tab.Key, out var data))
+            {
+                // results found in a publication type
+                searchResults[tab.Key] = data;
+            }
+            else
+            {
+                // no results in a publication type
+                searchResults[tab.Key] = new List<BookSearchDTO>();
+            }
         }
-        else
-        {
-            searchResults?.Clear();
-            selectedTab = null;
-            StateHasChanged();
-        }
+
+        searchResults[AllTab] = result;
+        StateHasChanged();
+        selectedTab = previousTab;
     }
 }
