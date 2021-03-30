@@ -191,7 +191,7 @@ namespace SelfServiceLibrary.BL.Services
                 .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
         }
 
-        public async Task ImportCsv(Stream csv)
+        public async Task ImportCsv(Stream csv, UserInfo enteredBy)
         {
             var statuses = (await _dbContext.BookStatuses.AsQueryable()
                 .ToListAsync())
@@ -232,6 +232,7 @@ namespace SelfServiceLibrary.BL.Services
                     var update = Builders<Book>.Update
                     // first insert only
                     .SetOnInsert(book => book.Entered, DateTime.UtcNow)
+                    .SetOnInsert(book => book.EnteredBy, enteredBy)
                     .SetOnInsert(book => book.IsAvailable, true)
                     // update
                     .Set(book => book.Name, row.Name)
@@ -290,6 +291,8 @@ namespace SelfServiceLibrary.BL.Services
         }
 
         public Task DeleteAll() =>
-            _dbContext.Books.DeleteManyAsync(Builders<Book>.Filter.Empty);
+            _dbContext
+                .Books
+                .DeleteManyAsync(Builders<Book>.Filter.Where(x => x.IsAvailable));
     }
 }

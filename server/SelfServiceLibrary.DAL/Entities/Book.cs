@@ -123,7 +123,7 @@ namespace SelfServiceLibrary.DAL.Entities
         /// <summary>
         /// Vloženo kým - Kým byl záznam o publikaci vložen (doplnit automaticky při vložení)
         /// </summary>
-        public string? EnteredBy { get; set; }
+        public UserInfo EnteredBy { get; set; } = new UserInfo();
 
         /// <summary>
         /// Určuje zda je kniha volná (nikdo si ji nepůjčil)
@@ -168,8 +168,6 @@ namespace SelfServiceLibrary.DAL.Entities
 
         #region Related entities
         public Issue? CurrentIssue { get; set; }
-
-        public List<string> IssueIds { get; set; } = new List<string>();
         #endregion
     }
 }

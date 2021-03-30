@@ -24,7 +24,7 @@ namespace SelfServiceLibrary.DAL.Entities
         /// <summary>
         /// Uživatelské jméno toho, komu byla kniha půjčena
         /// </summary>
-        public string? IssuedTo { get; set; }
+        public UserInfo IssuedTo { get; set; } = new UserInfo();
 
         /// <summary>
         /// Datum zapůjčení

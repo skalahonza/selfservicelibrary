@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using SelfServiceLibrary.BL.DTO.BookStatus;
+using SelfServiceLibrary.DAL.Entities;
 
 namespace SelfServiceLibrary.BL.DTO.Book
 {
@@ -34,10 +35,10 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }
         public DateTime? Entered { get; set; }
-        public string? EnteredBy { get; set; }
+        public UserInfo? EnteredBy { get; set; }
 
         public string? CurrentIssueId { get; set; }
-        public string? CurrentIssueIssuedTo { get; set; }
+        public UserInfo? CurrentIssueIssuedTo { get; set; }
         public DateTime? CurrentIssueIssueDate { get; set; }
         public DateTime? CurrentIssueExpiryDate { get; set; }
 

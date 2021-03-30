@@ -39,6 +39,8 @@ namespace SelfServiceLibrary.BL.Services
                 .AsQueryable()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .OrderBy(x => x.IsReturned)
+                .ThenBy(x => x.ExpiryDate)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
@@ -46,8 +48,9 @@ namespace SelfServiceLibrary.BL.Services
             _dbContext
                 .Issues
                 .AsQueryable()
-                .Where(x => x.IssuedTo == username)
-                .OrderBy(x => x.IsReturned).ThenBy(x => x.ExpiryDate)
+                .Where(x => x.IssuedTo.Username == username)
+                .OrderBy(x => x.IsReturned)
+                .ThenBy(x => x.ExpiryDate)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
@@ -64,9 +67,9 @@ namespace SelfServiceLibrary.BL.Services
         /// Borrow a book if available
         /// </summary>
         /// <param name="issue">Issue details.</param>
-        /// <param name="username">To whom will the book be issued.</param>
+        /// <param name="issuer">To whom will the book be issued.</param>
         /// <returns>Issue details.</returns>
-        public async Task<BorrowResponse> Borrow(string username, IssueCreateDTO issue)
+        public async Task<BorrowResponse> Borrow(UserInfo issuer, IssueCreateDTO issue)
         {
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
@@ -90,23 +93,16 @@ namespace SelfServiceLibrary.BL.Services
             {
                 Id = Guid.NewGuid().ToString(),
                 IssueDate = DateTime.UtcNow,
-                IssuedTo = username
+                IssuedTo = issuer
             };
             entity = _mapper.Map(issue, entity);
             entity = _mapper.Map(book, entity);
             await _dbContext.Issues.InsertOneAsync(entity);
 
-            // link issue to a user
-            await _dbContext.Users.UpdateOneAsync(
-                x => x.Username == username,
-                Builders<User>.Update.AddToSet(x => x.IssueIds, entity.Id),
-                new UpdateOptions { IsUpsert = true });
-
             // link issue to a book
             await _dbContext.Books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber,
                 Builders<Book>.Update
-                .AddToSet(x => x.IssueIds, entity.Id)
                 .Set(x => x.CurrentIssue, entity));
 
             return new BorrowResponse(_mapper.Map<IssueDetailDTO>(entity));

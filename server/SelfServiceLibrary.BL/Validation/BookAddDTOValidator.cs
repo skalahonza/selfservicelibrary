@@ -15,7 +15,6 @@ namespace SelfServiceLibrary.BL.Validation
                 .MustAsync(async (departmentNumber, _) => !await service.Exists(departmentNumber ?? string.Empty))
                 .WithMessage("Department Number must be unique.");
             RuleFor(x => x.PublicationType).NotEmpty().Length(1, 100);
-            RuleFor(x => x.EnteredBy).NotEmpty().Length(1, 100);
             RuleFor(x => x.Entered).NotEmpty();
         }
     }

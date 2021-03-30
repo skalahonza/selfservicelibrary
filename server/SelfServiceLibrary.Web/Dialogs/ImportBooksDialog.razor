@@ -1,4 +1,6 @@
-﻿@using SelfServiceLibrary.BL.Services
+﻿@using SelfServiceLibrary.DAL.Entities
+@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.Web.Extensions
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -21,7 +23,7 @@
     </ModalContent>
 </Modal>
 
-<SnackbarStack @ref="snackbarStack"   Location="SnackbarStackLocation.Center" />
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
 
 @code {
     private SnackbarStack snackbarStack = new SnackbarStack();
@@ -36,13 +38,15 @@
 
     private async Task Import()
     {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         isUploading = true;
+        var info = state.User.Claims.GetUserBasicInfo();
         // 5 Megabytes = 5242880 Bytes
         foreach (var file in files)
         {
             try
             {
-                await bookService.ImportCsv(file.OpenReadStream(5242880));
+                await bookService.ImportCsv(file.OpenReadStream(5242880), info);
                 await snackbarStack.PushAsync($"File {file.Name} imported.", SnackbarColor.Success);
             }
             catch (Exception ex)

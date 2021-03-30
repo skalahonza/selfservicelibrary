@@ -79,7 +79,7 @@
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             book.Entered = DateTime.UtcNow;
-            book.EnteredBy = state.User.Identity.Name;
+            book.EnteredBy = state.User.Claims.GetUserBasicInfo();
             var result = await bookService.Create(book);
             await result.Match(
                 ok =>

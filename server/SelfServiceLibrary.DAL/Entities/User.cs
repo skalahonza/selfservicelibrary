@@ -15,8 +15,24 @@ namespace SelfServiceLibrary.DAL.Entities
         public HashSet<Role> Roles { get; set; } = new HashSet<Role> { Role.Visitor };
 
         #region Related entities
-        public List<string> IssueIds { get; set; } = new List<string>();
         public List<IdCard> Cards { get; set; } = new List<IdCard>();
         #endregion
+    }
+
+    /// <summary>
+    /// Sub-entity holding info about a user
+    /// </summary>
+    public class UserInfo
+    {
+        /// <summary>
+        /// Uživatelské jméno - může být prázdné pro lidi mimo ČVUT
+        /// </summary>
+        public string? Username { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+
+        public override string ToString() =>
+            $"{FirstName} {LastName} ({Username})";
     }
 }
