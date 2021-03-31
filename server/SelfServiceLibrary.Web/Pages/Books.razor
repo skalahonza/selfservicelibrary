@@ -70,11 +70,13 @@
             </DataGridColumn>
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
                 <DisplayTemplate>
-                    <div>@context.Name</div>
-                    <Button Size="Size.ExtraSmall" Color="Color.Primary" Type="ButtonType.Link" To="@($"/books/{context.DepartmentNumber}")">Show Detail</Button>
-                    <div>
-                        <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
-                    </div>
+                    <Link To="@($"/books/{context.DepartmentNumber}")">@context.Name</Link>
+                    @if (context.CoAuthors.Prepend(context.Author).Any(x => !string.IsNullOrEmpty(x)))
+                    {
+                        <div>
+                            <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
+                        </div>
+                    }
                     <div><Keywords Words="context.Keywords" /></div>
                     <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
                         @{
