@@ -3,14 +3,6 @@
 @using SelfServiceLibrary.BL.DTO.Issue
 @inject IssueService issueService
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        All Issues
-    </BarBrand>
-</Bar>
-
 <Container Fluid="true">
     <DataGrid RowSelectable=@(_ => false)
               TItem="IssueListlDTO"
@@ -42,9 +34,13 @@
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
     private int? totalIssues;
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         totalIssues = (int)await issueService.GetTotalCount();
+        Main?.ChangeTitle("Issues");
     }
 
     private async Task OnReadData(DataGridReadDataEventArgs<IssueListlDTO> e)

@@ -6,13 +6,6 @@
 @inject ICardService cardService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        Profile
-    </BarBrand>
-</Bar>
 
 <Container Fluid="true">
     <h2>ID Cards</h2>
@@ -38,7 +31,6 @@
 
     <!-- Add card modal -->
     <Modal @ref="addCardModal">
-        <ModalBackdrop />
         <ModalContent IsCentered="true">
             <ModalHeader>
                 <ModalTitle>Add ID card</ModalTitle>
@@ -97,7 +89,6 @@
 
     <!-- Delete card modal -->
     <Modal @ref="@deleteCardModal">
-        <ModalBackdrop />
         <ModalContent IsCentered="true">
             <ModalHeader>
                 <ModalTitle>Delete card</ModalTitle>
@@ -115,17 +106,22 @@
 </Container>
 
 @code{
-    private Modal addCardModal;
-    private Modal deleteCardModal;
+    private Modal addCardModal = new Modal();
+    private Modal deleteCardModal = new Modal();
+    private Validations validations = new Validations();
+
     private AddCardDTO card = new AddCardDTO();
-    private Validations validations;
     private List<CardListDTO> cards = new List<CardListDTO>();
-    private CardListDTO cardToDelete;
+    private CardListDTO? cardToDelete;
+
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        cards = await cardService.GetAll(state.User.Identity.Name) ?? new List<CardListDTO>();
+        cards = await cardService.GetAll(state.User.Identity.Name!) ?? new List<CardListDTO>();
+        Main?.ChangeTitle("Profile");
     }
 
     private void ShowModal(Modal modal)
@@ -144,7 +140,7 @@
         if (validations.ValidateAll())
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            await cardService.Add(state.User.Identity.Name, card);
+            await cardService.Add(state.User.Identity.Name!, card);
             cards.Add(new CardListDTO
             {
                 Name = card.Name,
@@ -155,7 +151,7 @@
         }
     }
 
-    private async Task RemoveCard(CardListDTO card)
+    private void RemoveCard(CardListDTO card)
     {
         cardToDelete = card;
         deleteCardModal.Show();
@@ -164,7 +160,7 @@
     private async Task RemoveCardConfirmed(CardListDTO card)
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        await cardService.Remove(state.User.Identity.Name, card.Number);
+        await cardService.Remove(state.User.Identity!.Name!, card!.Number);
         cards.Remove(card);
         deleteCardModal.Hide();
         cardToDelete = null;

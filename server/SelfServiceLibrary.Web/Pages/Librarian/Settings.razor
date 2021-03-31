@@ -14,13 +14,6 @@
 @inject IMapper _mapper
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        Settings
-    </BarBrand>
-</Bar>
 
 <Container Fluid="true">
     <Card Margin="Margin.Is4.OnY">
@@ -126,10 +119,14 @@
     private BooksFilter filter = new BooksFilter();
     private int totalItems = 0;
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await Reload();
         totalItems = await bookService.GetTotalCount(filter);
+        Main?.ChangeTitle("Settings");
     }
 
     private async Task Reload()

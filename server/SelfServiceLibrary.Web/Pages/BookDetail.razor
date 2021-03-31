@@ -13,14 +13,6 @@
 @inject IssueService issueService
 @inject IMapper mapper
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        Book detail
-    </BarBrand>
-</Bar>
-
 <Container Fluid="true">
     @if (book != null)
     {
@@ -504,8 +496,9 @@
 
 
 @code {
-    SnackbarStack snackbarStack;
-    Validations validations;
+    SnackbarStack snackbarStack = new SnackbarStack();
+    Validations validations = new Validations();
+
     private bool edit = false;
     private bool isReadonly => !edit;
     private BookDetailDTO book = new BookDetailDTO();
@@ -517,6 +510,9 @@
 
     [Parameter]
     public string DepartmentNumber { get; set; }
+
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -532,6 +528,7 @@
             issues = await issueService.GetAll(book);
             statuses = await bookStatusService.GetAll();
         }
+        Main?.ChangeTitle("Book detail");
     }
 
     private async Task Borrow()

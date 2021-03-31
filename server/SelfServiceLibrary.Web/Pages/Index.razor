@@ -25,3 +25,14 @@
         </NotAuthorized>
     </AuthorizeView>
 </Jumbotron>
+
+@code{
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Main?.ChangeTitle("Home");
+        return Task.CompletedTask;
+    }
+}

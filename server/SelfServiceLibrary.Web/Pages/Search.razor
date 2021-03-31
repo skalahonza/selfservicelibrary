@@ -10,33 +10,20 @@
 @inject NavigationManager uriHelper
 @inject BookService bookService
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand Display="Display.None.OnMobile.Block.OnTablet">
-        Search
-    </BarBrand>
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <form @onsubmit=Fulltext>
-                    <Addons Margin="Margin.Is3.OnX.OnTablet">
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit Placeholder="Algebra genetics algorithm"
-                                      Role="TextRole.Search"
-                                      Text="@Query" TextChanged="QueryChanged" />
-                        </Addon>
-                        <Addon AddonType="AddonType.End">
-                            <Button Color="Color.Primary" Type="ButtonType.Submit"><Icon Name="IconName.Search" /></Button>
-                        </Addon>
-                    </Addons>
-                </form>
-            </BarItem>
-        </BarStart>
-    </BarMenu>
-</Bar>
-
 <Container Fluid="true">
+    <Form @onsubmit=Fulltext Margin="Margin.Is4.OnY">
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Placeholder="Algebra genetics algorithm"
+                          Role="TextRole.Search"
+                          Text="@Query" TextChanged="QueryChanged" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Type="ButtonType.Submit"><Icon Name="IconName.Search" /></Button>
+            </Addon>
+        </Addons>
+    </Form>
+
     <BadgedTabs Tabs="@tabs.ToList()"
                 TabCounts="@searchResults.ToDictionary(x => x.Key, x => x.Value.Count)"
                 SelectedTab="@SelectedTab"
@@ -110,6 +97,9 @@
         .Select(x => x.Key)
         .Prepend(AllTab);
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     [QueryStringParameter]
     public string? Query { get; set; }
 
@@ -130,6 +120,7 @@
         var types = await bookService.GetPublicationTypes(filter with { PublicationType = null });
         searchResults = types.ToDictionary(x => x.Key, _ => new List<BookSearchDTO>());
         searchResults[AllTab] = new List<BookSearchDTO>();
+        Main?.ChangeTitle("Search");
     }
 
     public override async Task SetParametersAsync(ParameterView parameters)

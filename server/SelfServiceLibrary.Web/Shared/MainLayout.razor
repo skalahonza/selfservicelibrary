@@ -1,16 +1,129 @@
 @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@using SelfServiceLibrary.Web.Policies
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Layout>
     <Layout Sider="true">
         <LayoutSider>
             <LayoutSiderContent>
-                <NavMenu />
+                <Bar @ref="@sidebar"
+                     Mode="BarMode.VerticalInline"
+                     CollapseMode="BarCollapseMode.Hide"
+                     Breakpoint="Breakpoint.Tablet"
+                     NavigationBreakpoint="Breakpoint.Tablet"
+                     ThemeContrast="ThemeContrast.Dark">
+                    <BarBrand>
+                        <BarItem>
+                            <BarLink To="/">
+                                <BarIcon IconName="IconName.Dashboard" />
+                                Self Service Library
+                            </BarLink>
+                        </BarItem>
+                    </BarBrand>
+                    <BarMenu>
+                        <BarStart>
+                            <BarItem>
+                                <BarLink To="/search">
+                                    <BarIcon IconName="IconName.Search" />
+                                    Search
+                                </BarLink>
+                            </BarItem>
+                            <BarItem>
+                                <BarLink To="/books">
+                                    <BarIcon IconName="IconName.Book" />
+                                    Books
+                                </BarLink>
+                            </BarItem>
+                            <AuthorizeView>
+                                <Authorized>
+                                    <BarItem>
+                                        <BarLink To="/my-issues">
+                                            <BarIcon IconName="IconName.BookReader" />
+                                            My Issues
+                                        </BarLink>
+                                    </BarItem>
+                                </Authorized>
+                            </AuthorizeView>
+
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <Divider />
+                                <BarItem>
+                                    <BarLink To="/issues">
+                                        <BarIcon IconName="IconName.Bookmark" />
+                                        All Issues
+                                    </BarLink>
+                                </BarItem>
+                                <BarItem>
+                                    <BarLink To="/settings">
+                                        <BarIcon IconName="IconName.Edit" />
+                                        Settings
+                                    </BarLink>
+                                </BarItem>
+                            </AuthorizeView>
+                            <AuthorizeView Policy="@AdminPolicy.NAME">
+                                <Divider />
+                                <BarItem>
+                                    <BarLink To="/librarians">
+                                        <BarIcon IconName="IconName.Users" />
+                                        Librarians
+                                    </BarLink>
+                                </BarItem>
+                            </AuthorizeView>
+                        </BarStart>
+                        <BarEnd>
+                            <AuthorizeView>
+                                <NotAuthorized>
+                                    <BarItem>
+                                        <a href="/login" class="b-bar-link"><BarIcon IconName="IconName.User" /> Login</a>
+                                    </BarItem>
+                                </NotAuthorized>
+                                <Authorized>
+                                    <BarItem>
+                                        <BarLink To="/profile">
+                                            <BarIcon IconName="IconName.User" />
+                                            Profile
+                                        </BarLink>
+                                    </BarItem>
+                                    <BarItem>
+                                        <a href="/logout" class="b-bar-link"><BarIcon IconName="IconName.Lock" /> Logout</a>
+                                    </BarItem>
+                                </Authorized>
+                            </AuthorizeView>
+                        </BarEnd>
+                    </BarMenu>
+                </Bar>
             </LayoutSiderContent>
         </LayoutSider>
         <Layout>
+            <LayoutHeader Fixed="true">
+                <Bar Mode="BarMode.Horizontal"
+                     Background="Background.Light"
+                     ThemeContrast="ThemeContrast.Light">
+                    <BarBrand>
+                        <BarItem>
+                            @pageTitle
+                        </BarItem>
+                    </BarBrand>
+                    <BarToggler Bar="@sidebar" Display="Display.InlineBlock.None.OnDesktop" />
+                </Bar>
+            </LayoutHeader>
             <LayoutContent>
-                @Body
+                <CascadingValue Value="this">
+                    @Body
+                </CascadingValue>
             </LayoutContent>
         </Layout>
     </Layout>
 </Layout>
+
+@code {
+    private Bar? sidebar;
+    private string? pageTitle;
+
+    public void ChangeTitle(string value)
+    {
+        pageTitle = value;
+        StateHasChanged();
+    }
+}

@@ -18,14 +18,6 @@
 @inject BookStatusService bookStatusService
 @inject IssueService issueService
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        Books
-    </BarBrand>
-</Bar>
-
 <Container Fluid="true">
     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
         <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
@@ -163,6 +155,9 @@
        .Select(x => x.Key)
        .Prepend(AllTab);
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     [QueryStringParameter]
     public int Page { get; set; } = 1;
 
@@ -195,6 +190,7 @@
         statuses = await bookStatusService.GetAll();
         publicationTypes = await bookService.GetPublicationTypes(filter with { PublicationType = null });
         publicationTypes[AllTab] = publicationTypes.Select(x => x.Value).Sum();
+        Main?.ChangeTitle("Books");
     }
 
     public override Task SetParametersAsync(ParameterView parameters)

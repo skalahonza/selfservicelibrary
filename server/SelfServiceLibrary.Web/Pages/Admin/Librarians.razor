@@ -6,14 +6,6 @@
 @using SelfServiceLibrary.BL.DTO.User
 @inject UserService service
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        Librarians
-    </BarBrand>
-</Bar>
-
 <Container Fluid="true">
     <DataGrid TItem="UserListDTO"
               Data="@librarians"
@@ -49,9 +41,13 @@
     SnackbarStack? snackbarStack;
     private List<UserListDTO> librarians = new List<UserListDTO>();
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         librarians = await service.GetAll(Role.Librarian);
+        Main?.ChangeTitle("Librarians");
     }
 
     private async Task OnRowInserted(SavedRowItem<UserListDTO, Dictionary<string, object>> e)

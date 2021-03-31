@@ -7,14 +7,6 @@
 @inject IssueService issueService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
-    <BarBrand>
-        My Issues
-    </BarBrand>
-</Bar>
-
 <Container Fluid="true">
     <DataGrid RowSelectable=@(_ => false)
               TItem="IssueListlDTO"
@@ -40,11 +32,15 @@
 </Container>
 
 @code {
-    private List<IssueListlDTO> issues;
+    private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         issues = await issueService.GetAll(state.User.Identity.Name);
+        Main?.ChangeTitle("My issues");
     }
 }
