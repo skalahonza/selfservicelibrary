@@ -140,8 +140,12 @@
             statuses.Remove(defaultStatus);
     }
 
-    private Task DeleteAll()
-        => bookService.DeleteAll();
+    private async Task DeleteAll()
+    {
+        await bookService.DeleteAll();
+        await snackbarStack.PushAsync("All books deleted.", SnackbarColor.Success);
+        delete = false;
+    }
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
