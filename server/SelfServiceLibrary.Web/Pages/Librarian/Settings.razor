@@ -102,14 +102,6 @@
 <AddBookDialog @ref="addBookModal" />
 <ImportBooksDialog @ref="importBooksModal" />
 
-<style>
-    .custom-file-label {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-</style>
-
 @code {
     private bool delete;
     private SnackbarStack snackbarStack = new SnackbarStack();

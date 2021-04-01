@@ -23,6 +23,14 @@
     top: 0.5rem;
 }
 
+
+/* File dialog - hide long file name owerflows */
+.custom-file-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* SAFARI FIX - Nav menu didn't collapse properly on Safari */
 .b-bar-vertical-inline[data-collapse=hide], .b-bar-vertical-popout[data-collapse=hide], .b-bar-vertical-small[data-collapse=hide] {
     display: none;
