@@ -19,7 +19,7 @@
                 <Validation>
                     <Field>
                         <FieldLabel>Department number</FieldLabel>
-                        <TextEdit @bind-Text="@book.DepartmentNumber" Placeholder="GL-00xxx">
+                        <TextEdit @bind-Text="@book.DepartmentNumber">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -54,7 +54,7 @@
     </ModalContent>
 </Modal>
 
-<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
 
 @code {
     private SnackbarStack snackbarStack;

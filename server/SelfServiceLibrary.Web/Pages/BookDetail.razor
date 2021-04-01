@@ -14,7 +14,7 @@
 @inject IMapper mapper
 
 <Container Fluid="true">
-    @if (book != null)
+    @if (bookExists)
     {
         <Row>
             <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
@@ -49,6 +49,7 @@
             <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
             <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
             <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+            <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
         </AuthorizeView>
 
 
@@ -491,15 +492,17 @@
     }
 </Container>
 
-
-<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
+<DeleteDialog @ref="deleteBook" Title="Delete book" Text="Are you sure you want to delete this book?" Confirmed="DeleteConfirmed" />
 
 
 @code {
     SnackbarStack snackbarStack = new SnackbarStack();
     Validations validations = new Validations();
+    DeleteDialog deleteBook = new DeleteDialog();
 
-    private bool edit = false;
+    private bool bookExists;
+    private bool edit;
     private bool isReadonly => !edit;
     private BookDetailDTO book = new BookDetailDTO();
     private BookEditDTO editBook = new BookEditDTO();
@@ -508,8 +511,10 @@
     private List<string> bookTypes = new List<string>();
     private List<string> formTypes = new List<string>();
 
+#pragma warning disable CS8618 // URL Template match
     [Parameter]
     public string DepartmentNumber { get; set; }
+#pragma warning restore CS8618 // URL Template match
 
     [CascadingParameter]
     protected MainLayout? Main { get; set; }
@@ -519,9 +524,10 @@
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var roles = state.User.Claims.GetRoles();
 
-        book = await bookService.GetDetail(DepartmentNumber);
-        if (book != null)
+        bookExists = await bookService.Exists(DepartmentNumber);
+        if (bookExists)
         {
+            book = await bookService.GetDetail(DepartmentNumber);
             formTypes = (await bookService.GetFormTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
             bookTypes = (await bookService.GetPublicationTypes(roles)).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
             editBook = mapper.Map<BookEditDTO>(book);
@@ -536,7 +542,7 @@
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var result = await issueService.Borrow(state.User.Claims.GetUserBasicInfo(), new IssueCreateDTO
         {
-            DepartmentNumber = book.DepartmentNumber,
+            DepartmentNumber = DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
         });
 
@@ -575,12 +581,25 @@
     {
         if (validations.ValidateAll())
         {
-            await bookService.Update(book.DepartmentNumber, editBook);
+            await bookService.Update(DepartmentNumber, editBook);
             book = await bookService.GetDetail(DepartmentNumber);
             editBook = mapper.Map<BookEditDTO>(book);
             edit = false;
             validations.ClearAll();
         }
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        var result = await bookService.Delete(DepartmentNumber);
+        deleteBook.Hide();
+        await result.Match(
+                ok => snackbarStack.PushAsync("Book deleted.", SnackbarColor.Success),
+                notFound => snackbarStack.PushAsync("Book not found.", SnackbarColor.Danger),
+                borrowed => snackbarStack.PushAsync("Book is currentely borrowed and can't be deleted. Needs to be returned first.", SnackbarColor.Warning)
+            );
+        bookExists = false;
+        book = new BookDetailDTO();
     }
 
     private void Cancel()

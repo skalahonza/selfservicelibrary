@@ -111,7 +111,7 @@ namespace SelfServiceLibrary.BL.Services
         public Task<bool> Exists(string departmentNumber) =>
             _dbContext.Books.Find(x => x.DepartmentNumber == departmentNumber).AnyAsync();
 
-        public Task<BookDetailDTO> GetDetail(string departmentNumber) =>
+        public Task<BookDetailDTO?> GetDetail(string departmentNumber) =>
             _dbContext
                 .Books
                 .AsQueryable()
@@ -288,6 +288,29 @@ namespace SelfServiceLibrary.BL.Services
                 .AsAsyncEnumerable();
 
             return _csv.ExportBooks(books, csv, leaveOpen);
+        }
+
+        public async Task<DeleteBookResponse> Delete(string departmentNumber)
+        {
+            var result = await _dbContext
+                .Books
+                .DeleteOneAsync(x => x.DepartmentNumber == departmentNumber && x.IsAvailable);
+
+            if(result.DeletedCount == 0)
+            {
+                if (!await Exists(departmentNumber))
+                {
+                    return new DeleteBookResponse(new BookNotFound());
+                }
+                else
+                {
+                    return new DeleteBookResponse(new BookIsBorrowed());
+                }
+            }
+            else
+            {
+                return new DeleteBookResponse(new BookDeleted());
+            }
         }
 
         public Task DeleteAll() =>

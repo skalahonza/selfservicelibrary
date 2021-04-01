@@ -1,0 +1,34 @@
+﻿<Modal @ref="@modal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>@Title</ModalTitle>
+            <CloseButton Clicked="() => modal.Hide()" />
+        </ModalHeader>
+        <ModalBody>
+            @Text
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="() => modal.Hide()">Close</Button>
+            <Button Color="Color.Danger" Clicked="() => Confirmed.InvokeAsync()">Delete!</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private Modal modal = new Modal();
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public EventCallback Confirmed { get; set; }
+
+    public void Show() =>
+        modal.Show();
+
+    public void Hide() =>
+        modal.Hide();
+}

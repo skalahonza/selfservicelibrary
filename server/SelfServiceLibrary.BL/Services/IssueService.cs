@@ -85,7 +85,7 @@ namespace SelfServiceLibrary.BL.Services
             if (result.ModifiedCount == 0)
             {
                 // handle book was already taken
-                return new BorrowResponse(new BookAlreadyBorrowed());
+                return new BorrowResponse(new BookIsBorrowed());
             }
 
             // create issue document
@@ -123,26 +123,28 @@ namespace SelfServiceLibrary.BL.Services
                 return new ReturnResponse(new IssueNotFound());
             }
 
-            await _dbContext.Issues.UpdateOneAsync(
+            var result = await _dbContext.Issues.UpdateOneAsync(
                 x => x.Id == id,
                 Builders<Issue>
                     .Update
                     .Set(x => x.IsReturned, true)
                     .Set(x => x.ReturnDate, now));
 
+            if (result.ModifiedCount == 0)
+            {
+                // handle book was already returned
+                return new ReturnResponse(new BookAlreadyReturned());
+            }
+
             // mark book as available again
-            var result = await _dbContext.Books.UpdateOneAsync(
+            await _dbContext.Books.UpdateOneAsync(
                 x => x.DepartmentNumber == issue.DepartmentNumber && !x.IsAvailable,
                 Builders<Book>.Update
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue.IsReturned, true)
                 .Set(x => x.CurrentIssue.ReturnDate, now));
 
-            return result switch
-            {
-                { ModifiedCount: 1 } => new ReturnResponse(new BookReturned()),
-                { ModifiedCount: 0 } => new ReturnResponse(new BookAlreadyReturned())
-            };
+            return new ReturnResponse(new BookReturned());
         }
     }
 }

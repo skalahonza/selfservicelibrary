@@ -4,11 +4,7 @@ using SelfServiceLibrary.BL.DTO.Issue;
 
 namespace SelfServiceLibrary.BL.Responses
 {
-    public class BookNotFound { }
-
-    public class BookAlreadyBorrowed { }
-
-    public class BorrowResponse : Coproduct3<IssueDetailDTO, BookNotFound, BookAlreadyBorrowed>
+    public class BorrowResponse : Coproduct3<IssueDetailDTO, BookNotFound, BookIsBorrowed>
     {
         public BorrowResponse(IssueDetailDTO firstValue) : base(firstValue)
         {
@@ -18,11 +14,11 @@ namespace SelfServiceLibrary.BL.Responses
         {
         }
 
-        public BorrowResponse(BookAlreadyBorrowed thirdValue) : base(thirdValue)
+        public BorrowResponse(BookIsBorrowed thirdValue) : base(thirdValue)
         {
         }
 
-        public BorrowResponse(ICoproduct3<IssueDetailDTO, BookNotFound, BookAlreadyBorrowed> source) : base(source)
+        public BorrowResponse(ICoproduct3<IssueDetailDTO, BookNotFound, BookIsBorrowed> source) : base(source)
         {
         }
 
