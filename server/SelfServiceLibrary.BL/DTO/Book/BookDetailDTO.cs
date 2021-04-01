@@ -18,6 +18,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? SystemNumber { get; set; }
         public string? FelNumber { get; set; }
         public string? NFCIdent { get; set; }
+        public string? QRIdent { get; set; }
         public string? BarCode { get; set; }
         public bool IsAvailable { get; set; }
         public string? Depended { get; set; }

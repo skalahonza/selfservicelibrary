@@ -54,11 +54,11 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<List<IssueListlDTO>> GetAll(BookDetailDTO book) =>
+        public Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber) =>
             _dbContext
                 .Issues
                 .AsQueryable()
-                .Where(x => x.DepartmentNumber == book.DepartmentNumber)
+                .Where(x => x.DepartmentNumber == departmentNumber)
                 .OrderByDescending(x => x.IssueDate)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();

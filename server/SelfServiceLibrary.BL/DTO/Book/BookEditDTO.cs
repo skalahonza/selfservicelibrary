@@ -21,6 +21,7 @@
         public int? MagazineYear { get; set; }
         public string? ISBNorISSN { get; set; }
         public string? NFCIdent { get; set; }
+        public string? QRIdent { get; set; }
         public string? BarCode { get; set; }
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }

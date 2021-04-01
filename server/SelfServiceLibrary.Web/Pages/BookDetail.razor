@@ -14,7 +14,7 @@
 @inject IMapper mapper
 
 <Container Fluid="true">
-    @if (bookExists)
+    @if (book != null)
     {
         <Row>
             <Column ColumnSize="ColumnSize.IsFull.OnTablet.Is9.OnDesktop">
@@ -458,7 +458,7 @@
                     <Validation>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                             <FieldLabel>QR code</FieldLabel>
-                            <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
+                            <TextEdit @bind-Text="@editBook.QRIdent" ReadOnly="isReadonly">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -501,10 +501,9 @@
     Validations validations = new Validations();
     DeleteDialog deleteBook = new DeleteDialog();
 
-    private bool bookExists;
     private bool edit;
     private bool isReadonly => !edit;
-    private BookDetailDTO book = new BookDetailDTO();
+    private BookDetailDTO? book = new BookDetailDTO();
     private BookEditDTO editBook = new BookEditDTO();
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
@@ -524,14 +523,13 @@
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var roles = state.User.Claims.GetRoles();
 
-        bookExists = await bookService.Exists(DepartmentNumber);
-        if (bookExists)
+        book = await bookService.GetDetail(DepartmentNumber);
+        if (book != null)
         {
-            book = await bookService.GetDetail(DepartmentNumber);
             formTypes = (await bookService.GetFormTypes()).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
             bookTypes = (await bookService.GetPublicationTypes(roles)).OrderByDescending(x => x.Value).Select(x => x.Key).ToList();
             editBook = mapper.Map<BookEditDTO>(book);
-            issues = await issueService.GetAll(book);
+            issues = await issueService.GetBookIssues(DepartmentNumber);
             statuses = await bookStatusService.GetAll();
         }
         Main?.ChangeTitle("Book detail");
@@ -550,7 +548,7 @@
             async ok =>
             {
                 book = await bookService.GetDetail(DepartmentNumber);
-                issues = await issueService.GetAll(book);
+                issues = await issueService.GetBookIssues(DepartmentNumber);
                 await snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success);
             },
             notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
@@ -561,18 +559,18 @@
     private async Task Return()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (state.User.Identity?.Name == book.CurrentIssueIssuedTo?.Username)
+        if (book != null && state.User.Identity?.Name == book.CurrentIssueIssuedTo?.Username)
         {
-            var result = await issueService.Return(book.CurrentIssueId);
+            var result = await issueService.Return(book.CurrentIssueId ?? string.Empty);
             await result.Match(
                     async ok =>
                     {
                         book = await bookService.GetDetail(DepartmentNumber);
-                        issues = await issueService.GetAll(book);
+                        issues = await issueService.GetBookIssues(DepartmentNumber);
                         await snackbarStack.PushAsync("Book returned.", SnackbarColor.Success);
                     },
-                    notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
-                    alreadyBorrowed => snackbarStack.PushAsync("The book has already been returned.", SnackbarColor.Danger)
+                    notFound => snackbarStack.PushAsync("The issue document was not found.", SnackbarColor.Danger),
+                    alreadyReturned => snackbarStack.PushAsync("The book has already been returned.", SnackbarColor.Warning)
                 );
         }
     }
@@ -583,7 +581,7 @@
         {
             await bookService.Update(DepartmentNumber, editBook);
             book = await bookService.GetDetail(DepartmentNumber);
-            editBook = mapper.Map<BookEditDTO>(book);
+            editBook = mapper.Map<BookEditDTO>(book!);
             edit = false;
             validations.ClearAll();
         }
@@ -598,14 +596,13 @@
                 notFound => snackbarStack.PushAsync("Book not found.", SnackbarColor.Danger),
                 borrowed => snackbarStack.PushAsync("Book is currentely borrowed and can't be deleted. Needs to be returned first.", SnackbarColor.Warning)
             );
-        bookExists = false;
-        book = new BookDetailDTO();
+        book = null;
     }
 
     private void Cancel()
     {
         validations.ClearAll();
-        editBook = mapper.Map<BookEditDTO>(book);
+        editBook = mapper.Map<BookEditDTO>(book!);
         edit = false;
     }
 }

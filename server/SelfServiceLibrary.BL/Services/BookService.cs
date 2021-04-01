@@ -112,11 +112,11 @@ namespace SelfServiceLibrary.BL.Services
             _dbContext.Books.Find(x => x.DepartmentNumber == departmentNumber).AnyAsync();
 
         public Task<BookDetailDTO?> GetDetail(string departmentNumber) =>
-            _dbContext
+             _dbContext
                 .Books
                 .AsQueryable()
                 .Where(x => x.DepartmentNumber == departmentNumber)
-                .ProjectTo<Book, BookDetailDTO>(_mapper)
+                .ProjectTo<Book, BookDetailDTO?>(_mapper)
                 .FirstOrDefaultAsync();
 
         public Task<BookListDTO> GetByNFC(string serNumNFC) =>
@@ -181,6 +181,7 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.MagazineYear, data.MagazineYear)
                 .Set(x => x.ISBNorISSN, data.ISBNorISSN)
                 .Set(x => x.NFCIdent, data.NFCIdent)
+                .Set(x => x.QRIdent, data.QRIdent)
                 .Set(x => x.BarCode, data.BarCode)
                 .Set(x => x.StsLocal, data.StsLocal)
                 .Set(x => x.StsUK, data.StsUK)
