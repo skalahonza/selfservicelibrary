@@ -22,3 +22,8 @@
     right: 0.75rem;
     top: 0.5rem;
 }
+
+/* SAFARI FIX - Nav menu didn't collapse properly on Safari */
+.b-bar-vertical-inline[data-collapse=hide], .b-bar-vertical-popout[data-collapse=hide], .b-bar-vertical-small[data-collapse=hide] {
+    display: none;
+}
