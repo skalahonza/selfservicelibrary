@@ -28,7 +28,7 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? PublicationType { get; set; }
 
         /// <summary>
-        /// Dependováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
+        /// Deponováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
         /// </summary>
         public string? Depended { get; set; }
 
