@@ -30,7 +30,7 @@ namespace SelfServiceLibrary.DAL.Entities
         /// <summary>
         /// Deponováno – Fyzická část knihovny, kde je publikace uložena (zatím GL, CMP)
         /// </summary>
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
 
         /// <summary>
         /// Číslo přiřazované ústřední knihovnou ČVUT (určuje typ knihy, stejné knihy mají stejné číslo)

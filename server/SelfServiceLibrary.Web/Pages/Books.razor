@@ -49,7 +49,7 @@
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
                 <DisplayTemplate>
                     <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-                    <div>@context.Depended</div>
+                    <div>@context.Storage</div>
                     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="auth">
                         <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
                             StsLocal

@@ -8,7 +8,7 @@
         public string? FelNumber { get; set; }
         public string? PublicationType { get; set; }
         public string? FormType { get; set; }
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
         public string? Conference { get; set; }
         public string? Note { get; set; }
         public string? CountryOfPublication { get; set; }

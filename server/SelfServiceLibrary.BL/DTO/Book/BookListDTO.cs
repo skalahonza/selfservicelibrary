@@ -10,7 +10,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? ISBNorISSN { get; set; }
         public string? Name { get; set; }
         public string? PublicationType { get; set; }
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
         public string? Author { get; set; }
         public List<string> CoAuthors { get; set; } = new List<string>();
         public int? YearOfPublication { get; set; }

@@ -16,7 +16,7 @@ namespace SelfServiceLibrary.CSV
         [Name("DruhPublikace")]
         public string? PublicationType { get; set; }
         [Name("Deponovano")]
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
         [Name("SystemoveCislo")]
         public string? SystemNumber { get; set; }
         [Name("EvidencniCisloFEL")]

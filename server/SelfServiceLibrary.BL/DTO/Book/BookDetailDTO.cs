@@ -21,7 +21,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? QRIdent { get; set; }
         public string? BarCode { get; set; }
         public bool IsAvailable { get; set; }
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
         public string? Conference { get; set; }
         public string? Note { get; set; }
         public string? CountryOfPublication { get; set; }

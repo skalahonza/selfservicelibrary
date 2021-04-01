@@ -8,7 +8,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public string? Author { get; set; }
         public List<string> CoAuthors { get; set; } = new List<string>();
         public string? PublicationType { get; set; }
-        public string? Depended { get; set; }
+        public string? Storage { get; set; }
         public string? SystemNumber { get; set; }
         public string? FelNumber { get; set; }
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
