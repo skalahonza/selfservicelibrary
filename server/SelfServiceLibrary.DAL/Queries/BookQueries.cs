@@ -65,6 +65,7 @@ namespace SelfServiceLibrary.DAL.Queries
         /// <summary>
         /// Librarian should see all books. Users without librarian role should only see Books where the visibility is set to true.
         /// </summary>
+        /// <param name="builder">MongoDb filter builder</param>
         /// <param name="userRoles">Roles the current user is member of</param>
         /// <returns></returns>
         public static FilterDefinition<Book> OnlyVisible(this FilterDefinitionBuilder<Book> builder, ISet<Role> userRoles) =>
