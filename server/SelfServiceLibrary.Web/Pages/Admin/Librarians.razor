@@ -38,7 +38,7 @@
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Right" />
 
 @code {
-    SnackbarStack? snackbarStack;
+    SnackbarStack snackbarStack = new SnackbarStack();
     private List<UserListDTO> librarians = new List<UserListDTO>();
 
     [CascadingParameter]
@@ -52,14 +52,22 @@
 
     private async Task OnRowInserted(SavedRowItem<UserListDTO, Dictionary<string, object>> e)
     {
-        var added = await service.AddRole(e.Item.Username, Role.Librarian);
-        if (!added)
+        if (!string.IsNullOrEmpty(e.Item.Username))
         {
-            await snackbarStack.PushAsync("Such user is already a librarian.", SnackbarColor.Danger);
-            librarians = await service.GetAll(Role.Librarian);
+            var added = await service.AddRole(e.Item.Username, Role.Librarian);
+            if (!added)
+            {
+                await snackbarStack.PushAsync("Such user is already a librarian.", SnackbarColor.Danger);
+                librarians = await service.GetAll(Role.Librarian);
+            }
         }
     }
 
-    private Task OnRowRemoved(UserListDTO item) =>
-        service.RemoveRole(item.Username, Role.Librarian);
+    private Task OnRowRemoved(UserListDTO item)
+    {
+        if (!string.IsNullOrEmpty(item.Username))
+            return service.RemoveRole(item.Username, Role.Librarian);
+        else
+            return Task.CompletedTask;
+    }
 }

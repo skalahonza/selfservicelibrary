@@ -104,7 +104,7 @@
     public string? Query { get; set; }
 
     [QueryStringParameter]
-    private string? SelectedTab { get; set; } = AllTab;
+    public string? SelectedTab { get; set; }
 
     [QueryStringParameter]
     public int Page { get; set; } = 1;
@@ -121,6 +121,9 @@
         searchResults = types.ToDictionary(x => x.Key, _ => new List<BookSearchDTO>());
         searchResults[AllTab] = new List<BookSearchDTO>();
         Main?.ChangeTitle("Search");
+
+        if (string.IsNullOrEmpty(SelectedTab))
+            SelectedTab = AllTab;
     }
 
     public override async Task SetParametersAsync(ParameterView parameters)
@@ -170,7 +173,11 @@
         var previousTab = SelectedTab;
         SelectedTab = AllTab;
 
-        var lookup = result.ToLookup(x => x.PublicationType).ToDictionary(x => x.Key, x => x.ToList());
+        var lookup = result
+            .Where(x => !string.IsNullOrEmpty(x.PublicationType))
+            .ToLookup(x => x.PublicationType!)
+            .ToDictionary(x => x.Key, x => x.ToList());
+
         foreach (var tab in searchResults)
         {
             if (lookup.TryGetValue(tab.Key, out var data))
@@ -187,6 +194,9 @@
 
         searchResults[AllTab] = result;
         StateHasChanged();
+
+        // HACK force active tab reselection, their order might change due to sorting based on found items
         SelectedTab = previousTab;
+        StateHasChanged();
     }
 }

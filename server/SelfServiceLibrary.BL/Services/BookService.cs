@@ -67,7 +67,7 @@ namespace SelfServiceLibrary.BL.Services
                 }).ToListAsync();
             return types
                 .Where(x => !string.IsNullOrEmpty(x.Type))
-                .ToDictionary(x => x.Type, x => x.Count);
+                .ToDictionary(x => x.Type!, x => x.Count);
         }
 
         public async Task<Dictionary<string, int>> GetPublicationTypes(IBooksFilter filter)
@@ -83,7 +83,9 @@ namespace SelfServiceLibrary.BL.Services
                    })
                    .AsMongoDbQueryable()
                    .ToListAsync();
-            return types.ToDictionary(x => x.Type, x => x.Count);
+            return types
+                .Where(x => !string.IsNullOrEmpty(x.Type))
+                .ToDictionary(x => x.Type!, x => x.Count);
         }
 
         public async Task<Dictionary<string, int>> GetPublicationTypes(ISet<Role> userRoles)
@@ -97,7 +99,9 @@ namespace SelfServiceLibrary.BL.Services
                     Type = x.Key,
                     Count = x.Count()
                 }).ToListAsync();
-            return types.ToDictionary(x => x.Type, x => x.Count);
+            return types
+                .Where(x => !string.IsNullOrEmpty(x.Type))
+                .ToDictionary(x => x.Type!, x => x.Count);
         }
 
         public Task<int> GetTotalCount(IBooksFilter filter) =>

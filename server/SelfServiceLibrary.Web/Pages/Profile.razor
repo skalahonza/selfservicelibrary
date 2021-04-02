@@ -112,7 +112,7 @@
 
     private AddCardDTO card = new AddCardDTO();
     private List<CardListDTO> cards = new List<CardListDTO>();
-    private CardListDTO? cardToDelete;
+    private CardListDTO cardToDelete = new CardListDTO();
 
     [CascadingParameter]
     protected MainLayout? Main { get; set; }
@@ -120,7 +120,7 @@
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        cards = await cardService.GetAll(state.User.Identity.Name!) ?? new List<CardListDTO>();
+        cards = await cardService.GetAll(state.User.Identity!.Name!);
         Main?.ChangeTitle("Profile");
     }
 
@@ -140,7 +140,7 @@
         if (validations.ValidateAll())
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            await cardService.Add(state.User.Identity.Name!, card);
+            await cardService.Add(state.User.Identity!.Name!, card);
             cards.Add(new CardListDTO
             {
                 Name = card.Name,
@@ -160,10 +160,10 @@
     private async Task RemoveCardConfirmed(CardListDTO card)
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        await cardService.Remove(state.User.Identity!.Name!, card!.Number);
+        await cardService.Remove(state.User.Identity!.Name!, card.Number!);
         cards.Remove(card);
         deleteCardModal.Hide();
-        cardToDelete = null;
+        cardToDelete = new CardListDTO();
         StateHasChanged();
     }
 }

@@ -8,6 +8,7 @@ namespace SelfServiceLibrary.Card.Authentication.Model
     {
         public IdCard()
         {
+            CvutUsername = string.Empty;
         }
 
         public IdCard(string cardNumber, string cvutUsername)
@@ -21,8 +22,6 @@ namespace SelfServiceLibrary.Card.Authentication.Model
         /// </summary>
         public HashSet<string> Otps { get; set; } = new HashSet<string>();
 
-#pragma warning disable CS8618 // Enforced by validation.
         public string CvutUsername { get; set; }
-#pragma warning restore CS8618 // Enforced by validation.
     }
 }

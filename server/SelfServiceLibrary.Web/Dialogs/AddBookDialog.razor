@@ -57,11 +57,11 @@
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
 
 @code {
-    private SnackbarStack snackbarStack;
-    private Modal modalRef;
-    private Validations validations;
+    private SnackbarStack snackbarStack = new SnackbarStack();
+    private Modal modalRef = new Modal();
+    private Validations validations = new Validations();
 
-    private ISet<Role> roles;
+    private ISet<Role> roles = new HashSet<Role>();
     private BookAddDTO book = new BookAddDTO();
     private List<string> bookTypes = new List<string>();
 

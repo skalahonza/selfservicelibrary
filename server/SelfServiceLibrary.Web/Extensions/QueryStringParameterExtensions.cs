@@ -86,7 +86,9 @@ namespace SelfServiceLibrary.Web.Extensions
             where T : ComponentBase
         {
             var newUri = BuildNewUri(component, navigationManager);
+#pragma warning disable CS8625 // JavaScript method invocation
             return jsRuntime.InvokeVoidAsync("window.history.replaceState", null, "", newUri);
+#pragma warning restore CS8625 // JavaScript method invocation
         }
 
         // Apply the values from the component to the query string

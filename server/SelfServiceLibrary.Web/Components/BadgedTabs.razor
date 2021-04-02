@@ -17,18 +17,18 @@
         border-radius: 4px;
     }
 
-    /* selected tab */
-    .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active  {
-        color: #ffffff;
-        background-color: #004085;
-        border-color: transparent;
-        border-radius: 4px;
-    }
+        /* selected tab */
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            color: #ffffff;
+            background-color: #004085;
+            border-color: transparent;
+            border-radius: 4px;
+        }
 </style>
 
 @code{
     [Parameter]
-    public string SelectedTab { get; set; }
+    public string SelectedTab { get; set; } = string.Empty;
 
     [Parameter]
     public EventCallback<string> SelectedTabChanged { get; set; }
@@ -37,5 +37,5 @@
     public List<string> Tabs { get; set; } = new List<string>();
 
     [Parameter]
-    public Dictionary<string, int> TabCounts { get; set; } = new Dictionary<string, int>();
+    public Dictionary<string, int> TabCounts { get; set; } = new Dictionary<string, int> { { string.Empty, 0 } };
 }
