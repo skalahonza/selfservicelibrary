@@ -39,19 +39,42 @@
 
         <AuthorizeView>
             <Divider />
-            <div class="float-right">
-                <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-                <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
-            </div>
         </AuthorizeView>
 
-        <AuthorizeView Policy="@LibrarianPolicy.NAME">
-            <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
-            <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
-            <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
-            <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
-        </AuthorizeView>
+        <div class="clearfix d-none d-sm-block">
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Buttons class="float-left">
+                    <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
+                    <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
+                    <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+                    <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                </Buttons>
+            </AuthorizeView>
+            <AuthorizeView>
+                <Buttons class="float-right">
+                    <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+                    <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                </Buttons>
+            </AuthorizeView>
+        </div>
 
+        <div class="clearfix d-block d-sm-none">
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Buttons>
+                    <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
+                    <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
+                    <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+                    <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                </Buttons>
+            </AuthorizeView>
+            <AuthorizeView>
+                <Divider />
+                <Buttons>
+                    <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
+                    <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                </Buttons>
+            </AuthorizeView>
+        </div>
 
         <AuthorizeView>
             <Divider />
