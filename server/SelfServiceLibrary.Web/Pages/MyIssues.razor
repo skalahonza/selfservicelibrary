@@ -12,7 +12,7 @@
               TItem="IssueListlDTO"
               Data="@issues"
               ShowPager="true"
-              PagerPosition="DataGridPagerPosition.Top"
+              PagerPosition="DataGridPagerPosition.Bottom"
               ShowPageSizes="true">
         <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
             <DisplayTemplate>
@@ -40,7 +40,7 @@
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        issues = await issueService.GetAll(state.User.Identity.Name);
+        issues = await issueService.GetAll(state.User.Identity!.Name!);
         Main?.ChangeTitle("My issues");
     }
 }
