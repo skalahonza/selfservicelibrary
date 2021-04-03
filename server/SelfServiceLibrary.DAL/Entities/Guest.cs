@@ -3,7 +3,10 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SelfServiceLibrary.DAL.Entities
 {
-    public class Person
+    /// <summary>
+    /// Holds data about persons outside of CTU (guests)
+    /// </summary>
+    public class Guest
     {
 #pragma warning disable CS8618 // Database id cannot be empty
         [BsonId]

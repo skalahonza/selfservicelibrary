@@ -21,12 +21,14 @@ namespace SelfServiceLibrary.DAL
             BookStatuses = _database.GetCollection<BookStatus>("bookStatuses");
             Issues = _database.GetCollection<Issue>("issues");
             Users = _database.GetCollection<User>("users");
+            Guests = _database.GetCollection<Guest>("guests");
         }
 
         public IMongoCollection<Book> Books { get; }
         public IMongoCollection<BookStatus> BookStatuses { get; }
         public IMongoCollection<Issue> Issues { get; }
         public IMongoCollection<User> Users { get; }
+        public IMongoCollection<Guest> Guests { get; }
 
         /// <summary>
         /// This method should only be called at application startup and is responsible for DB configuration (primary keys etc) and asserting that the indexes exist.

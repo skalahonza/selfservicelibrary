@@ -1,0 +1,76 @@
+﻿@page "/guests"
+
+@using SelfServiceLibrary.BL.DTO.Guest
+@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Validation
+@inject GuestService service
+
+<Container Fluid="true">
+    <DataGrid TItem="GuestDTO"
+              Data="@guests"
+              ShowValidationFeedback="true"
+              ShowValidationsSummary="true"
+              RowSelectable=@(_ => false)
+              Editable="true"
+              Responsive="true"
+              SortMode="DataGridSortMode.Multiple"
+              EditMode="DataGridEditMode.Inline"
+              RowInserted="@OnRowInserted"
+              RowUpdated="@OnRowUpdated"
+              RowRemoved="@OnRowRemoved"
+              ShowPager="true"
+              ShowPageSizes="true"
+              PagerPosition="DataGridPagerPosition.Bottom">
+        <DataGridCommandColumn TItem="GuestDTO" Width="170px">
+            <NewCommandTemplate>
+                <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+            </NewCommandTemplate>
+            <EditCommandTemplate>
+            </EditCommandTemplate>
+            <SaveCommandTemplate>
+                <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+            </SaveCommandTemplate>
+            <DeleteCommandTemplate>
+                <Dropdown>
+                    <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
+                        Delete
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem Clicked="@context.Clicked">Yes, I am sure</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </DeleteCommandTemplate>
+            <CancelCommandTemplate>
+                <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+            </CancelCommandTemplate>
+        </DataGridCommandColumn>
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleBefore)" Caption="Title before" Editable="true" />
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.FirstName)" Caption="First name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true" />
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.LastName)" Caption="Last name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true" />
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleAfter)" Caption="Title after" Editable="true" />
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.Email)" Caption="Email" Validator="@ValidationRule.IsEmail" Editable="true" />
+        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.PhoneNumber)" Caption="Phone" Editable="true" />
+    </DataGrid>
+</Container>
+
+@code {
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
+    private List<GuestDTO> guests = new List<GuestDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Main?.ChangeTitle("Guests");
+        guests = await service.GetAll();
+    }
+
+    private Task OnRowInserted(SavedRowItem<GuestDTO, Dictionary<string, object>> e) =>
+         service.Add(e.Item);
+
+    private Task OnRowUpdated(SavedRowItem<GuestDTO, Dictionary<string, object>> e) =>
+         service.Update(e.Item);
+
+    private Task OnRowRemoved(GuestDTO model) =>
+        service.Delete(model.Id ?? string.Empty);
+}

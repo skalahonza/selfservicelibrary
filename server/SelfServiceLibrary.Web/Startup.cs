@@ -268,6 +268,7 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
             services.AddScoped<UserService>();
+            services.AddScoped<GuestService>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));

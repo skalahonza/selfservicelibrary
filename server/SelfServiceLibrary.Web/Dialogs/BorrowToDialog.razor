@@ -12,6 +12,7 @@
 @inject BookService bookService
 @inject IssueService issueService
 @inject UserService userService
+@inject GuestService guestService
 @inject NavigationManager uriHelper
 
 <Modal @ref="modalRef">
@@ -117,23 +118,9 @@
         });
     }
 
-    private async Task UpdatePersonSuggestions(string value)
+    private async Task UpdatePersonSuggestions(string? value)
     {
-        externalSuggestions.Clear();
-        externalSuggestions.Add(new UserInfoDTO
-        {
-            TitleBefore = "Bc.",
-            FirstName = "John",
-            LastName = "Doe",
-        });
-
-        externalSuggestions.Add(new UserInfoDTO
-        {
-            TitleBefore = "Ing.",
-            FirstName = "Jane",
-            LastName = "Doe",
-            TitleAfter = "PhD."
-        });
+        externalSuggestions = await guestService.Suggest(value ?? string.Empty);
     }
 
     private async Task Borrow()
