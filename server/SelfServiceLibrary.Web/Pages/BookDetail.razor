@@ -1,5 +1,6 @@
 ﻿@page "/books/{departmentNumber}"
 @using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using SelfServiceLibrary.BL.DTO.Issue
@@ -56,12 +57,12 @@
                     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
                         <Authorized>
                             <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Clicked="@(() => borrowToDialog.Show())" Color="Color.Warning">Borrow to</Button>
-                            <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
+                            <Button Disabled="@(book.IsAvailable)" Clicked="Return" Color="Color.Primary">Return</Button>
                         </Authorized>
                         <NotAuthorized>
                             <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
                         </NotAuthorized>
-                    </AuthorizeView>                    
+                    </AuthorizeView>
                 </Buttons>
             </AuthorizeView>
         </div>
@@ -594,9 +595,12 @@
     private async Task Return()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (book != null && state.User.Identity?.Name == book.CurrentIssueIssuedTo?.Username)
+        if (book != null 
+            && state.User.Identity != null 
+            && !string.IsNullOrEmpty(book.CurrentIssueId)
+            && (state.User.Identity.Name == book.CurrentIssueIssuedTo?.Username || state.User.Claims.GetRoles().Contains(Role.Librarian)))
         {
-            var result = await issueService.Return(book.CurrentIssueId ?? string.Empty);
+            var result = await issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo());
             await result.Match(
                     async ok =>
                     {

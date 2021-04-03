@@ -116,8 +116,9 @@ namespace SelfServiceLibrary.BL.Services
         /// Return a borrowed book
         /// </summary>
         /// <param name="id">Id of the issue document</param>
+        /// <param name="returnedBy">By whom was the book returned</param>
         /// <returns></returns>
-        public async Task<ReturnResponse> Return(string id)
+        public async Task<ReturnResponse> Return(string id, UserInfoDTO returnedBy)
         {
             var now = DateTime.UtcNow;
             var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
@@ -132,6 +133,7 @@ namespace SelfServiceLibrary.BL.Services
                 Builders<Issue>
                     .Update
                     .Set(x => x.IsReturned, true)
+                    .Set(x => x.ReturnedBy, _mapper.Map<UserInfo>(returnedBy))
                     .Set(x => x.ReturnDate, now));
 
             if (result.ModifiedCount == 0)
