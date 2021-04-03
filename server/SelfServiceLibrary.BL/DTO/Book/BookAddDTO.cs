@@ -1,5 +1,6 @@
 ﻿using System;
 
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.DAL.Entities;
 
 namespace SelfServiceLibrary.BL.DTO.Book
@@ -8,7 +9,7 @@ namespace SelfServiceLibrary.BL.DTO.Book
     {
         public string? DepartmentNumber { get; set; }
         public string? PublicationType { get; set; }
-        public UserInfo? EnteredBy { get; set; }
+        public UserInfoDTO? EnteredBy { get; set; }
         public DateTime? Entered { get; set; }
     }
 }

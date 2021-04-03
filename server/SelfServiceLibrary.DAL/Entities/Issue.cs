@@ -22,9 +22,19 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? BookName { get; set; }
 
         /// <summary>
+        /// Kdo knihu půjčil, knihovník nebo sám uživatel
+        /// </summary>
+        public UserInfo IssuedBy { get; set; } = new UserInfo();
+
+        /// <summary>
         /// Uživatelské jméno toho, komu byla kniha půjčena
         /// </summary>
         public UserInfo IssuedTo { get; set; } = new UserInfo();
+
+        /// <summary>
+        /// Kdo knihu vrátil, knihovník nebo sám uživatel
+        /// </summary>
+        public UserInfo ReturnedBy { get; set; } = new UserInfo();
 
         /// <summary>
         /// Datum zapůjčení

@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Responses;
@@ -196,11 +197,13 @@ namespace SelfServiceLibrary.BL.Services
                 .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
         }
 
-        public async Task ImportCsv(Stream csv, UserInfo enteredBy)
+        public async Task ImportCsv(Stream csv, UserInfoDTO enteredBy)
         {
             var statuses = (await _dbContext.BookStatuses.AsQueryable()
                 .ToListAsync())
                 .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+
+            var enteredByEntity = _mapper.Map<UserInfo>(enteredBy);
 
             var newStatuses = new List<BookStatus> { new BookStatus() };
 
@@ -237,7 +240,7 @@ namespace SelfServiceLibrary.BL.Services
                     var update = Builders<Book>.Update
                     // first insert only
                     .SetOnInsert(book => book.Entered, DateTime.UtcNow)
-                    .SetOnInsert(book => book.EnteredBy, enteredBy)
+                    .SetOnInsert(book => book.EnteredBy, enteredByEntity)
                     .SetOnInsert(book => book.IsAvailable, true)
                     // update
                     .Set(book => book.Name, row.Name)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-using SelfServiceLibrary.DAL.Entities;
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.DAL.Enums;
 
 namespace SelfServiceLibrary.Web.Extensions
@@ -28,8 +28,8 @@ namespace SelfServiceLibrary.Web.Extensions
         public static string? GetEmail(this IEnumerable<Claim> claims) =>
             claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
 
-        public static UserInfo GetUserBasicInfo(this IEnumerable<Claim> claims) =>
-            new UserInfo
+        public static UserInfoDTO GetUserBasicInfo(this IEnumerable<Claim> claims) =>
+            new()
             {
                 Username = claims.GetUserName(),
                 FirstName = claims.GetFirstName(),

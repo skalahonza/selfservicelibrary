@@ -16,12 +16,12 @@
     z-index: 1000;
 }
 
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
-}
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
 
 
 /* File dialog - hide long file name owerflows */
@@ -34,4 +34,20 @@
 /* SAFARI FIX - Nav menu didn't collapse properly on Safari */
 .b-bar-vertical-inline[data-collapse=hide], .b-bar-vertical-popout[data-collapse=hide], .b-bar-vertical-small[data-collapse=hide] {
     display: none;
+}
+
+/* TABS style */
+/* regural tab */
+.nav-tabs .nav-link {
+    background: #eee;
+    margin: 5px;
+    border-radius: 4px;
+}
+
+    /* selected tab */
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #ffffff;
+    background-color: #004085;
+    border-color: transparent;
+    border-radius: 4px;
 }

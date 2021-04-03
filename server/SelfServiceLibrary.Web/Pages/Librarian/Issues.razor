@@ -1,4 +1,7 @@
 ﻿@page "/issues"
+@attribute [Authorize(Policy = LibrarianPolicy.NAME)]
+
+@using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Issue
 @inject IssueService issueService

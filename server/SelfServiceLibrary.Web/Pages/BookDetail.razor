@@ -53,7 +53,15 @@
             <AuthorizeView>
                 <Buttons class="float-right">
                     <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-                    <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
+                        <Authorized>
+                            <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Clicked="@(() => borrowToDialog.Show())" Color="Color.Warning">Borrow to</Button>
+                            <Button Disabled="@(book.IsAvailable)" Color="Color.Primary">Return</Button>
+                        </Authorized>
+                        <NotAuthorized>
+                            <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                        </NotAuthorized>
+                    </AuthorizeView>                    
                 </Buttons>
             </AuthorizeView>
         </div>
@@ -517,12 +525,14 @@
 
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
 <DeleteDialog @ref="deleteBook" Title="Delete book" Text="Are you sure you want to delete this book?" Confirmed="DeleteConfirmed" />
+<BorrowToDialog @ref="borrowToDialog" DepartmentNumber="@DepartmentNumber" OnBorrowed="Borrowed" />
 
 
 @code {
     SnackbarStack snackbarStack = new SnackbarStack();
     Validations validations = new Validations();
     DeleteDialog deleteBook = new DeleteDialog();
+    BorrowToDialog borrowToDialog = new BorrowToDialog();
 
     private bool edit;
     private bool isReadonly => !edit;
@@ -558,6 +568,13 @@
         Main?.ChangeTitle("Book detail");
     }
 
+    private async Task Borrowed()
+    {
+        book = await bookService.GetDetail(DepartmentNumber);
+        issues = await issueService.GetBookIssues(DepartmentNumber);
+        await snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success);
+    }
+
     private async Task Borrow()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -568,12 +585,7 @@
         });
 
         await result.Match(
-            async ok =>
-            {
-                book = await bookService.GetDetail(DepartmentNumber);
-                issues = await issueService.GetBookIssues(DepartmentNumber);
-                await snackbarStack.PushAsync("Borrowed.", SnackbarColor.Success);
-            },
+            ok => Borrowed(),
             notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
             alreadyBorrowed => snackbarStack.PushAsync("The book has already been borrowed.", SnackbarColor.Danger)
             );

@@ -1,0 +1,38 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace SelfServiceLibrary.DAL.Entities
+{
+    /// <summary>
+    /// Weak entity holding info about a person
+    /// </summary>
+    public class UserInfo
+    {
+        /// <summary>
+        /// Can be empty for people outside CTU
+        /// </summary>
+        public string? Username { get; set; }
+        public string? TitleBefore { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? TitleAfter { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+
+        private IEnumerable<string?> NameFields()
+        {
+            yield return TitleBefore;
+            yield return FirstName;
+            yield return LastName;
+            yield return TitleAfter;
+        }
+
+        public override string ToString()
+        {
+            var text = string.Join(" ", NameFields().Where(x => !string.IsNullOrEmpty(x)));
+            return string.IsNullOrEmpty(Username)
+                ? text
+                : $"{text} ({Username})";
+        }
+    }
+}

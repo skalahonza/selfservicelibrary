@@ -10,6 +10,7 @@ namespace SelfServiceLibrary.Mapping.Profiles
         public UserProfile()
         {
             CreateMap<User, UserListDTO>();
+            CreateMap<UserInfo, UserInfoDTO>().ReverseMap();
         }
     }
 }

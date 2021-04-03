@@ -4,6 +4,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Responses;
@@ -66,12 +67,14 @@ namespace SelfServiceLibrary.BL.Services
         /// <summary>
         /// Borrow a book if available
         /// </summary>
-        /// <param name="issue">Issue details.</param>
-        /// <param name="issuer">To whom will the book be issued.</param>
+        /// <param name="issuedTo">To whom will the book be issued.</param>
+        /// <param name="details">Issue details.</param>
+        /// <param name="issuedBy">By whom was the book issued, leave empty in case of self-service borrowing.</param>
         /// <returns>Issue details.</returns>
-        public async Task<BorrowResponse> Borrow(UserInfo issuer, IssueCreateDTO issue)
+        public async Task<BorrowResponse> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null)
         {
-            var book = await _dbContext.Books.Find(x => x.DepartmentNumber == issue.DepartmentNumber).FirstOrDefaultAsync();
+            issuedBy ??= issuedTo;
+            var book = await _dbContext.Books.Find(x => x.DepartmentNumber == details.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
                 // handle not found
@@ -80,7 +83,7 @@ namespace SelfServiceLibrary.BL.Services
 
             // try to mark the book as borrowed
             var result = await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == issue.DepartmentNumber && x.IsAvailable,
+                x => x.DepartmentNumber == details.DepartmentNumber && x.IsAvailable,
                 Builders<Book>.Update.Set(x => x.IsAvailable, false));
             if (result.ModifiedCount == 0)
             {
@@ -89,23 +92,24 @@ namespace SelfServiceLibrary.BL.Services
             }
 
             // create issue document
-            var entity = new Issue
+            var issue = new Issue
             {
                 Id = Guid.NewGuid().ToString(),
                 IssueDate = DateTime.UtcNow,
-                IssuedTo = issuer
+                IssuedTo = _mapper.Map<UserInfo>(issuedTo),
+                IssuedBy = _mapper.Map<UserInfo>(issuedBy)
             };
-            entity = _mapper.Map(issue, entity);
-            entity = _mapper.Map(book, entity);
-            await _dbContext.Issues.InsertOneAsync(entity);
+            issue = _mapper.Map(details, issue);
+            issue = _mapper.Map(book, issue);
+            await _dbContext.Issues.InsertOneAsync(issue);
 
             // link issue to a book
             await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == issue.DepartmentNumber,
+                x => x.DepartmentNumber == details.DepartmentNumber,
                 Builders<Book>.Update
-                .Set(x => x.CurrentIssue, entity));
+                .Set(x => x.CurrentIssue, issue));
 
-            return new BorrowResponse(_mapper.Map<IssueDetailDTO>(entity));
+            return new BorrowResponse(_mapper.Map<IssueDetailDTO>(issue));
         }
 
         /// <summary>

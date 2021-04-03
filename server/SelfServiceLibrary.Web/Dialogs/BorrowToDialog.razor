@@ -1,0 +1,169 @@
+﻿@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.DAL.Entities
+@using SelfServiceLibrary.BL.DTO.Issue
+@using SelfServiceLibrary.BL.DTO.User
+@using SelfServiceLibrary.BL.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize(Policy = LibrarianPolicy.NAME)]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject BookService bookService
+@inject IssueService issueService
+@inject UserService userService
+@inject NavigationManager uriHelper
+
+<Modal @ref="modalRef">
+    <ModalContent IsCentered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader>
+            <ModalTitle>Borrow to</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Tabs @bind-SelectedTab="tab">
+                <Items>
+                    <Tab Name="ctu">CTU</Tab>
+                    <Tab Name="external">External</Tab>
+                </Items>
+                <Content>
+                    <TabPanel Name="ctu" Padding="Padding.Is3">
+                        <Autocomplete TItem="UserInfoDTO"
+                                      TValue="UserInfoDTO"
+                                      Data="@ctuSuggestions"
+                                      TextField="@((item)=>item.ToString())"
+                                      ValueField="@((item)=>item)"
+                                      @bind-SelectedValue="issuedTo"
+                                      Filter="AutocompleteFilter.Contains"
+                                      SearchChanged="UpdateUsersSuggestions"
+                                      ChangeTextOnKeyPress="true"
+                                      DelayTextOnKeyPress="true"
+                                      DelayTextOnKeyPressInterval="200"
+                                      MinLength="2"
+                                      Placeholder="Search...">
+                        </Autocomplete>
+                        <FieldHelp>Search person inside CTU by their name</FieldHelp>
+                        <!-- USERMAP search https://rozvoj.fit.cvut.cz/Main/usermap-api -->
+                    </TabPanel>
+                    <TabPanel Name="external" Padding="Padding.Is3">
+                        <Autocomplete TItem="UserInfoDTO"
+                                      TValue="UserInfoDTO"
+                                      Data="@externalSuggestions"
+                                      TextField="@((item)=>item.ToString())"
+                                      ValueField="@((item)=>item)"
+                                      @bind-SelectedValue="issuedTo"
+                                      Filter="AutocompleteFilter.Contains"
+                                      SearchChanged="UpdatePersonSuggestions"
+                                      ChangeTextOnKeyPress="true"
+                                      DelayTextOnKeyPress="true"
+                                      DelayTextOnKeyPressInterval="200"
+                                      MinLength="2"
+                                      Placeholder="Search...">
+                        </Autocomplete>
+                        <FieldHelp>Search person outside CTU by their name</FieldHelp>
+                    </TabPanel>
+                </Content>
+            </Tabs>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                <Button Disabled="@(issuedTo == null)" Color="Color.Success" Clicked="@Borrow">Confirm</Button>
+            </AuthorizeView>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
+
+@code {
+    private string tab = "ctu";
+    private SnackbarStack snackbarStack = new SnackbarStack();
+    private Modal modalRef = new Modal();
+
+    private UserInfoDTO? issuedTo;
+    private List<UserInfoDTO> ctuSuggestions = new List<UserInfoDTO>();
+    private List<UserInfoDTO> externalSuggestions = new List<UserInfoDTO>();
+
+    [Parameter]
+    public EventCallback OnBorrowed { get; set; }
+
+    [Parameter]
+    public string? DepartmentNumber { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task UpdateUsersSuggestions(string value)
+    {
+        ctuSuggestions.Clear();
+        ctuSuggestions.Add(new UserInfoDTO
+        {
+            TitleBefore = "Bc.",
+            FirstName = "Jan",
+            LastName = "Skála",
+            Username = "skalaja7"
+        });
+
+        ctuSuggestions.Add(new UserInfoDTO
+        {
+            TitleBefore = "Ing.",
+            FirstName = "Petr",
+            LastName = "Novák",
+            Username = "novakpe",
+            TitleAfter = "PhD."
+        });
+    }
+
+    private async Task UpdatePersonSuggestions(string value)
+    {
+        externalSuggestions.Clear();
+        externalSuggestions.Add(new UserInfoDTO
+        {
+            TitleBefore = "Bc.",
+            FirstName = "John",
+            LastName = "Doe",
+        });
+
+        externalSuggestions.Add(new UserInfoDTO
+        {
+            TitleBefore = "Ing.",
+            FirstName = "Jane",
+            LastName = "Doe",
+            TitleAfter = "PhD."
+        });
+    }
+
+    private async Task Borrow()
+    {
+        if (issuedTo != null && !string.IsNullOrEmpty(DepartmentNumber))
+        {
+            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var librarian = state.User.Claims.GetUserBasicInfo();
+            var details = new IssueCreateDTO
+            {
+                DepartmentNumber = DepartmentNumber,
+                ExpiryDate = DateTime.UtcNow.AddDays(30)
+            };
+
+            var result = await issueService.Borrow(issuedTo, details, librarian);
+            await result.Match(
+                async ok =>
+                {
+                    HideModal();
+                    await OnBorrowed.InvokeAsync();
+                },
+                notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
+                alreadyBorrowed => snackbarStack.PushAsync("The book has already been borrowed.", SnackbarColor.Danger)
+            );
+        }
+    }
+
+    public void Show() =>
+        modalRef.Show();
+
+    private void HideModal() =>
+        modalRef.Hide();
+}
