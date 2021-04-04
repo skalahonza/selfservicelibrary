@@ -1,0 +1,57 @@
+﻿<Form @onsubmit=AddTag>
+    @if (!ReadOnly)
+    {
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Role="TextRole.Text" @bind-Text="tag" ReadOnly="ReadOnly" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Type="ButtonType.Submit" Color="Color.Success">Add</Button>
+            </Addon>
+        </Addons>
+    }
+    <div>
+        @foreach (var tag in Tags)
+        {
+            <span class="lead">
+                @if (ReadOnly)
+                {
+                    <Badge Margin="Margin.Is1.OnX" Color="Color.Info">@tag</Badge>
+                }
+                else
+                {
+                    <Badge Margin="Margin.Is1.OnX" Color="Color.Info" CloseClicked="@(()=>RemoveTag(tag))">@tag</Badge>
+                }
+            </span>
+        }
+    </div>
+</Form>
+
+@code {
+    private string tag = string.Empty;
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public List<string> Tags { get; set; } = new List<string>();
+
+    [Parameter]
+    public EventCallback<List<string>> TagsChanged { get; set; }
+
+    private Task AddTag()
+    {
+        if (string.IsNullOrEmpty(tag) || ReadOnly)
+            return Task.CompletedTask;
+
+        Tags.Add(tag);
+        tag = string.Empty;
+        return TagsChanged.InvokeAsync(Tags);
+    }
+
+    private Task RemoveTag(string tag)
+    {
+        Tags.Remove(tag);
+        return TagsChanged.InvokeAsync(Tags);
+    }
+}

@@ -185,9 +185,23 @@
                 </Validation>
 
                 <!-- TODO CO-AUTHORS-->
+                <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                    <FieldLabel>Co-authors</FieldLabel>
+                    <TagsInput @bind-Tags="editBook.CoAuthors" ReadOnly="isReadonly" />
+                    <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                        <FieldHelp>Spoluautoři</FieldHelp>
+                    </AuthorizeView>
+                </Field>
             </Fields>
 
             <!-- TODO KEYWORDS-->
+            <Field>
+                <FieldLabel>Keywords</FieldLabel>
+                <TagsInput @bind-Tags="editBook.Keywords" ReadOnly="isReadonly" />
+                <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                    <FieldHelp>Klíčová slova</FieldHelp>
+                </AuthorizeView>
+            </Field>
 
             <Validation>
                 <Field>

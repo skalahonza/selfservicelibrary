@@ -169,10 +169,12 @@ namespace SelfServiceLibrary.BL.Services
             var update = Builders<Book>.Update
                 .Set(x => x.Name, data.Name)
                 .Set(x => x.Author, data.Author)
+                .Set(x => x.CoAuthors, data.CoAuthors)
                 .Set(x => x.SystemNumber, data.SystemNumber)
                 .Set(x => x.FelNumber, data.FelNumber)
                 .Set(x => x.PublicationType, data.PublicationType)
                 .Set(x => x.FormType, data.FormType)
+                .Set(x => x.Keywords, data.Keywords)
                 .Set(x => x.Storage, data.Storage)
                 .Set(x => x.Conference, data.Conference)
                 .Set(x => x.Note, data.Note)
