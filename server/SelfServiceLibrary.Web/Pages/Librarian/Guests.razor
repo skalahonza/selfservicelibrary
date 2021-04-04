@@ -14,42 +14,58 @@
               Editable="true"
               Responsive="true"
               SortMode="DataGridSortMode.Multiple"
-              EditMode="DataGridEditMode.Inline"
+              EditMode="DataGridEditMode.Popup"
               RowInserted="@OnRowInserted"
               RowUpdated="@OnRowUpdated"
               RowRemoved="@OnRowRemoved"
               ShowPager="true"
               ShowPageSizes="true"
               PagerPosition="DataGridPagerPosition.Bottom">
-        <DataGridCommandColumn TItem="GuestDTO" Width="170px">
-            <NewCommandTemplate>
-                <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
-            </NewCommandTemplate>
-            <EditCommandTemplate>
-            </EditCommandTemplate>
-            <SaveCommandTemplate>
-                <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
-            </SaveCommandTemplate>
-            <DeleteCommandTemplate>
-                <Dropdown>
-                    <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
-                        Delete
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        <DropdownItem Clicked="@context.Clicked">Yes, I am sure</DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-            </DeleteCommandTemplate>
-            <CancelCommandTemplate>
-                <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
-            </CancelCommandTemplate>
-        </DataGridCommandColumn>
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleBefore)" Caption="Title before" Editable="true" />
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.FirstName)" Caption="First name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true" />
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.LastName)" Caption="Last name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true" />
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleAfter)" Caption="Title after" Editable="true" />
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.Email)" Caption="Email" Validator="@ValidationRule.IsEmail" Editable="true" />
-        <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.PhoneNumber)" Caption="Phone" Editable="true" />
+        <DataGridColumns>
+            <DataGridCommandColumn TItem="GuestDTO">
+                <NewCommandTemplate>
+                    <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+                </NewCommandTemplate>
+                <EditCommandTemplate>
+                    <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
+                </EditCommandTemplate>
+                <SaveCommandTemplate>
+                    <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+                </SaveCommandTemplate>
+                <DeleteCommandTemplate>
+                    <Dropdown>
+                        <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
+                            Delete
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem Clicked="@context.Clicked">Yes, I am sure</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </DeleteCommandTemplate>
+                <CancelCommandTemplate>
+                    <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+                </CancelCommandTemplate>
+            </DataGridCommandColumn>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleBefore)" Caption="Title before" ShowCaption="false" Editable="true" >
+                <DisplayTemplate></DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.FirstName)" Caption="First name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true" >
+                <DisplayTemplate>
+                    @context.TitleBefore @context.FirstName
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.LastName)" Caption="Last name" Validator="@ValidationRule.IsNotEmpty" Editable="true" Sortable="true">
+                <DisplayTemplate>@context.LastName @context.TitleAfter</DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.TitleAfter)" Caption="Title after" ShowCaption="false" Editable="true" >
+                <DisplayTemplate></DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.Email)" Caption="Email" Validator="@ValidationRule.IsEmail" Editable="true" Sortable="true"/>
+            <DataGridColumn TItem="GuestDTO" Field="@nameof(GuestDTO.PhoneNumber)" Caption="Phone" Editable="true" Sortable="false"/>
+        </DataGridColumns>
+        <PopupTitleTemplate>
+            @($"{context.LocalizationString} Guest")
+        </PopupTitleTemplate>
     </DataGrid>
 </Container>
 
