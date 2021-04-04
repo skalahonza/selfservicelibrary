@@ -18,10 +18,12 @@
 <Container Fluid="true">
     <Card Margin="Margin.Is4.OnY">
         <CardHeader>
-            <Row>
-                <Column ColumnSize="ColumnSize.Is11">Book statuses</Column>
-                <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
-            </Row>
+            <div class="clearfix">
+                <div class="float-left">Book statuses</div>
+                <div class="float-right">
+                    <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger">Delete</Switch>
+                </div>
+            </div>
         </CardHeader>
         <CardBody>
             <DataGrid TItem="BookStatusListDTO"
@@ -70,10 +72,12 @@
 
     <Card Margin="Margin.Is4.OnY">
         <CardHeader>
-            <Row>
-                <Column ColumnSize="ColumnSize.Is11">Books</Column>
-                <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger" ColumnSize="ColumnSize.Is1">Delete</Switch>
-            </Row>
+            <div class="clearfix">
+                <div class="float-left">Books</div>
+                <div class="float-right">
+                    <Switch TValue="bool" @bind-Checked="delete" Color="Color.Danger">Delete</Switch>
+                </div>
+            </div>
         </CardHeader>
         <CardBody>
             <Buttons Role="ButtonsRole.Toolbar">
@@ -82,7 +86,7 @@
             </Buttons>
             <Divider />
 
-            <BookFilter Filter="filter" FilterChanged="FilerChagned"/>
+            <BookFilter Filter="filter" FilterChanged="FilerChagned" />
             <Text>Total items: @totalItems</Text>
             <Button Color="Color.Primary" Type="ButtonType.Link" To="@($"/csv/books{CsvQueryFilter()}")" Target="Target.Blank">Export CSV</Button>
             <Divider />
@@ -170,7 +174,7 @@
         var queryString
             = HttpUtility.ParseQueryString(string.Empty);
 
-        if(!string.IsNullOrEmpty(filter.Departmentnumber))
+        if (!string.IsNullOrEmpty(filter.Departmentnumber))
             queryString.Add(nameof(filter.Departmentnumber), filter.Departmentnumber);
 
         if (!string.IsNullOrEmpty(filter.Name))
