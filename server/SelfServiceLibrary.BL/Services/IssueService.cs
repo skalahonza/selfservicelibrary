@@ -129,7 +129,7 @@ namespace SelfServiceLibrary.BL.Services
             }
 
             var result = await _dbContext.Issues.UpdateOneAsync(
-                x => x.Id == id,
+                x => x.Id == id && !x.IsReturned,
                 Builders<Issue>
                     .Update
                     .Set(x => x.IsReturned, true)
