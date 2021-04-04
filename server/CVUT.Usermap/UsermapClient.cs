@@ -11,6 +11,8 @@ using SelfServiceLibrary.BL.Interfaces;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -35,6 +37,11 @@ namespace CVUT.Usermap
                 .WithBearerAuthentication(token)
                 .As<User>();
 
+        public Task<User> Get(string username) =>
+            _client
+                .GetAsync($"people/{username}")
+                .As<User>();
+
         public async Task<List<UserInfoDTO>> Suggest(string term, int limit = 10)
         {
             var users = await _client
@@ -42,7 +49,18 @@ namespace CVUT.Usermap
                 .WithArgument("query", $"name==\"{term}\"")
                 .WithArgument("limit", limit)
                 .AsArray<User>();
-            return _mapper.Map<List<UserInfoDTO>>(users);
+
+            // try find by username
+            try
+            {
+                var user = await Get(term);
+                return _mapper.Map<List<UserInfoDTO>>(users.Take(limit - 1).Prepend(user));
+            }
+            catch (ApiException ex) when (ex.Status == HttpStatusCode.NotFound)
+            {
+                // not found by username
+                return _mapper.Map<List<UserInfoDTO>>(users);
+            }
         }
     }
 }
