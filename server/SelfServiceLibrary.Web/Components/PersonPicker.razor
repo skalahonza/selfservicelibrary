@@ -1,0 +1,32 @@
+﻿@using SelfServiceLibrary.BL.DTO.User
+
+<TextEdit TextChanged="SearchChanged"
+          ChangeTextOnKeyPress="true"
+          DelayTextOnKeyPress="true"
+          DelayTextOnKeyPressInterval="300"
+          Role="TextRole.Search"
+          MinLength="2"
+          Placeholder="Search...">
+</TextEdit>
+
+<DataGrid TItem="UserInfoDTO" Data="Suggestions" SelectedRow="Selected" SelectedRowChanged="SelectedChanged">
+    <DataGridColumn TItem="UserInfoDTO" Field="@nameof(UserInfoDTO.FullName)" Caption="Name" >
+        <DisplayTemplate>
+            @context.ToString()
+        </DisplayTemplate>
+    </DataGridColumn>
+</DataGrid>
+
+@code {
+    [Parameter]
+    public List<UserInfoDTO> Suggestions { get; set; } = new List<UserInfoDTO>();
+
+    [Parameter]
+    public EventCallback<string> SearchChanged { get; set; }
+
+    [Parameter]
+    public UserInfoDTO? Selected { get; set; }
+
+    [Parameter]
+    public EventCallback<UserInfoDTO> SelectedChanged { get; set; }
+}

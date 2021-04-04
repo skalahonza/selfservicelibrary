@@ -12,12 +12,14 @@ namespace SelfServiceLibrary.BL.DTO.User
         public string? TitleBefore { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? FullName { get; set; }
         public string? TitleAfter { get; set; }
         public string? Email { get; set; }
         /// <summary>
         /// Can be empty for people inside CTU
         /// </summary>
         public string? PhoneNumber { get; set; }
+        public bool IsGuest => string.IsNullOrEmpty(Username);
 
         private IEnumerable<string?> NameFields()
         {
@@ -29,7 +31,9 @@ namespace SelfServiceLibrary.BL.DTO.User
 
         public override string ToString()
         {
-            var text = string.Join(" ", NameFields().Where(x => !string.IsNullOrEmpty(x)));
+            var text = string.IsNullOrEmpty(FullName)
+                ? string.Join(" ", NameFields().Where(x => !string.IsNullOrEmpty(x)))
+                : FullName;
             return string.IsNullOrEmpty(Username)
                 ? text
                 : $"{text} ({Username})";

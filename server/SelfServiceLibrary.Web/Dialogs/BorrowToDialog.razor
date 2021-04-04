@@ -1,9 +1,9 @@
 ﻿@using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Policies
-@using SelfServiceLibrary.DAL.Entities
 @using SelfServiceLibrary.BL.DTO.Issue
 @using SelfServiceLibrary.BL.DTO.User
 @using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
@@ -13,6 +13,7 @@
 @inject IssueService issueService
 @inject UserService userService
 @inject GuestService guestService
+@inject IUserContextService userContextService
 @inject NavigationManager uriHelper
 
 <Modal @ref="modalRef">
@@ -29,39 +30,13 @@
                 </Items>
                 <Content>
                     <TabPanel Name="ctu" Padding="Padding.Is3">
-                        <Autocomplete TItem="UserInfoDTO"
-                                      TValue="UserInfoDTO"
-                                      Data="@ctuSuggestions"
-                                      TextField="@((item)=>item.ToString())"
-                                      ValueField="@((item)=>item)"
-                                      @bind-SelectedValue="issuedTo"
-                                      Filter="AutocompleteFilter.Contains"
-                                      SearchChanged="UpdateUsersSuggestions"
-                                      ChangeTextOnKeyPress="true"
-                                      DelayTextOnKeyPress="true"
-                                      DelayTextOnKeyPressInterval="200"
-                                      MinLength="2"
-                                      Placeholder="Search...">
-                        </Autocomplete>
                         <FieldHelp>Search person inside CTU by their name</FieldHelp>
                         <!-- USERMAP search https://rozvoj.fit.cvut.cz/Main/usermap-api -->
+                        <PersonPicker @bind-Selected="issuedTo" Suggestions="ctuSuggestions" SearchChanged="UpdateUsersSuggestions" />
                     </TabPanel>
                     <TabPanel Name="external" Padding="Padding.Is3">
-                        <Autocomplete TItem="UserInfoDTO"
-                                      TValue="UserInfoDTO"
-                                      Data="@externalSuggestions"
-                                      TextField="@((item)=>item.ToString())"
-                                      ValueField="@((item)=>item)"
-                                      @bind-SelectedValue="issuedTo"
-                                      Filter="AutocompleteFilter.Contains"
-                                      SearchChanged="UpdatePersonSuggestions"
-                                      ChangeTextOnKeyPress="true"
-                                      DelayTextOnKeyPress="true"
-                                      DelayTextOnKeyPressInterval="200"
-                                      MinLength="2"
-                                      Placeholder="Search...">
-                        </Autocomplete>
                         <FieldHelp>Search person outside CTU by their name</FieldHelp>
+                        <PersonPicker @bind-Selected="issuedTo" Suggestions="externalSuggestions" SearchChanged="UpdatePersonSuggestions" />
                     </TabPanel>
                 </Content>
             </Tabs>
@@ -92,35 +67,24 @@
     [Parameter]
     public string? DepartmentNumber { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private async Task UpdateUsersSuggestions(string? value)
     {
-
-    }
-
-    private async Task UpdateUsersSuggestions(string value)
-    {
-        ctuSuggestions.Clear();
-        ctuSuggestions.Add(new UserInfoDTO
+        if (!string.IsNullOrEmpty(value))
         {
-            TitleBefore = "Bc.",
-            FirstName = "Jan",
-            LastName = "Skála",
-            Username = "skalaja7"
-        });
-
-        ctuSuggestions.Add(new UserInfoDTO
+            ctuSuggestions = await userContextService.Suggest(value);
+        }
+        else
         {
-            TitleBefore = "Ing.",
-            FirstName = "Petr",
-            LastName = "Novák",
-            Username = "novakpe",
-            TitleAfter = "PhD."
-        });
+            ctuSuggestions.Clear();
+        }
     }
 
     private async Task UpdatePersonSuggestions(string? value)
     {
-        externalSuggestions = await guestService.Suggest(value ?? string.Empty);
+        if (!string.IsNullOrEmpty(value))
+        {
+            externalSuggestions = await guestService.Suggest(value ?? string.Empty);
+        }
     }
 
     private async Task Borrow()

@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CVUT.Auth.Options
+namespace CVUT.Usermap
 {
-    public class oAuth2Options
+    public class UsermapClientOptions
     {
 #pragma warning disable CS8618 // Enforced by validation
         [Required]
         public string ClientId { get; set; }
         [Required]
         public string ClientSecret { get; set; }
-        [Required]
-        public string RedirectUri { get; set; }
 #pragma warning restore CS8618 // Enforced by validation
     }
 }

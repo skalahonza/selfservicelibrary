@@ -12,7 +12,8 @@ namespace SelfServiceLibrary.Mapping.Profiles
         {
             CreateMap<Guest, GuestDTO>().ReverseMap();
             CreateMap<Guest, UserInfoDTO>()
-                .ForMember(x => x.Username, x => x.Ignore());
+                .ForMember(x => x.Username, x => x.Ignore())
+                .ForMember(x => x.FullName, x => x.Ignore());
         }
     }
 }

@@ -95,7 +95,9 @@ namespace SelfServiceLibrary.Web
             services.AddHttpClient<ZuulClient>();
 
             // Usermap
+            services.AddOptions<UsermapClientOptions>().Bind(Configuration.GetSection("usermap")).ValidateDataAnnotations();
             services.AddHttpClient<UsermapClient>();
+            services.AddHttpClient<IUserContextService, UsermapClient>();
 
             // Authentication
             services

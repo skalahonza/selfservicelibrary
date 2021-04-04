@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace SelfServiceLibrary.DAL.Entities
+﻿namespace SelfServiceLibrary.DAL.Entities
 {
     /// <summary>
     /// Weak entity holding info about a person
@@ -15,24 +12,9 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? TitleBefore { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? FullName { get; set; }
         public string? TitleAfter { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-
-        private IEnumerable<string?> NameFields()
-        {
-            yield return TitleBefore;
-            yield return FirstName;
-            yield return LastName;
-            yield return TitleAfter;
-        }
-
-        public override string ToString()
-        {
-            var text = string.Join(" ", NameFields().Where(x => !string.IsNullOrEmpty(x)));
-            return string.IsNullOrEmpty(Username)
-                ? text
-                : $"{text} ({Username})";
-        }
     }
 }
