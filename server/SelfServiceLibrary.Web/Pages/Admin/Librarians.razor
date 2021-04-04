@@ -25,7 +25,14 @@
                 <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
             </SaveCommandTemplate>
             <DeleteCommandTemplate>
-                <Button Color="Color.Danger" Clicked="@context.Clicked">Delete</Button>
+                <Dropdown>
+                    <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
+                        Delete
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem Clicked="@context.Clicked">Yes, I am sure</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
             </DeleteCommandTemplate>
             <CancelCommandTemplate>
                 <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
