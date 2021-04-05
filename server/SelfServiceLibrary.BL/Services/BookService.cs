@@ -49,14 +49,6 @@ namespace SelfServiceLibrary.BL.Services
 
             // sorting
             query = query.Sort(sortings);
-            //if (sortings == null)
-            //{
-            //    query = query.OrderBy(x => x.DepartmentNumber);
-            //}
-            //else
-            //{
-            //    query = query.Sort(sortings);
-            //}
 
             var data = await query
                 .Skip((page - 1) * pageSize)
