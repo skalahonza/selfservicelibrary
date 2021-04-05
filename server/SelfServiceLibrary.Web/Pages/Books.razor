@@ -10,6 +10,7 @@
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.ComponentModel
 @inject IJSRuntime jsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager uriHelper
@@ -46,7 +47,7 @@
             <Loading />
         </LoadingTemplate>
         <DataGridColumns>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Caption="Ident" Sortable="true">
                 <DisplayTemplate>
                     <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
                     <div>@context.Storage</div>
@@ -103,7 +104,7 @@
                     }
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="true">
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.StatusName)" Caption="Available" Sortable="false">
                 <DisplayTemplate>
                     <div>
                         <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
@@ -125,16 +126,6 @@
 </Container>
 
 <AddBookDialog @ref="addBookModal" />
-
-<style scoped>
-    th {
-        background: white;
-        position: sticky;
-        top: 0; /* Don't forget this, required for the stickiness */
-        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-        z-index: 10
-    }
-</style>
 
 @code {
     private const string AllTab = "All";
@@ -232,12 +223,18 @@
 
     private async Task OnReadData(DataGridReadDataEventArgs<BookListDTO> e)
     {
-        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
+        var sortings = e.GetSortingCriteria().ToList();
+
+        if(sortings.Count == 0)
+        {
+            sortings.Add((nameof(BookListDTO.DepartmentNumber), ListSortDirection.Ascending));
+        }
+
         // display all publication types when AllTab selected
         var vm = await bookService.GetAll(e.Page, e.PageSize, filter with
         {
             PublicationType = filter.PublicationType == AllTab ? null : filter.PublicationType
-        });
+        }, sortings);
 
         books = vm;
 

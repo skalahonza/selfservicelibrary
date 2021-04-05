@@ -16,6 +16,7 @@ using SelfServiceLibrary.DAL.Queries;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,19 +36,29 @@ namespace SelfServiceLibrary.BL.Services
             _csv = csv;
         }
 
-        public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, IBooksFilter filter)
+        public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, IBooksFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null)
         {
             var query = _dbContext
                 .Books
                 .AsQueryable()
-                .Filter(filter);
+                .Filter(filter);            
 
             var count = await query
                 .AsMongoDbQueryable()
                 .CountAsync();
 
+            // sorting
+            query = query.Sort(sortings);
+            //if (sortings == null)
+            //{
+            //    query = query.OrderBy(x => x.DepartmentNumber);
+            //}
+            //else
+            //{
+            //    query = query.Sort(sortings);
+            //}
+
             var data = await query
-                .OrderBy(x => x.DepartmentNumber)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ProjectTo<Book, BookListDTO>(_mapper)
