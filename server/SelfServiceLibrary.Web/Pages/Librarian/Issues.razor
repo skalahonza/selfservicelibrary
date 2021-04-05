@@ -1,9 +1,11 @@
 ﻿@page "/issues"
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
 
+@using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.DTO.Issue
+@using System.ComponentModel
 @inject IssueService issueService
 
 <Container Fluid="true">
@@ -48,10 +50,15 @@
 
     private async Task OnReadData(DataGridReadDataEventArgs<IssueListlDTO> e)
     {
-        var sortings = e.Columns.Where(x => x.Direction != SortDirection.None).ToDictionary(x => x.Field, x => x.Direction);
-        var searches = e.Columns.Where(x => !string.IsNullOrEmpty(x.SearchValue)).ToDictionary(x => x.Field, x => x.SearchValue);
+        var sortings = e.GetSortingCriteria().ToList();
 
-        issues = await issueService.GetAll(e.Page, e.PageSize);
+        if (sortings.Count == 0)
+        {
+            sortings.Add((nameof(IssueListlDTO.IsReturned), ListSortDirection.Ascending));
+            sortings.Add((nameof(IssueListlDTO.ExpiryDate), ListSortDirection.Ascending));
+        }
+
+        issues = await issueService.GetAll(e.Page, e.PageSize, sortings);
         StateHasChanged();
     }
 }

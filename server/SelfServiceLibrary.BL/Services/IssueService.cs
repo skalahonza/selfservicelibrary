@@ -13,6 +13,7 @@ using SelfServiceLibrary.DAL.Entities;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,14 +35,13 @@ namespace SelfServiceLibrary.BL.Services
                 ? _dbContext.Issues.EstimatedDocumentCountAsync()
                 : _dbContext.Issues.CountDocumentsAsync(Builders<Issue>.Filter.Empty);
 
-        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize) =>
+        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues
                 .AsQueryable()
+                .Sort(sortings)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(x => x.IsReturned)
-                .ThenBy(x => x.ExpiryDate)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
