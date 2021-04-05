@@ -21,11 +21,18 @@
 
 <Container Fluid="true">
     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
-        <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
-        <Divider />
+        <Button Margin="Margin.Is2.OnY" Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
     </AuthorizeView>
+    <Button Margin="Margin.Is2.OnY" Color="Color.Primary" Clicked="@(() => filterVisible = !filterVisible)">
+        Filter <Icon Name="IconName.Filter" />
+    </Button>
+    <Divider />
 
-    <BookFilter Filter="filter" FilterChanged="FilterChanged" />
+    @if (filterVisible)
+    {
+        <BookFilter Filter="filter" FilterChanged="FilterChanged" />
+        <Divider />
+    }
 
     <BadgedTabs Tabs="@types.ToList()" TabCounts="publicationTypes" SelectedTab="@filter.PublicationType" SelectedTabChanged="OnSelectedTabChanged" />
 
@@ -128,6 +135,7 @@
 <AddBookDialog @ref="addBookModal" />
 
 @code {
+    private bool filterVisible;
     private const string AllTab = "All";
     private AddBookDialog? addBookModal;
     private DataGrid<BookListDTO> dataGrid = new DataGrid<BookListDTO>();
@@ -225,7 +233,7 @@
     {
         var sortings = e.GetSortingCriteria().ToList();
 
-        if(sortings.Count == 0)
+        if (sortings.Count == 0)
         {
             sortings.Add((nameof(BookListDTO.DepartmentNumber), ListSortDirection.Ascending));
         }

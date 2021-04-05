@@ -13,23 +13,23 @@
 @inject BookService bookService
 @inject BookStatusService bookStatusService
 
-<Fields>
-    <Field ColumnSize="ColumnSize.Is1.OnTablet">
+<Fields Display="Display">
+    <Field ColumnSize="ColumnSize.Is2.OnDesktop">
         <FieldLabel>Ident</FieldLabel>
         <TextEdit Text="@Filter.Departmentnumber" TextChanged="IdentChanged" Role="TextRole.Search" />
     </Field>
 
-    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+    <Field ColumnSize="ColumnSize.Is3.OnDesktop">
         <FieldLabel>Name</FieldLabel>
         <TextEdit Text="@Filter.Name" TextChanged="NameChanged" Role="TextRole.Search" />
     </Field>
 
-    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+    <Field ColumnSize="ColumnSize.Is3.OnDesktop">
         <FieldLabel>Author</FieldLabel>
         <TextEdit Text="@Filter.Author" TextChanged="AuthorChanged" Role="TextRole.Search" />
     </Field>
 
-    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+    <Field ColumnSize="ColumnSize.Is2.OnDesktop">
         <FieldLabel>Status</FieldLabel>
         <Select TValue="string" SelectedValue="@Filter.Status" SelectedValueChanged="StatusChanged">
             <SelectItem Value="@("")">All</SelectItem>
@@ -40,7 +40,7 @@
         </Select>
     </Field>
 
-    <Field ColumnSize="ColumnSize.Is2.OnTablet" Margin="Margin.IsAuto.OnAll">
+    <Field ColumnSize="ColumnSize.Is2.OnDesktop" Margin="Margin.IsAuto.OnAll">
         <Switch TValue="bool?"
                 Checked="@Filter.IsAvailable"
                 CheckedChanged="@OnIsAvailableChanged">
@@ -50,6 +50,9 @@
 </Fields>
 
 @code {
+    [Parameter]
+    public IFluentDisplay? Display { get; set; }
+
     [Parameter]
     public BooksFilter Filter { get; set; } = new BooksFilter();
 
