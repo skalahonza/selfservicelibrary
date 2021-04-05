@@ -1,0 +1,104 @@
+﻿@page "/permissions"
+@attribute [Authorize(Policy = LibrarianPolicy.NAME)]
+@using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.Web.ViewModels
+@using SelfServiceLibrary.DAL.Enums
+@using SelfServiceLibrary.BL.Services
+@inject UserService service
+
+<Container Fluid="true">
+    <DataGrid TItem="PermissionRow"
+              Data="@permissions"
+              ShowValidationFeedback="true"
+              ShowValidationsSummary="true"
+              RowSelectable=@(_ => false)
+              Editable="true"
+              Responsive="true"
+              SortMode="DataGridSortMode.Multiple"
+              EditMode="DataGridEditMode.Inline"
+              RowInserted="@Save"
+              RowUpdated="@Save"
+              RowRemoved="@OnRowRemoved"
+              ShowPager="true"
+              ShowPageSizes="true"
+              PagerPosition="DataGridPagerPosition.Bottom">
+        <DataGridColumns>
+            <DataGridCommandColumn TItem="PermissionRow">
+                <NewCommandTemplate>
+                    <Button Color="Color.Success" Clicked="@context.Clicked">Add</Button>
+                </NewCommandTemplate>
+                <EditCommandTemplate>
+                    <Button Color="Color.Primary" Clicked="@context.Clicked">Edit</Button>
+                </EditCommandTemplate>
+                <SaveCommandTemplate>
+                    <Button Color="Color.Primary" Clicked="@context.Clicked">Save</Button>
+                </SaveCommandTemplate>
+                <DeleteCommandTemplate>
+                    <Dropdown>
+                        <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">
+                            Delete
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem Clicked="@context.Clicked">Yes, I am sure</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </DeleteCommandTemplate>
+                <CancelCommandTemplate>
+                    <Button Color="Color.Secondary" Clicked="@context.Clicked">Cancel</Button>
+                </CancelCommandTemplate>
+            </DataGridCommandColumn>
+            <DataGridColumn TItem="PermissionRow" Field="@nameof(PermissionRow.Username)" Caption="User" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
+            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsVisitor)" Caption="Visitor" Editable="true">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.IsVisitor" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsKioskUser)" Caption="Kiosk" Editable="true">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.IsKioskUser" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsSelfServiceUser)" Caption="Online" Editable="true">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.IsSelfServiceUser" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+        </DataGridColumns>
+        <PopupTitleTemplate>
+            @($"{context.LocalizationString} Permission")
+        </PopupTitleTemplate>
+    </DataGrid>
+</Container>
+
+@code {
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
+    private List<PermissionRow> permissions = new List<PermissionRow>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Main?.ChangeTitle("Permissions");
+        var users = await service.GetAll();
+        permissions = users.Select(x => new PermissionRow(x.Username, x.Roles)).ToList();
+    }
+
+    private Task ResolveRole(string username, Role role, bool indicator) =>
+        indicator ? service.AddRole(username, role) : service.RemoveRole(username, role);
+
+    private async Task Save(SavedRowItem<PermissionRow, Dictionary<string, object>> e)
+    {
+        await ResolveRole(e.Item.Username, Role.Visitor, e.Item.IsVisitor);
+        await ResolveRole(e.Item.Username, Role.KioskUser, e.Item.IsKioskUser);
+        await ResolveRole(e.Item.Username, Role.SelfServiceUser, e.Item.IsSelfServiceUser);
+    }
+
+    private async Task OnRowRemoved(PermissionRow model)
+    {
+        var roles = new[] { Role.Visitor, Role.KioskUser, Role.SelfServiceUser };
+        foreach (var role in roles)
+        {
+            await service.RemoveRole(model.Username, role);
+        }
+    }
+}

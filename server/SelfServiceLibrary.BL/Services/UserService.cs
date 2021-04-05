@@ -49,6 +49,14 @@ namespace SelfServiceLibrary.BL.Services
                 _ => true
             };
 
+        public Task<List<UserListDTO>> GetAll() =>
+            _dbContext
+                .Users
+                .AsQueryable()
+                .OrderBy(x => x.Username)
+                .ProjectTo<User, UserListDTO>(_mapper)
+                .ToListAsync();
+
         public Task<List<UserListDTO>> GetAll(Role role) =>
             _dbContext
                 .Users

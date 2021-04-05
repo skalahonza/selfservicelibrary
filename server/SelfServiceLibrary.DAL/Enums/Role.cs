@@ -3,7 +3,9 @@
     public enum Role
     {
         Visitor = 0,
-        Librarian = 1,
-        Admin = 2
+        KioskUser = 1,
+        SelfServiceUser = 2,
+        Librarian = 3,
+        Admin = 4
     }
 }

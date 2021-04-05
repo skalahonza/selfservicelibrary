@@ -12,7 +12,7 @@ namespace SelfServiceLibrary.DAL.Entities
         [BsonId]
         public string Username { get; set; }
 #pragma warning restore CS8618 // Database id cannot be empty
-        public HashSet<Role> Roles { get; set; } = new HashSet<Role> { Role.Visitor };
+        public HashSet<Role> Roles { get; set; } = new HashSet<Role>();
 
         #region Related entities
         public List<IdCard> Cards { get; set; } = new List<IdCard>();
