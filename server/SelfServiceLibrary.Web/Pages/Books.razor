@@ -21,11 +21,15 @@
 
 <Container Fluid="true">
     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
-        <Button Margin="Margin.Is2.OnY" Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add new item</Button>
+        <Button Margin="Margin.Is2.OnY" Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add New Item</Button>
     </AuthorizeView>
     <Button Margin="Margin.Is2.OnY" Color="Color.Primary" Clicked="@(() => filterVisible = !filterVisible)">
         Filter <Icon Name="IconName.Filter" />
     </Button>
+    @if (filterVisible)
+    {
+        <Button Margin="Margin.Is2.OnY" Color="Color.Warning" Clicked="ClearFilter" >Clear Filter</Button>
+    }
     <Divider />
 
     @if (filterVisible)
@@ -100,7 +104,7 @@
                     </AuthorizeView>
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Sortable="true" >
+            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Sortable="true">
                 <CaptionTemplate>
                     <Text Display="Display.None.OnMobile.Block.OnTablet">Main Author</Text>
                 </CaptionTemplate>
@@ -275,5 +279,12 @@
             }
         }
         StateHasChanged();
+    }
+
+    private async Task ClearFilter()
+    {
+        filter = new BooksFilter(filter.PublicationType);
+        await UpdateQuery();
+        await dataGrid.Reload();
     }
 }
