@@ -580,7 +580,7 @@
             issues = await issueService.GetBookIssues(DepartmentNumber);
             statuses = await bookStatusService.GetAll();
         }
-        Main?.ChangeTitle("Book detail");
+        Main?.ChangeTitle("Item detail");
     }
 
     private async Task Borrowed()

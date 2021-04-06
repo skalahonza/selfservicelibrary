@@ -80,8 +80,7 @@
             </div>
         </CardHeader>
         <CardBody>
-            <Buttons Role="ButtonsRole.Toolbar">
-                <Button Color="Color.Success" Clicked="@(() => addBookModal?.Show())">Add</Button>
+            <Buttons Role="ButtonsRole.Toolbar">                
                 <Button Color="Color.Info" Clicked="@(() => importBooksModal?.Show())">Import CSV</Button>
             </Buttons>
             <Divider />
@@ -103,13 +102,11 @@
 </Container>
 
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
-<AddBookDialog @ref="addBookModal" />
 <ImportBooksDialog @ref="importBooksModal" />
 
 @code {
     private bool delete;
     private SnackbarStack snackbarStack = new SnackbarStack();
-    private AddBookDialog? addBookModal;
     private ImportBooksDialog? importBooksModal;
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
     private BooksFilter filter = new BooksFilter();

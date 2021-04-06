@@ -78,7 +78,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Main?.ChangeTitle("Permissions");
+        Main?.ChangeTitle("Permissions for self-service");
         var users = await service.GetAll();
         permissions = users.Select(x => new PermissionRow(x.Username, x.Roles)).ToList();
     }
