@@ -47,7 +47,7 @@ namespace SelfServiceLibrary.CSV
             await csv.ReadAsync();
             csv.ReadHeader();
 
-            await foreach(var book in csv.GetRecordsAsync<BookCSV>().Select(x => _mapper.Map<BookCsvDTO>(x)))
+            await foreach (var book in csv.GetRecordsAsync<BookCSV>().Select(x => _mapper.Map<BookCsvDTO>(x)))
             {
                 yield return book;
             }
@@ -55,11 +55,17 @@ namespace SelfServiceLibrary.CSV
 
         public async Task ExportBooks(IAsyncEnumerable<BookCsvDTO> books, Stream outputStream, bool leaveOpen = false)
         {
-            using var writer = new StreamWriter(outputStream , leaveOpen: leaveOpen);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture, leaveOpen);
+            using var writer = new StreamWriter(outputStream, leaveOpen: leaveOpen);
+            using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                LeaveOpen = leaveOpen,
+                TrimOptions = TrimOptions.Trim,
+                Delimiter = ";",
+                HasHeaderRecord = true
+            });
             csv.WriteHeader<BookCSV>();
             csv.NextRecord();
-            await foreach(var book in books)
+            await foreach (var book in books)
             {
                 csv.WriteRecord(_mapper.Map<BookCSV>(book));
                 csv.NextRecord();
