@@ -11,14 +11,22 @@ namespace SelfServiceLibrary.Web.ViewModels
         public PermissionRow(string? username, ISet<Role> roles)
         {
             Username = username ?? string.Empty;
-            IsVisitor = roles.Contains(Role.Visitor);
-            IsKioskUser = roles.Contains(Role.KioskUser);
-            IsSelfServiceUser = roles.Contains(Role.SelfServiceUser);
+            if (roles.Contains(Role.SelfServiceUser))
+            {
+                CurrentRole = Role.SelfServiceUser;
+            }
+            else if (roles.Contains(Role.KioskUser))
+            {
+                CurrentRole = Role.KioskUser;
+            }
+            else
+            {
+                CurrentRole = Role.Visitor;
+            }
         }
 
         public string Username { get; set; } = string.Empty;
-        public bool IsVisitor { get; set; }
-        public bool IsKioskUser { get; set; }
-        public bool IsSelfServiceUser { get; set; }
+
+        public Role CurrentRole { get; set; }
     }
 }

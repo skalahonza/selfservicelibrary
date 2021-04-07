@@ -48,21 +48,22 @@
                 </CancelCommandTemplate>
             </DataGridCommandColumn>
             <DataGridColumn TItem="PermissionRow" Field="@nameof(PermissionRow.Username)" Caption="User" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
-            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsVisitor)" Caption="Visitor" Editable="true">
+            <DataGridSelectColumn TItem="PermissionRow" Field="@nameof(PermissionRow.CurrentRole)" Caption="Role" Editable="true">
                 <DisplayTemplate>
-                    <Check TValue="bool" Checked="context.IsVisitor" Disabled="true" ReadOnly="true" />
+                    <RadioGroup TValue="Role" Name="roles-read" CheckedValue="@context.CurrentRole">
+                        <Radio TValue="Role" Value="@(Role.Visitor)" ReadOnly="true" Disabled="true">None (Visitor)</Radio>
+                        <Radio TValue="Role" Value="@(Role.KioskUser)" ReadOnly="true" Disabled="true">Kiosk (Only)</Radio>
+                        <Radio TValue="Role" Value="@(Role.SelfServiceUser)" ReadOnly="true" Disabled="true">OnLine (+ Kiosk)</Radio>
+                    </RadioGroup>
                 </DisplayTemplate>
-            </DataGridCheckColumn>
-            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsKioskUser)" Caption="Kiosk" Editable="true">
-                <DisplayTemplate>
-                    <Check TValue="bool" Checked="context.IsKioskUser" Disabled="true" ReadOnly="true" />
-                </DisplayTemplate>
-            </DataGridCheckColumn>
-            <DataGridCheckColumn TItem="PermissionRow" Field="@nameof(PermissionRow.IsSelfServiceUser)" Caption="Online" Editable="true">
-                <DisplayTemplate>
-                    <Check TValue="bool" Checked="context.IsSelfServiceUser" Disabled="true" ReadOnly="true" />
-                </DisplayTemplate>
-            </DataGridCheckColumn>
+                <EditTemplate>
+                    <RadioGroup TValue="Role" Name="roles" CheckedValue="@((Role)( context.CellValue ))" CheckedValueChanged="@(( v ) => context.CellValue = v)">
+                        <Radio TValue="Role" Value="@(Role.Visitor)">None (Visitor)</Radio>
+                        <Radio TValue="Role" Value="@(Role.KioskUser)">Kiosk (Only)</Radio>
+                        <Radio TValue="Role" Value="@(Role.SelfServiceUser)">OnLine (+ Kiosk)</Radio>
+                    </RadioGroup>
+                </EditTemplate>
+            </DataGridSelectColumn>
         </DataGridColumns>
         <PopupTitleTemplate>
             @($"{context.LocalizationString} Permission")
@@ -83,14 +84,28 @@
         permissions = users.Select(x => new PermissionRow(x.Username, x.Roles)).ToList();
     }
 
-    private Task ResolveRole(string username, Role role, bool indicator) =>
-        indicator ? service.AddRole(username, role) : service.RemoveRole(username, role);
-
     private async Task Save(SavedRowItem<PermissionRow, Dictionary<string, object>> e)
     {
-        await ResolveRole(e.Item.Username, Role.Visitor, e.Item.IsVisitor);
-        await ResolveRole(e.Item.Username, Role.KioskUser, e.Item.IsKioskUser);
-        await ResolveRole(e.Item.Username, Role.SelfServiceUser, e.Item.IsSelfServiceUser);
+        var add = e.Item switch
+        {
+            { CurrentRole: Role.SelfServiceUser } => new[] { Role.Visitor, Role.KioskUser, Role.SelfServiceUser },
+            { CurrentRole: Role.KioskUser } => new[] { Role.Visitor, Role.KioskUser },
+            { CurrentRole: Role.Visitor } => new[] { Role.Visitor },
+            _ => Array.Empty<Role>()
+        };
+
+        var remove = e.Item switch
+        {
+            { CurrentRole: Role.KioskUser } => new[] { Role.SelfServiceUser },
+            { CurrentRole: Role.Visitor } => new[] { Role.KioskUser, Role.SelfServiceUser },
+            _ => Array.Empty<Role>()
+        };
+
+        foreach (var role in add)
+            await service.AddRole(e.Item.Username, role);
+
+        foreach (var role in remove)
+            await service.RemoveRole(e.Item.Username, role);
     }
 
     private async Task OnRowRemoved(PermissionRow model)
