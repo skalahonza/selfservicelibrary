@@ -59,5 +59,18 @@ namespace SelfServiceLibrary.Card.Authentication.Services
                 ? card.CvutUsername
                 : null;
         }
+
+        public async Task<bool> Exists(string cardNumber)
+        {            
+            var card = await _userManager.FindByNameAsync(cardNumber);
+            return card != null;
+        }
+
+        public async Task<bool> HasPin(string cardNumber)
+        {
+            var card = await _userManager.FindByNameAsync(cardNumber);
+            if (card == null) return false;
+            return card.PasswordHash != null;
+        }
     }
 }

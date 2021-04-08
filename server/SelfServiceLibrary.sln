@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Card.Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.DAL", "SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj", "{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelfServiceLibrary.Integration.Tests", "SelfServiceLibrary.Integration.Tests\SelfServiceLibrary.Integration.Tests.csproj", "{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{874086FB-5395-456E-A719-19ADFC4582D2} = {8453474E-6A5C-4B79-9C81-49FA794A73E4}
 		{20FFBAB3-FB8A-4C53-952D-4135F6AEDCC6} = {75F64DE0-3BE1-4164-913D-DA5B09743B5A}
 		{F5B5D967-01E6-44EB-B4A2-B33BF4D2F0E4} = {0EF7C10D-89FF-430F-B1C7-AE5CC5B16860}
+		{D7E8A60E-9DC9-4EBD-B03B-1EE30724919C} = {8453474E-6A5C-4B79-9C81-49FA794A73E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BFEF83D8-9393-445C-9E66-0821FD211DB1}

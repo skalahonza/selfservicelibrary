@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
+using Newtonsoft.Json.Converters;
+
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.BL.DTO.Book;
@@ -37,8 +39,6 @@ namespace SelfServiceLibrary.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureSwagger(IServiceCollection services)
         {
-            services.AddSwaggerGenNewtonsoftSupport();
-
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -77,6 +77,8 @@ namespace SelfServiceLibrary.API
                     c.IncludeXmlComments(xmlPath);
                 }
             });
+
+            services.AddSwaggerGenNewtonsoftSupport();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -84,7 +86,7 @@ namespace SelfServiceLibrary.API
             services
                 .AddControllers()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>())
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()));
             ConfigureSwagger(services);
 
             // Business logic
