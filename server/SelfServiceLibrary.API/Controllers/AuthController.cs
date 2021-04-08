@@ -8,7 +8,7 @@ using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.API.Controllers
 {
-    public record CardLoginRequest(string CardNumber, string Pin);
+    public record CardLoginRequest(string CardNumber, string? Pin);
     public record CardLoginResponse(string RedirectUrl);
 
     [AllowAnonymous]

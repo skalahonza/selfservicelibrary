@@ -34,6 +34,14 @@ namespace SelfServiceLibrary.Card.Authentication.Services
         {
             var card = await _userManager.FindByNameAsync(cardNumber);
             if (card == null) return null;
+
+            // card without pin
+            if(card.PasswordHash == null && string.IsNullOrEmpty(pin))
+            {
+                return await _userManager.GenerateUserTokenAsync(card, CardLoginTokenProvider.NAME, "card-auth");
+            }
+
+            // card with pin
             var result = await _signInManager.CheckPasswordSignInAsync(card, pin, true);
 
             return result.Succeeded
