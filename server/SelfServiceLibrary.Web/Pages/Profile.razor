@@ -1,10 +1,12 @@
 ﻿@page "/profile"
+@page "/cards/{CardNumber}"
 @attribute [Authorize]
 @using SelfServiceLibrary.BL.DTO.Card
 @using SelfServiceLibrary.BL.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 @inject ICardService cardService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 
 <Container Fluid="true">
@@ -24,7 +26,10 @@
         }
         <Card ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet.Is12.OnMobile">
             <CardBody>
-                <Button Clicked="() => ShowModal(addCardModal)" Color="Color.Success" Size="Size.ExtraLarge" Block="true" style="height: 100%">Add</Button>
+                <CardTitle Size="5">Add card</CardTitle>
+                <CardText>
+                    In order to add a card use the library kiosk.
+                </CardText>
             </CardBody>
         </Card>
     </CardDeck>
@@ -41,7 +46,7 @@
                     <Validation>
                         <Field>
                             <FieldLabel>Card number</FieldLabel>
-                            <TextEdit @bind-Text="@card.Number">
+                            <TextEdit @bind-Text="@card.Number" ReadOnly="true" Disabled="true">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -95,7 +100,7 @@
                 <CloseButton Clicked="() => HideModal(deleteCardModal)" />
             </ModalHeader>
             <ModalBody>
-               Are you sure you want to delete this card?
+                Are you sure you want to delete this card?
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Secondary" Clicked="() => HideModal(deleteCardModal)">Close</Button>
@@ -117,16 +122,27 @@
     [CascadingParameter]
     protected MainLayout? Main { get; set; }
 
+    [Parameter]
+    public string? CardNumber { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         cards = await cardService.GetAll(state.User.Identity!.Name!);
         Main?.ChangeTitle("Profile");
+
+        if (!string.IsNullOrEmpty(CardNumber))
+        {
+            ShowModal(addCardModal);
+        }
     }
 
     private void ShowModal(Modal modal)
     {
-        card = new AddCardDTO();
+        card = new AddCardDTO
+        {
+            Number = CardNumber ?? string.Empty
+        };
         modal.Show();
     }
 
@@ -148,6 +164,7 @@
             });
             StateHasChanged();
             addCardModal.Hide();
+            NavigationManager.NavigateTo("/profile");
         }
     }
 
