@@ -4,5 +4,6 @@
     {
         public string? Number { get; set; }
         public string? Name { get; set; }
+        public bool HasPin { get; set; }
     }
 }

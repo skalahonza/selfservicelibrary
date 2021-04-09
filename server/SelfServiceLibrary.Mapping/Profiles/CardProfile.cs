@@ -11,9 +11,7 @@ namespace SelfServiceLibrary.Mapping.Profiles
         {
             CreateMap<IdCard, CardListDTO>();
             CreateMap<AddCardDTO, IdCard>(MemberList.Source)
-                .ForSourceMember(x => x.Pin, x => x.DoNotValidate())
-                .ForSourceMember(x => x.PinConfirmation, x => x.DoNotValidate());
-            CreateMap<EditCardDTO, IdCard>(MemberList.Source)
+                .ForMember(x => x.HasPin, o => o.MapFrom(x => !string.IsNullOrEmpty(x.Pin)))
                 .ForSourceMember(x => x.Pin, x => x.DoNotValidate())
                 .ForSourceMember(x => x.PinConfirmation, x => x.DoNotValidate());
         }

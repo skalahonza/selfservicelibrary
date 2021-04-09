@@ -16,7 +16,16 @@
         {
             <Card ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet.Is12.OnMobile">
                 <CardBody>
-                    <CardTitle Size="5">@card.Name</CardTitle>
+                    <CardTitle Size="5">
+                        @if (card.HasPin)
+                        {
+                            @card.Name <Icon Name="IconName.Lock" />
+                        }
+                        else
+                        {
+                            @card.Name
+                        }
+                    </CardTitle>
                     <CardText>
                         @card.Number
                     </CardText>
@@ -56,7 +65,7 @@
                     <Validation>
                         <Field>
                             <FieldLabel>Card name</FieldLabel>
-                            <TextEdit Placeholder="CVUT, ISIC" @bind-Text="@card.Name">
+                            <TextEdit @bind-Text="@card.Name">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -84,6 +93,15 @@
                         </Field>
                     </Validation>
                 </Validations>
+                <Alert Color="Color.Danger" @bind-Visible="duplicate">
+                    <Heading Size="HeadingSize.Is4" Color="TextColor.Danger">
+                        Card already registered
+                        <CloseButton />
+                    </Heading>
+                    <Paragraph>
+                        Such card is already registered.
+                    </Paragraph>
+                </Alert>
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Secondary" Clicked="() => HideModal(addCardModal)">Close</Button>
@@ -111,6 +129,7 @@
 </Container>
 
 @code{
+    private bool duplicate;
     private Modal addCardModal = new Modal();
     private Modal deleteCardModal = new Modal();
     private Validations validations = new Validations();
@@ -139,9 +158,11 @@
 
     private void ShowModal(Modal modal)
     {
+        duplicate = false;
         card = new AddCardDTO
         {
-            Number = CardNumber ?? string.Empty
+            Number = CardNumber ?? string.Empty,
+            Name = "My Card"
         };
         modal.Show();
     }
@@ -156,15 +177,20 @@
         if (validations.ValidateAll())
         {
             var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            await cardService.Add(state.User.Identity!.Name!, card);
-            cards.Add(new CardListDTO
+            if (state.User.Identity != null && await cardService.Add(state.User.Identity.Name!, card))
             {
-                Name = card.Name,
-                Number = card.Number
-            });
-            StateHasChanged();
-            addCardModal.Hide();
-            NavigationManager.NavigateTo("/profile");
+                cards.Add(new CardListDTO
+                {
+                    Name = card.Name,
+                    Number = card.Number
+                });
+                addCardModal.Hide();
+                NavigationManager.NavigateTo("/profile");
+            }
+            else
+            {
+                duplicate = true;
+            }
         }
     }
 
