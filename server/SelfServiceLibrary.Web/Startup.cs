@@ -47,6 +47,8 @@ using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Services;
 using SelfServiceLibrary.BL.Validation;
 using SelfServiceLibrary.Web.Extensions;
+using SelfServiceLibrary.Web.Services;
+using SelfServiceLibrary.Web.Interfaces;
 
 namespace SelfServiceLibrary.Web
 {
@@ -80,6 +82,7 @@ namespace SelfServiceLibrary.Web
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 
+            // Allows the app to recognize that the proxy uses HTTPS schema
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -117,6 +120,10 @@ namespace SelfServiceLibrary.Web
                 options.AddPolicy(LibrarianPolicy.NAME, LibrarianPolicy.Build);
                 options.AddPolicy(AdminPolicy.NAME, AdminPolicy.Build);
             });
+
+            // Kiosk one time password authentication
+            services.AddOptions<TotpOptions>().Bind(Configuration.GetSection("kiosk")).ValidateDataAnnotations();
+            services.AddScoped<IOneTimePasswordService, TimeBasedOneTimePasswordService>();
 
             // Business logic
             services.AddScoped<BookService>();
