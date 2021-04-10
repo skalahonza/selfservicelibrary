@@ -166,8 +166,7 @@
 
     private IEnumerable<string> types => publicationTypes
        .Where(x => x.Key != AllTab)
-       .OrderByDescending(x => x.Value)
-       .ThenBy(x => x.Key)
+       .OrderBy(x => x.Key)
        .Select(x => x.Key)
        .Prepend(AllTab);
 
@@ -294,7 +293,7 @@
 
     private async Task ClearFilter()
     {
-        filter = new BooksFilter(filter.PublicationType);
+        filter = new BooksFilter(filter.PublicationType ?? AllTab);
         await UpdateQuery();
         await dataGrid.Reload();
     }
