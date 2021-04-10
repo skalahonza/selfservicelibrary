@@ -139,7 +139,7 @@
     private CardListDTO cardToDelete = new CardListDTO();
 
     [CascadingParameter]
-    protected MainLayout? Main { get; set; }
+    protected MainLayout Main { get; set; } = new MainLayout();
 
     [Parameter]
     public string? CardNumber { get; set; }

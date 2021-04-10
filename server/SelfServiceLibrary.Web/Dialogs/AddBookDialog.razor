@@ -66,7 +66,7 @@
     private List<string> bookTypes = new List<string>();
 
     [CascadingParameter]
-    protected MainLayout? Main { get; set; }
+    protected MainLayout Main { get; set; } = new MainLayout();
 
     protected override async Task OnInitializedAsync()
     {

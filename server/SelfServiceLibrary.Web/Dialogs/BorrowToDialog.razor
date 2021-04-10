@@ -67,7 +67,7 @@
     public string? DepartmentNumber { get; set; }
 
     [CascadingParameter]
-    protected MainLayout? Main { get; set; }
+    protected MainLayout Main { get; set; } = new MainLayout();
 
     private async Task UpdateUsersSuggestions(string? value)
     {

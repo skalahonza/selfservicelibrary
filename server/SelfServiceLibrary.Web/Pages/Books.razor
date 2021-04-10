@@ -172,7 +172,7 @@
        .Prepend(AllTab);
 
     [CascadingParameter]
-    protected MainLayout? Main { get; set; }
+    protected MainLayout Main { get; set; } = new MainLayout();
 
     [QueryStringParameter]
     public int Page { get; set; } = 1;
@@ -288,6 +288,8 @@
             }
         }
         StateHasChanged();
+
+        
     }
 
     private async Task ClearFilter()

@@ -35,7 +35,7 @@
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
 
     [CascadingParameter]
-    protected MainLayout? Main { get; set; }
+    protected MainLayout Main { get; set; } = new MainLayout();
 
     protected override async Task OnInitializedAsync()
     {
