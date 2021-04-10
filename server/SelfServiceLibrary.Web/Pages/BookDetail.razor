@@ -183,20 +183,34 @@
                     </Field>
                 </Validation>
 
-                <!-- TODO CO-AUTHORS-->
+
                 <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                     <FieldLabel>Co-authors</FieldLabel>
-                    <TagsInput @bind-Tags="editBook.CoAuthors" ReadOnly="isReadonly" />
+                    @if (isReadonly)
+                    {
+                        <TextEdit Text="@string.Join(", ", editBook.CoAuthors)" ReadOnly="isReadonly" />
+                    }
+                    else
+                    {
+                        <TagsInput @bind-Tags="editBook.CoAuthors" ReadOnly="isReadonly" />
+                    }
                     <AuthorizeView Policy="@LibrarianPolicy.NAME">
                         <FieldHelp>Spoluautoři</FieldHelp>
                     </AuthorizeView>
                 </Field>
             </Fields>
 
-            <!-- TODO KEYWORDS-->
+
             <Field>
                 <FieldLabel>Keywords</FieldLabel>
-                <TagsInput @bind-Tags="editBook.Keywords" ReadOnly="isReadonly" />
+                @if (isReadonly && editBook.Keywords.Count == 0)
+                {
+                    <TextEdit Text="" ReadOnly="isReadonly" />
+                }
+                else
+                {
+                    <TagsInput @bind-Tags="editBook.Keywords" ReadOnly="isReadonly" />
+                }
                 <AuthorizeView Policy="@LibrarianPolicy.NAME">
                     <FieldHelp>Klíčová slova</FieldHelp>
                 </AuthorizeView>
@@ -610,7 +624,7 @@
             && !string.IsNullOrEmpty(book.CurrentIssueId)
             && (state.User.Identity.Name == book.CurrentIssueIssuedTo?.Username || state.User.Claims.GetRoles().Contains(Role.Librarian)))
         {
-            if(await Main.ExecuteSafe(() => issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo())))
+            if (await Main.ExecuteSafe(() => issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo())))
             {
                 book = await bookService.GetDetail(DepartmentNumber);
                 issues = await issueService.GetBookIssues(DepartmentNumber);
