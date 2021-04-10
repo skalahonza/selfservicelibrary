@@ -28,7 +28,7 @@
     </Button>
     @if (filterVisible)
     {
-        <Button Margin="Margin.Is2.OnY" Color="Color.Warning" Clicked="ClearFilter" >Clear Filter</Button>
+        <Button Margin="Margin.Is2.OnY" Color="Color.Warning" Clicked="ClearFilter">Clear Filter</Button>
     }
     <Divider />
 
@@ -197,7 +197,17 @@
     public string? Status { get => filter.Status; set => filter.Status = value; }
 
     [QueryStringParameter]
-    public bool? IsAvailable { get => filter.IsAvailable; set => filter.IsAvailable = value; }
+    public string? IsAvailable
+    {
+        get => filter.IsAvailable?.ToString(); set
+        {
+            if (bool.TryParse(value, out var isAvailable) && isAvailable)
+                filter.IsAvailable = true;
+
+            else
+                filter.IsAvailable = null;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
