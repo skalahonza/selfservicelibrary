@@ -50,14 +50,14 @@
             <DataGridColumn TItem="PermissionRow" Field="@nameof(PermissionRow.Username)" Caption="User" Editable="true" CellsEditableOnEditCommand="false" CellsEditableOnNewCommand="true" />
             <DataGridSelectColumn TItem="PermissionRow" Field="@nameof(PermissionRow.CurrentRole)" Caption="Role" Editable="true">
                 <DisplayTemplate>
-                    <RadioGroup TValue="Role" Name="roles-read" CheckedValue="@context.CurrentRole">
+                    <RadioGroup TValue="Role" Name="@($"roles-{context.Username}-read")" CheckedValue="@context.CurrentRole">
                         <Radio TValue="Role" Value="@(Role.Visitor)" ReadOnly="true" Disabled="true">None (Visitor)</Radio>
                         <Radio TValue="Role" Value="@(Role.KioskUser)" ReadOnly="true" Disabled="true">Kiosk (Only)</Radio>
                         <Radio TValue="Role" Value="@(Role.SelfServiceUser)" ReadOnly="true" Disabled="true">OnLine (+ Kiosk)</Radio>
                     </RadioGroup>
                 </DisplayTemplate>
                 <EditTemplate>
-                    <RadioGroup TValue="Role" Name="roles" CheckedValue="@((Role)( context.CellValue ))" CheckedValueChanged="@(( v ) => context.CellValue = v)">
+                    <RadioGroup TValue="Role" Name="@($"roles-{context.Item.Username}")" CheckedValue="@((Role)( context.CellValue ))" CheckedValueChanged="@(( v ) => context.CellValue = v)">
                         <Radio TValue="Role" Value="@(Role.Visitor)">None (Visitor)</Radio>
                         <Radio TValue="Role" Value="@(Role.KioskUser)">Kiosk (Only)</Radio>
                         <Radio TValue="Role" Value="@(Role.SelfServiceUser)">OnLine (+ Kiosk)</Radio>
