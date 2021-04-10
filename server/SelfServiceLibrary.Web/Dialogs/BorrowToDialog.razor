@@ -43,7 +43,7 @@
         <ModalFooter>
             <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
-                <Button Disabled="@(issuedTo == null)" Color="Color.Success" Clicked="@Borrow">Confirm</Button>
+                <Button Disabled="@(issuedTo == null)" Color="Color.Success" Clicked="@BorrowTo">Confirm</Button>
             </AuthorizeView>
         </ModalFooter>
     </ModalContent>
@@ -89,19 +89,17 @@
         }
     }
 
-    private async Task Borrow()
+    private async Task BorrowTo()
     {
         if (issuedTo != null && !string.IsNullOrEmpty(DepartmentNumber))
         {
-            var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var librarian = state.User.Claims.GetUserBasicInfo();
             var details = new IssueCreateDTO
             {
                 DepartmentNumber = DepartmentNumber,
                 ExpiryDate = DateTime.UtcNow.AddDays(30)
             };
 
-            if (await Main.ExecuteSafe(() => issueService.Borrow(issuedTo, details, librarian)))
+            if (await Main.ExecuteSafe(() => issueService.BorrowTo(details, issuedTo)))
             {
                 HideModal();
                 await OnBorrowed.InvokeAsync();

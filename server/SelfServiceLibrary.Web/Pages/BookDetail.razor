@@ -605,12 +605,13 @@
 
     private async Task Borrow()
     {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (await Main.ExecuteSafe(() => issueService.Borrow(state.User.Claims.GetUserBasicInfo(), new IssueCreateDTO
+        var details = new IssueCreateDTO
         {
             DepartmentNumber = DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
-        })))
+        };
+
+        if (await Main.ExecuteSafe(() => issueService.Borrow(details)))
         {
             await Borrowed();
         }

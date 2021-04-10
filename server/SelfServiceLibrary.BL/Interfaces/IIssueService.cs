@@ -10,15 +10,22 @@ namespace SelfServiceLibrary.BL.Interfaces
     public interface IIssueService
     {
         /// <summary>
-        /// Borrow an existing book
+        /// Borrow an existing book in self service mode.
         /// </summary>
-        /// <param name="issuedTo"></param>
         /// <param name="details"></param>
-        /// <param name="issuedBy"></param>
         /// <exception cref="Exceptions.Business.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
         /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
         /// <returns></returns>
-        Task<IssueDetailDTO> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null);
+        Task<IssueDetailDTO> Borrow(IssueCreateDTO details);
+        /// <summary>
+        /// Borrow an existing book to someone.
+        /// </summary>
+        /// <param name="details"></param>
+        /// <param name="issuedTo">To whom will the book be borrowed</param>
+        /// <exception cref="Exceptions.Business.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
+        /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
+        /// <returns></returns>
+        Task<IssueDetailDTO> BorrowTo(IssueCreateDTO details, UserInfoDTO issuedTo);
         Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
         Task<List<IssueListlDTO>> GetAll(string username);
         Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber);

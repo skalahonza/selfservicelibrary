@@ -66,9 +66,8 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
-        public async Task<IssueDetailDTO> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null)
+        private async Task<IssueDetailDTO> Borrow(IssueCreateDTO details, UserInfoDTO issuedTo, UserInfoDTO issuedBy)
         {
-            issuedBy ??= issuedTo;
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == details.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
@@ -105,6 +104,40 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.CurrentIssue, issue));
 
             return _mapper.Map<IssueDetailDTO>(issue);
+        }
+
+        public async Task<IssueDetailDTO> Borrow(IssueCreateDTO details)
+        {
+            var actor = await _authorizationContext.GetUserInfo();
+
+            if (actor == null || string.IsNullOrEmpty(actor.Username))
+            {
+                throw new AuthorizationException("Borrow action cannot be performed. Current user's name is empty.");
+            }
+
+            if (!await _authorizationContext.CanBorrow())
+            {
+                throw new AuthorizationException($"User {actor.Username} is not allowed to borrow anything on it's own.");
+            }
+
+            return await Borrow(details, actor, actor);
+        }
+
+        public async Task<IssueDetailDTO> BorrowTo(IssueCreateDTO details, UserInfoDTO issuedTo)
+        {
+            var actor = await _authorizationContext.GetUserInfo();
+
+            if (actor == null || string.IsNullOrEmpty(actor.Username))
+            {
+                throw new AuthorizationException("Borrow action cannot be performed. Current user's name is empty.");
+            }
+
+            if (!await _authorizationContext.CanBorrowTo())
+            {
+                throw new AuthorizationException($"User {actor.Username} is not allowed to borrow a book to someone else.");
+            }
+
+            return await Borrow(details, issuedTo, actor);
         }
 
         private async Task Return(Issue issue, UserInfoDTO returnedBy)
