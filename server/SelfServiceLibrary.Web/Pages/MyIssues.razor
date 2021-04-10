@@ -1,10 +1,10 @@
 ﻿@page "/my-issues"
 @attribute [Authorize]
 
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.Issue
 @using Microsoft.AspNetCore.Components.Authorization
-@inject IssueService issueService
+@inject IIssueService issueService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Container Fluid="true">

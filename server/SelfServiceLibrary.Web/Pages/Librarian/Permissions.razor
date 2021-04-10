@@ -3,8 +3,8 @@
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.Web.ViewModels
 @using SelfServiceLibrary.DAL.Enums
-@using SelfServiceLibrary.BL.Services
-@inject UserService service
+@using SelfServiceLibrary.BL.Interfaces
+@inject IUserService service
 
 <Container Fluid="true">
     <DataGrid TItem="PermissionRow"

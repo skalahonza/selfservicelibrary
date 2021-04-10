@@ -2,17 +2,16 @@
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.DTO.Issue
 @using SelfServiceLibrary.BL.DTO.User
-@using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 
 @attribute [Authorize(Policy = LibrarianPolicy.NAME)]
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject BookService bookService
-@inject IssueService issueService
-@inject UserService userService
-@inject GuestService guestService
+@inject IBookService bookService
+@inject IIssueService issueService
+@inject IUserService userService
+@inject IGuestService guestService
 @inject IUserContextService userContextService
 @inject NavigationManager uriHelper
 

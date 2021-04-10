@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Web.Extensions;
 using SelfServiceLibrary.Web.Filters;
 using SelfServiceLibrary.Web.Policies;
@@ -15,9 +15,9 @@ namespace SelfServiceLibrary.Web.Pages.Librarian
     [Authorize(Policy = LibrarianPolicy.NAME)]
     public class BooksCsvModel : PageModel
     {
-        private readonly BookService _bookService;
+        private readonly IBookService _bookService;
 
-        public BooksCsvModel(BookService bookService) => 
+        public BooksCsvModel(IBookService bookService) => 
             _bookService = bookService;
 
         public async Task<IActionResult> OnGet([FromQuery] BooksFilter? filter)

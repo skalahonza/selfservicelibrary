@@ -3,10 +3,10 @@
 
 @using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Policies
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.Issue
 @using System.ComponentModel
-@inject IssueService issueService
+@inject IIssueService issueService
 
 <Container Fluid="true">
     <DataGrid RowSelectable=@(_ => false)

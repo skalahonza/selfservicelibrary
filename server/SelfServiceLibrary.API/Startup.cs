@@ -90,7 +90,7 @@ namespace SelfServiceLibrary.API
             ConfigureSwagger(services);
 
             // Business logic
-            services.AddScoped<BookService>();
+            services.AddScoped<IBookService, BookService>();
 
             // CSV
             services.AddScoped<ICsvService, CsvHelperAdapter>();

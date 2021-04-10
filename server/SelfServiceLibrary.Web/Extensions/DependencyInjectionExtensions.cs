@@ -20,7 +20,7 @@ using Microsoft.Extensions.Options;
 
 using Pathoschild.Http.Client;
 
-using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL.Enums;
 using SelfServiceLibrary.Web.Options;
 
@@ -33,7 +33,7 @@ namespace SelfServiceLibrary.Web.Extensions
             var zuul = services.GetRequiredService<ZuulClient>();
             var usermap = services.GetRequiredService<UsermapClient>();
             var adminOptions = services.GetRequiredService<IOptionsMonitor<AdminOptions>>();
-            var userService = services.GetRequiredService<UserService>();
+            var userService = services.GetRequiredService<IUserService>();
 
             var info = await zuul.CheckToken(accessToken);
             var user = await usermap.Get(info.UserName, accessToken);

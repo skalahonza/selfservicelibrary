@@ -1,17 +1,16 @@
 ﻿@using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Filters
-@using SelfServiceLibrary.Web.Policies
-@using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.Interfaces
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.ViewModels
 @using SelfServiceLibrary.BL.DTO.Book
+@using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject IMapper mapper
-@inject BookService bookService
-@inject BookStatusService bookStatusService
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
 
 <Fields Display="Display">
     <Field ColumnSize="ColumnSize.Is2.OnDesktop">

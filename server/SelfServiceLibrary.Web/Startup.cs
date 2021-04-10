@@ -1,7 +1,4 @@
 
-using System.Net.Http;
-using System.Net.Http.Headers;
-
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -11,36 +8,23 @@ using CVUT.Auth.Options;
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using MongoDB.Driver;
-
 using SelfServiceLibrary.CSV;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
-using System.Text;
-using System;
 using CVUT.Usermap;
 using CVUT.Auth;
-using System.Linq;
-using System.Security.Claims;
-using Pathoschild.Http.Client;
-using Microsoft.AspNetCore.Authentication;
-using System.Collections.Generic;
 using SelfServiceLibrary.Card.Authentication.Extensions;
 using SelfServiceLibrary.Card.Authentication.Services;
 using FluentValidation;
 using SelfServiceLibrary.Web.Policies;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Options;
 using SelfServiceLibrary.Web.Options;
-using SelfServiceLibrary.DAL.Enums;
 using SelfServiceLibrary.DAL.Extensions;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.BL.Interfaces;
@@ -126,13 +110,13 @@ namespace SelfServiceLibrary.Web
             services.AddScoped<IOneTimePasswordService, TimeBasedOneTimePasswordService>();
 
             // Business logic
-            services.AddScoped<BookService>();
-            services.AddScoped<BookStatusService>();
-            services.AddScoped<IssueService>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IBookStatusService, BookStatusService>();
+            services.AddScoped<IIssueService, IssueService>();
             services.AddScoped<ICardService, CardService>();
             services.Decorate<ICardService, AspNetCoreIdentityDecorator>();
-            services.AddScoped<UserService>();
-            services.AddScoped<GuestService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGuestService, GuestService>();
 
             // Persistence, MongoDB
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
@@ -148,7 +132,7 @@ namespace SelfServiceLibrary.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MongoDbContext dbContext)
         {
-            // database configuration, creating indexes, configuring primary keys
+            // database configuration, creating indexes
             dbContext.EnsureIndexesExist().Wait();
 
             if (env.IsDevelopment())

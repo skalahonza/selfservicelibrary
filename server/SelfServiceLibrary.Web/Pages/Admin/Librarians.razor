@@ -2,9 +2,9 @@
 @attribute [Authorize(Policy = AdminPolicy.NAME)]
 @using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.Web.Policies
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.User
-@inject UserService service
+@inject IUserService service
 
 <Container Fluid="true">
     <DataGrid TItem="UserListDTO"

@@ -20,10 +20,10 @@ namespace SelfServiceLibrary.API.Controllers
 
     public class NfcController : BaseController
     {
-        private readonly BookService _bookService;
+        private readonly IBookService _bookService;
         private readonly ICardAuthenticator _cardAuthenticator;
 
-        public NfcController(BookService bookService, ICardAuthenticator cardAuthenticator)
+        public NfcController(IBookService bookService, ICardAuthenticator cardAuthenticator)
         {
             _bookService = bookService;
             _cardAuthenticator = cardAuthenticator;

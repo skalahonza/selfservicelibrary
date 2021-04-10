@@ -5,13 +5,12 @@
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using SelfServiceLibrary.BL.DTO.Issue
 @using SelfServiceLibrary.BL.Interfaces
-@using SelfServiceLibrary.BL.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @using SelfServiceLibrary.Web.Policies
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject BookService bookService
-@inject BookStatusService bookStatusService
-@inject IssueService issueService
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
+@inject IIssueService issueService
 @inject IMapper mapper
 
 <Container Fluid="true">

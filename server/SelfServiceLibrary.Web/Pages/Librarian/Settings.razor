@@ -4,13 +4,12 @@
 @using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.DAL.Entities
-@using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Web
-@inject BookService bookService
-@inject BookStatusService bookStatusService
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
 @inject IMapper _mapper
 @inject AuthenticationStateProvider AuthenticationStateProvider
 

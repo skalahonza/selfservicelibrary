@@ -5,7 +5,6 @@
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.Interfaces
-@using SelfServiceLibrary.BL.Services
 @using SelfServiceLibrary.BL.ViewModels
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.BookStatus
@@ -15,9 +14,9 @@
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject NavigationManager uriHelper
 @inject IMapper mapper
-@inject BookService bookService
-@inject BookStatusService bookStatusService
-@inject IssueService issueService
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
+@inject IIssueService issueService
 
 <Container Fluid="true">
     <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">

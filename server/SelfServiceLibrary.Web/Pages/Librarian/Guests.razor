@@ -1,9 +1,9 @@
 ﻿@page "/guests"
 
 @using SelfServiceLibrary.BL.DTO.Guest
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.Validation
-@inject GuestService service
+@inject IGuestService service
 
 <Container Fluid="true">
     <DataGrid TItem="GuestDTO"

@@ -1,11 +1,11 @@
 ﻿@using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.DTO.Book
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject BookService bookService
+@inject IBookService bookService
 @inject NavigationManager uriHelper
 
 <Modal @ref="modalRef">

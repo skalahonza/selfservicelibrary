@@ -2,13 +2,13 @@
 using FluentValidation;
 
 using SelfServiceLibrary.BL.DTO.Book;
-using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.BL.Validation
 {
     public class BookAddDTOValidator : AbstractValidator<BookAddDTO>
     {
-        public BookAddDTOValidator(BookService service)
+        public BookAddDTOValidator(IBookService service)
         {
             RuleFor(x => x.DepartmentNumber).NotEmpty().Length(1, 100);
             RuleFor(x => x.DepartmentNumber)

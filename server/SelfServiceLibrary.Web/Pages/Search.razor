@@ -2,13 +2,13 @@
 @using SelfServiceLibrary.Web.Attributes
 @using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Filters
-@using SelfServiceLibrary.BL.Services
+@using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.Book
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject IJSRuntime jsRuntime
 @inject NavigationManager uriHelper
-@inject BookService bookService
+@inject IBookService bookService
 
 <Container Fluid="true">
     <Form @onsubmit=Fulltext Margin="Margin.Is4.OnY">
