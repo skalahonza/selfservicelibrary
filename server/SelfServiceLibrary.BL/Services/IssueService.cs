@@ -4,6 +4,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Exceptions.Authorization;
 using SelfServiceLibrary.BL.Exceptions.Business;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
@@ -22,11 +23,13 @@ namespace SelfServiceLibrary.BL.Services
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationContext _authorizationContext;
 
-        public IssueService(MongoDbContext dbContext, IMapper mapper)
+        public IssueService(MongoDbContext dbContext, IMapper mapper, IAuthorizationContext authorizationContext)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _authorizationContext = authorizationContext;
         }
 
         public Task<long> GetTotalCount(bool estimated = true) =>
@@ -63,13 +66,6 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
-        /// <summary>
-        /// Borrow a book if available
-        /// </summary>
-        /// <param name="issuedTo">To whom will the book be issued.</param>
-        /// <param name="details">Issue details.</param>
-        /// <param name="issuedBy">By whom was the book issued, leave empty in case of self-service borrowing.</param>
-        /// <returns>Issue details.</returns>
         public async Task<IssueDetailDTO> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null)
         {
             issuedBy ??= issuedTo;
@@ -111,24 +107,12 @@ namespace SelfServiceLibrary.BL.Services
             return _mapper.Map<IssueDetailDTO>(issue);
         }
 
-        /// <summary>
-        /// Return a borrowed book
-        /// </summary>
-        /// <param name="id">Id of the issue document</param>
-        /// <param name="returnedBy">By whom was the book returned</param>
-        /// <returns></returns>
-        public async Task Return(string id, UserInfoDTO returnedBy)
+        private async Task Return(Issue issue, UserInfoDTO returnedBy)
         {
             var now = DateTime.UtcNow;
-            var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
-            if (issue == null)
-            {
-                // handle not found
-                throw new EntityNotFoundException<Issue>(id);
-            }
 
             var result = await _dbContext.Issues.UpdateOneAsync(
-                x => x.Id == id && !x.IsReturned,
+                x => x.Id == issue.Id && !x.IsReturned,
                 Builders<Issue>
                     .Update
                     .Set(x => x.IsReturned, true)
@@ -148,6 +132,43 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue.IsReturned, true)
                 .Set(x => x.CurrentIssue.ReturnDate, now));
+        }
+
+        public async Task Return(string id)
+        {
+            var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if (issue == null)
+            {
+                // handle not found
+                throw new EntityNotFoundException<Issue>(id);
+            }
+
+            var actor = await _authorizationContext.GetUserInfo();
+
+            if (actor == null || string.IsNullOrEmpty(actor.Username))
+            {
+                throw new AuthorizationException("Return action cannot be performed. Current user's name is empty.");
+            }
+
+            // self return
+            if (issue.IssuedTo.Username == actor.Username)
+            {
+                if(!await _authorizationContext.CanBorrow())
+                {
+                    throw new AuthorizationException($"User {actor.Username} is not allowed to return on it's own.");
+                }
+            }
+
+            // librarian is returning
+            else
+            {
+                if (!await _authorizationContext.CanBorrowTo())
+                {
+                    throw new AuthorizationException($"User {actor.Username} is not allowed to return someone else's book.");
+                }
+            }
+
+            await Return(issue, actor);
         }
     }
 }

@@ -618,13 +618,9 @@
 
     private async Task Return()
     {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (book != null
-            && state.User.Identity != null
-            && !string.IsNullOrEmpty(book.CurrentIssueId)
-            && (state.User.Identity.Name == book.CurrentIssueIssuedTo?.Username || state.User.Claims.GetRoles().Contains(Role.Librarian)))
+        if (book != null && book.CurrentIssueId != null)
         {
-            if (await Main.ExecuteSafe(() => issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo())))
+            if (await Main.ExecuteSafe(() => issueService.Return(book.CurrentIssueId)))
             {
                 book = await bookService.GetDetail(DepartmentNumber);
                 issues = await issueService.GetBookIssues(DepartmentNumber);

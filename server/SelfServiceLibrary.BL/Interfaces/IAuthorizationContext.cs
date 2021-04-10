@@ -22,6 +22,6 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<bool> CanManageBooks();
         Task<bool> CanGrantSelfService();
         Task<bool> CanManageLibrarians();
-        Task<UserInfoDTO> GetUserInfo();
+        Task<UserInfoDTO?> GetUserInfo();
     }
 }

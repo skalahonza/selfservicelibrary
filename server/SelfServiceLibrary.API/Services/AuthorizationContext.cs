@@ -25,9 +25,7 @@ namespace SelfServiceLibrary.API.Services
         public Task<bool> CanReturnFor() =>
             Task.FromResult(false);
 
-        public Task<UserInfoDTO> GetUserInfo()
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<UserInfoDTO?> GetUserInfo() =>
+            Task.FromResult<UserInfoDTO?>(null);
     }
 }

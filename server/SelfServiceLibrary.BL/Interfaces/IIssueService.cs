@@ -27,10 +27,9 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Return a previously borrowed book.
         /// </summary>
         /// <param name="id">Issue document id</param>
-        /// <param name="returnedBy"></param>
         /// <exception cref="Exceptions.Business.EntityNotFoundException{Issue}">Thrown when the issue is not found.</exception>
         /// <exception cref="Exceptions.Business.BookAlreadyReturnedException">Thrown when the book has already been returned.</exception>
         /// <returns></returns>
-        Task Return(string id, UserInfoDTO returnedBy);
+        Task Return(string id);
     }
 }

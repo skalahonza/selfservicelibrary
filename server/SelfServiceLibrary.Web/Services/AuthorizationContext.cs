@@ -71,10 +71,12 @@ namespace SelfServiceLibrary.Web.Services
             return state.User.Claims.GetRoles().Contains(Role.Admin);
         }
 
-        public async Task<UserInfoDTO> GetUserInfo()
+        public async Task<UserInfoDTO?> GetUserInfo()
         {
             var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-            return state.User.Claims.GetUserBasicInfo();
+            return state.User.Identity?.IsAuthenticated ?? false
+                ? state.User.Claims.GetUserBasicInfo()
+                : null;
         }
     }
 }
