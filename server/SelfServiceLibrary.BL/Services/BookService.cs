@@ -4,6 +4,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Exceptions.Authorization;
 using SelfServiceLibrary.BL.Exceptions.Business;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
@@ -28,12 +29,14 @@ namespace SelfServiceLibrary.BL.Services
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ICsvService _csv;
+        private readonly IAuthorizationContext _authorizationContext;
 
-        public BookService(MongoDbContext dbContext, IMapper mapper, ICsvService csv)
+        public BookService(MongoDbContext dbContext, IMapper mapper, ICsvService csv, IAuthorizationContext authorizationContext)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _csv = csv;
+            _authorizationContext = authorizationContext;
         }
 
         public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, IBooksFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null)
@@ -156,6 +159,11 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task Create(BookAddDTO data)
         {
+            if (!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for adding a book.");
+            }
+
             if (string.IsNullOrEmpty(data.DepartmentNumber))
                 throw new ArgumentException("DepartmentNumber cannot be null or empty.");
 
@@ -171,6 +179,11 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task Update(string departmentNumber, BookEditDTO data)
         {
+            if (!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for updating a book.");
+            }
+
             var update = Builders<Book>.Update
                 .Set(x => x.Name, data.Name)
                 .Set(x => x.Author, data.Author)
@@ -206,6 +219,11 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task ImportCsv(Stream csv, UserInfoDTO enteredBy)
         {
+            if (!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for importing CSV with books.");
+            }
+
             var statuses = (await _dbContext.BookStatuses.AsQueryable()
                 .ToListAsync())
                 .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
@@ -293,8 +311,13 @@ namespace SelfServiceLibrary.BL.Services
             }));
         }
 
-        public Task ExportCsv(Stream csv, IBooksFilter filter, bool leaveOpen = false)
+        public async Task ExportCsv(Stream csv, IBooksFilter filter, bool leaveOpen = false)
         {
+            if (!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for exporting CSV with books.");
+            }
+
             var books = _dbContext
                 .Books
                 .AsQueryable()
@@ -302,11 +325,16 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Book, BookCsvDTO>(_mapper)
                 .AsAsyncEnumerable();
 
-            return _csv.ExportBooks(books, csv, leaveOpen);
+            await _csv.ExportBooks(books, csv, leaveOpen);
         }
 
         public async Task Delete(string departmentNumber)
         {
+            if (!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for deleting a book.");
+            }
+
             var result = await _dbContext
                 .Books
                 .DeleteOneAsync(x => x.DepartmentNumber == departmentNumber && x.IsAvailable);
@@ -324,9 +352,14 @@ namespace SelfServiceLibrary.BL.Services
             }
         }
 
-        public Task DeleteAll() =>
-            _dbContext
-                .Books
-                .DeleteManyAsync(Builders<Book>.Filter.Where(x => x.IsAvailable));
+        public async Task DeleteAll()
+        {
+            if(!await _authorizationContext.CanManageBooks())
+            {
+                throw new AuthorizationException("Insufficient permissions for deleting all books.");
+            }
+
+            await _dbContext.Books.DeleteManyAsync(Builders<Book>.Filter.Where(x => x.IsAvailable));
+        }
     }
 }
