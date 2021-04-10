@@ -4,9 +4,9 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Exceptions.Business;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
-using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
 
@@ -70,14 +70,14 @@ namespace SelfServiceLibrary.BL.Services
         /// <param name="details">Issue details.</param>
         /// <param name="issuedBy">By whom was the book issued, leave empty in case of self-service borrowing.</param>
         /// <returns>Issue details.</returns>
-        public async Task<BorrowResponse> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null)
+        public async Task<IssueDetailDTO> Borrow(UserInfoDTO issuedTo, IssueCreateDTO details, UserInfoDTO? issuedBy = null)
         {
             issuedBy ??= issuedTo;
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == details.DepartmentNumber).FirstOrDefaultAsync();
             if (book == null)
             {
                 // handle not found
-                return new BorrowResponse(new BookNotFound());
+                throw new EntityNotFoundException<Book>(details.DepartmentNumber);
             }
 
             // try to mark the book as borrowed
@@ -87,7 +87,7 @@ namespace SelfServiceLibrary.BL.Services
             if (result.ModifiedCount == 0)
             {
                 // handle book was already taken
-                return new BorrowResponse(new BookIsBorrowed());
+                throw new BookIsBorrowedException(details.DepartmentNumber);
             }
 
             // create issue document
@@ -108,7 +108,7 @@ namespace SelfServiceLibrary.BL.Services
                 Builders<Book>.Update
                 .Set(x => x.CurrentIssue, issue));
 
-            return new BorrowResponse(_mapper.Map<IssueDetailDTO>(issue));
+            return _mapper.Map<IssueDetailDTO>(issue);
         }
 
         /// <summary>
@@ -117,14 +117,14 @@ namespace SelfServiceLibrary.BL.Services
         /// <param name="id">Id of the issue document</param>
         /// <param name="returnedBy">By whom was the book returned</param>
         /// <returns></returns>
-        public async Task<ReturnResponse> Return(string id, UserInfoDTO returnedBy)
+        public async Task Return(string id, UserInfoDTO returnedBy)
         {
             var now = DateTime.UtcNow;
             var issue = await _dbContext.Issues.Find(x => x.Id == id).FirstOrDefaultAsync();
             if (issue == null)
             {
                 // handle not found
-                return new ReturnResponse(new IssueNotFound());
+                throw new EntityNotFoundException<Issue>(id);
             }
 
             var result = await _dbContext.Issues.UpdateOneAsync(
@@ -138,7 +138,7 @@ namespace SelfServiceLibrary.BL.Services
             if (result.ModifiedCount == 0)
             {
                 // handle book was already returned
-                return new ReturnResponse(new BookAlreadyReturned());
+                throw new BookAlreadyReturnedException(issue.DepartmentNumber);
             }
 
             // mark book as available again
@@ -148,8 +148,6 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue.IsReturned, true)
                 .Set(x => x.CurrentIssue.ReturnDate, now));
-
-            return new ReturnResponse(new BookReturned());
         }
     }
 }

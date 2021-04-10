@@ -65,6 +65,9 @@
     private BookAddDTO book = new BookAddDTO();
     private List<string> bookTypes = new List<string>();
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -80,16 +83,11 @@
 
             book.Entered = DateTime.UtcNow;
             book.EnteredBy = state.User.Claims.GetUserBasicInfo();
-            var result = await bookService.Create(book);
-            await result.Match(
-                ok =>
-                {
-                    uriHelper.NavigateTo($"books/{book.DepartmentNumber}");
-                    HideModal();
-                    return Task.CompletedTask;
-                },
-                conflict => snackbarStack.PushAsync("Such book already exists.", SnackbarColor.Danger)
-                );
+            if (await Main.ExecuteSafe(() => bookService.Create(book)))
+            {
+                uriHelper.NavigateTo($"books/{book.DepartmentNumber}");
+                HideModal();
+            }
         }
     }
 

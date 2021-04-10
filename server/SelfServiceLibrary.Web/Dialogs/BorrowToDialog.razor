@@ -66,6 +66,9 @@
     [Parameter]
     public string? DepartmentNumber { get; set; }
 
+    [CascadingParameter]
+    protected MainLayout? Main { get; set; }
+
     private async Task UpdateUsersSuggestions(string? value)
     {
         if (!string.IsNullOrEmpty(value))
@@ -98,16 +101,11 @@
                 ExpiryDate = DateTime.UtcNow.AddDays(30)
             };
 
-            var result = await issueService.Borrow(issuedTo, details, librarian);
-            await result.Match(
-                async ok =>
-                {
-                    HideModal();
-                    await OnBorrowed.InvokeAsync();
-                },
-                notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
-                alreadyBorrowed => snackbarStack.PushAsync("The book has already been borrowed.", SnackbarColor.Danger)
-            );
+            if (await Main.ExecuteSafe(() => issueService.Borrow(issuedTo, details, librarian)))
+            {
+                HideModal();
+                await OnBorrowed.InvokeAsync();
+            }
         }
     }
 

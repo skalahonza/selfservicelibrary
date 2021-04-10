@@ -9,7 +9,7 @@
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Secondary" Clicked="() => modal.Hide()">Close</Button>
-            <Button Color="Color.Danger" Clicked="() => Confirmed.InvokeAsync()">Delete!</Button>
+            <Button Color="Color.Danger" Clicked="OnConfirmed">Delete!</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -25,6 +25,12 @@
 
     [Parameter]
     public EventCallback Confirmed { get; set; }
+
+    public async Task OnConfirmed()
+    {
+        await Confirmed.InvokeAsync();
+        Hide();
+    }
 
     public void Show() =>
         modal.Show();

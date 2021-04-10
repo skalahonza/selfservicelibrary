@@ -592,38 +592,30 @@
     private async Task Borrow()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var result = await issueService.Borrow(state.User.Claims.GetUserBasicInfo(), new IssueCreateDTO
+        if (await Main.ExecuteSafe(() => issueService.Borrow(state.User.Claims.GetUserBasicInfo(), new IssueCreateDTO
         {
             DepartmentNumber = DepartmentNumber,
             ExpiryDate = DateTime.UtcNow.AddDays(30)
-        });
-
-        await result.Match(
-            ok => Borrowed(),
-            notFound => snackbarStack.PushAsync("The book was not found.", SnackbarColor.Danger),
-            alreadyBorrowed => snackbarStack.PushAsync("The book has already been borrowed.", SnackbarColor.Danger)
-            );
+        })))
+        {
+            await Borrowed();
+        }
     }
 
     private async Task Return()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (book != null 
-            && state.User.Identity != null 
+        if (book != null
+            && state.User.Identity != null
             && !string.IsNullOrEmpty(book.CurrentIssueId)
             && (state.User.Identity.Name == book.CurrentIssueIssuedTo?.Username || state.User.Claims.GetRoles().Contains(Role.Librarian)))
         {
-            var result = await issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo());
-            await result.Match(
-                    async ok =>
-                    {
-                        book = await bookService.GetDetail(DepartmentNumber);
-                        issues = await issueService.GetBookIssues(DepartmentNumber);
-                        await snackbarStack.PushAsync("Book returned.", SnackbarColor.Success);
-                    },
-                    notFound => snackbarStack.PushAsync("The issue document was not found.", SnackbarColor.Danger),
-                    alreadyReturned => snackbarStack.PushAsync("The book has already been returned.", SnackbarColor.Warning)
-                );
+            if(await Main.ExecuteSafe(() => issueService.Return(book.CurrentIssueId, state.User.Claims.GetUserBasicInfo())))
+            {
+                book = await bookService.GetDetail(DepartmentNumber);
+                issues = await issueService.GetBookIssues(DepartmentNumber);
+                await snackbarStack.PushAsync("Book returned.", SnackbarColor.Success);
+            }
         }
     }
 
@@ -641,14 +633,11 @@
 
     private async Task DeleteConfirmed()
     {
-        var result = await bookService.Delete(DepartmentNumber);
-        deleteBook.Hide();
-        await result.Match(
-                ok => snackbarStack.PushAsync("Book deleted.", SnackbarColor.Success),
-                notFound => snackbarStack.PushAsync("Book not found.", SnackbarColor.Danger),
-                borrowed => snackbarStack.PushAsync("Book is currentely borrowed and can't be deleted. Needs to be returned first.", SnackbarColor.Warning)
-            );
-        book = null;
+        if (await Main.ExecuteSafe(() => bookService.Delete(DepartmentNumber)))
+        {
+            await snackbarStack.PushAsync("Book deleted.", SnackbarColor.Success);
+            book = null;
+        }
     }
 
     private void Cancel()

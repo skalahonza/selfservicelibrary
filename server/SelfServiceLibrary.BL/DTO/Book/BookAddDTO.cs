@@ -1,7 +1,6 @@
 ﻿using System;
 
 using SelfServiceLibrary.BL.DTO.User;
-using SelfServiceLibrary.DAL.Entities;
 
 namespace SelfServiceLibrary.BL.DTO.Book
 {

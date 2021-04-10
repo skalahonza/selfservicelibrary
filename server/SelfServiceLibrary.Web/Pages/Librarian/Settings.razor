@@ -79,7 +79,7 @@
             </div>
         </CardHeader>
         <CardBody>
-            <Buttons Role="ButtonsRole.Toolbar">                
+            <Buttons Role="ButtonsRole.Toolbar">
                 <Button Color="Color.Info" Clicked="@(() => importBooksModal?.Show())">Import CSV</Button>
             </Buttons>
             <Divider />
@@ -138,15 +138,8 @@
 
     private async Task OnRowInserted(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)
     {
-        var result = await bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item));
-        await result.Match(
-                ok => snackbarStack.PushAsync("Book status created.", SnackbarColor.Success),
-                async alreadyExisted =>
-                {
-                    await Reload();
-                    await snackbarStack.PushAsync("Such book status already exists.", SnackbarColor.Danger);
-                }
-            );
+        await Main.ExecuteSafe(() => bookStatusService.Create(_mapper.Map<BookStatusCreateDTO>(e.Item)));
+        await Reload();
     }
 
     private async Task OnRowUpdated(SavedRowItem<BookStatusListDTO, Dictionary<string, object>> e)

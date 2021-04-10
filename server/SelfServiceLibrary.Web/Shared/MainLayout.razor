@@ -1,6 +1,8 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
 @using SelfServiceLibrary.Web.Policies
+@using SelfServiceLibrary.BL.Exceptions.Authorization
+@using SelfServiceLibrary.BL.Exceptions.Business
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Layout>
@@ -129,7 +131,10 @@
     </Layout>
 </Layout>
 
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" DefaultInterval="4500"/>
+
 @code {
+    private SnackbarStack snackbarStack = new SnackbarStack();
     private Bar? sidebar;
     private string? pageTitle;
 
@@ -137,5 +142,24 @@
     {
         pageTitle = value;
         StateHasChanged();
+    }
+
+    public async Task<bool> ExecuteSafe(Func<Task> thunk)
+    {
+        try
+        {
+            await thunk();
+            return true;
+        }
+        catch (AuthorizationException ex)
+        {
+            await snackbarStack.PushAsync(ex.Message, title: "Unauthorized", color: SnackbarColor.Danger);
+            return false;
+        }
+        catch (BusinessLayerException ex)
+        {
+            await snackbarStack.PushAsync(ex.Message, title: "Error", color: SnackbarColor.Danger);
+            return false;
+        }
     }
 }

@@ -4,9 +4,9 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Exceptions.Business;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
-using SelfServiceLibrary.BL.Responses;
 using SelfServiceLibrary.BL.ViewModels;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
@@ -154,16 +154,18 @@ namespace SelfServiceLibrary.BL.Services
             return _mapper.Map<List<BookSearchDTO>>(results);
         }
 
-        public async Task<CreateBookResponse> Create(BookAddDTO data)
+        public async Task Create(BookAddDTO data)
         {
+            if (string.IsNullOrEmpty(data.DepartmentNumber))
+                throw new ArgumentException("DepartmentNumber cannot be null or empty.");
+
             try
             {
                 await _dbContext.Books.InsertOneAsync(_mapper.Map<Book>(data));
-                return new CreateBookResponse(new BookCreated());
             }
             catch (MongoWriteException ex) when (ex.Message.Contains("duplicate key"))
             {
-                return new CreateBookResponse(new BookAlreadyExists());
+                throw new BookAlreadyExistsException(data.DepartmentNumber);
             }
         }
 
@@ -303,7 +305,7 @@ namespace SelfServiceLibrary.BL.Services
             return _csv.ExportBooks(books, csv, leaveOpen);
         }
 
-        public async Task<DeleteBookResponse> Delete(string departmentNumber)
+        public async Task Delete(string departmentNumber)
         {
             var result = await _dbContext
                 .Books
@@ -313,16 +315,12 @@ namespace SelfServiceLibrary.BL.Services
             {
                 if (!await Exists(departmentNumber))
                 {
-                    return new DeleteBookResponse(new BookNotFound());
+                    throw new EntityNotFoundException<Book>(departmentNumber);
                 }
                 else
                 {
-                    return new DeleteBookResponse(new BookIsBorrowed());
+                    throw new BookIsBorrowedException(departmentNumber);
                 }
-            }
-            else
-            {
-                return new DeleteBookResponse(new BookDeleted());
             }
         }
 
