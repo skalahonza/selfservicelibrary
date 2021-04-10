@@ -51,29 +51,23 @@
               PageSize="PageSize"
               PageSizeChanged="PageSizeChanged"
               CurrentPage="Page"
-              PageChanged="PageChanged"
-              Responsive="true">
+              PageChanged="PageChanged">
         <LoadingTemplate>
             <Loading />
         </LoadingTemplate>
         <DataGridColumns>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.DepartmentNumber)" Sortable="true">
-                <CaptionTemplate>
-                    <Text Display="Display.None.OnMobile.Block.OnTablet">Ident</Text>
-                </CaptionTemplate>
+            <DataGridColumn TItem="BookListDTO" HeaderCellClass="d-none d-sm-block" CellClass="@((_) => "d-none d-sm-block")" Caption="Ident" Field="@nameof(BookListDTO.DepartmentNumber)" Sortable="true">
                 <DisplayTemplate>
-                    <Text Display="Display.None.OnMobile.Block.OnTablet">
-                        <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-                        <div>@context.Storage</div>
-                        <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="auth">
-                            <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
-                                StsLocal
-                            </Check>
-                            <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
-                                StsUK
-                            </Check>
-                        </AuthorizeView>
-                    </Text>
+                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                    <div>@context.Storage</div>
+                    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="auth">
+                        <Check TValue="bool" Checked="context.StsLocal" Disabled="true" ReadOnly="true">
+                            StsLocal
+                        </Check>
+                        <Check TValue="bool" Checked="context.StsUK" Disabled="true" ReadOnly="true">
+                            StsUK
+                        </Check>
+                    </AuthorizeView>
                 </DisplayTemplate>
             </DataGridColumn>
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Name)" Caption="Name" Sortable="true">
@@ -103,14 +97,7 @@
                     </AuthorizeView>
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Author)" Sortable="true">
-                <CaptionTemplate>
-                    <Text Display="Display.None.OnMobile.Block.OnTablet">Main Author</Text>
-                </CaptionTemplate>
-                <DisplayTemplate>
-                    <Text Display="Display.None.OnMobile.Block.OnTablet">@context.Author</Text>
-                </DisplayTemplate>
-            </DataGridColumn>
+            <DataGridColumn TItem="BookListDTO" HeaderCellClass="d-none d-sm-block" CellClass="@((_) => "d-none d-sm-block")" Field="@nameof(BookListDTO.Author)" Sortable="true" Caption="Main Author"/>
             <DataGridColumn TItem="BookListDTO" Field="@nameof(BookListDTO.Publication)" Sortable="false" Filterable="false" Caption="Publication">
                 <DisplayTemplate>
                     @if (context.YearOfPublication.HasValue)
