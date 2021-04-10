@@ -104,6 +104,7 @@ namespace SelfServiceLibrary.Web
                 options.AddPolicy(LibrarianPolicy.NAME, LibrarianPolicy.Build);
                 options.AddPolicy(AdminPolicy.NAME, AdminPolicy.Build);
             });
+            services.AddScoped<IAuthorizationContext, AuthorizationContext>();
 
             // Kiosk one time password authentication
             services.AddOptions<TotpOptions>().Bind(Configuration.GetSection("kiosk")).ValidateDataAnnotations();

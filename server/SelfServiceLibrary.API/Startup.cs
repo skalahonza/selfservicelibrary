@@ -16,6 +16,7 @@ using Newtonsoft.Json.Converters;
 
 using SelfServiceLibrary.API.Extensions;
 using SelfServiceLibrary.API.Options;
+using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Services;
@@ -105,7 +106,7 @@ namespace SelfServiceLibrary.API
             // Id cards
             services.AddCardAuthentication(Configuration.GetSection("Identity"));            
 
-            // Auth
+            // Authentication
             services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
             services.AddAuthentication(options =>
             {
@@ -113,12 +114,15 @@ namespace SelfServiceLibrary.API
                 options.DefaultChallengeScheme = CvutAuthOptions.DefaultScheme;
             })
            .AddCVUT(_ => { });
+
+            // Authorization
+            services.AddScoped<IAuthorizationContext, AuthorizationContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MongoDbContext dbContext)
         {
-            // database configuration, creating indexes, configuring primary keys
+            // database configuration, creating indexes
             dbContext.EnsureIndexesExist().Wait();
 
             ConfigureSwagger(app);
