@@ -2,7 +2,6 @@
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Extensions;
@@ -19,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace SelfServiceLibrary.BL.Services
 {
-    public class IssueService
+    public class IssueService : IIssueService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;

@@ -13,7 +13,7 @@ using SelfServiceLibrary.DAL.Entities;
 
 namespace SelfServiceLibrary.BL.Services
 {
-    public class BookStatusService
+    public class BookStatusService : IBookStatusService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -38,7 +38,7 @@ namespace SelfServiceLibrary.BL.Services
                 await _dbContext.BookStatuses.InsertOneAsync(_mapper.Map<BookStatus>(bookStatus));
                 return new CreateStatusResponse(new StatusCreated());
             }
-            catch(MongoWriteException ex) when (ex.Message.Contains("duplicate key"))
+            catch (MongoWriteException ex) when (ex.Message.Contains("duplicate key"))
             {
                 return new CreateStatusResponse(new StatusAlreadyExisted());
             }

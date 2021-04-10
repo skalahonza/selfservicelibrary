@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace SelfServiceLibrary.BL.Services
 {
-    public class BookService
+    public class BookService : IBookService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -41,7 +41,7 @@ namespace SelfServiceLibrary.BL.Services
             var query = _dbContext
                 .Books
                 .AsQueryable()
-                .Filter(filter);            
+                .Filter(filter);
 
             var count = await query
                 .AsMongoDbQueryable()
@@ -309,7 +309,7 @@ namespace SelfServiceLibrary.BL.Services
                 .Books
                 .DeleteOneAsync(x => x.DepartmentNumber == departmentNumber && x.IsAvailable);
 
-            if(result.DeletedCount == 0)
+            if (result.DeletedCount == 0)
             {
                 if (!await Exists(departmentNumber))
                 {

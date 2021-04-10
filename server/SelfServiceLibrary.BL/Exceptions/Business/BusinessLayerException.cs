@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SelfServiceLibrary.BL.Exceptions
+namespace SelfServiceLibrary.BL.Exceptions.Business
 {
     public class BusinessLayerException : Exception
     {

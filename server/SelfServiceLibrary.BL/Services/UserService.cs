@@ -15,7 +15,7 @@ using SelfServiceLibrary.DAL.Enums;
 
 namespace SelfServiceLibrary.BL.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -27,23 +27,23 @@ namespace SelfServiceLibrary.BL.Services
         }
 
         public async Task<bool> AddRole(string username, Role role) =>
-            (await _dbContext
+            await _dbContext
                 .Users
                 .UpdateOneAsync(
                     x => x.Username == username,
                     Builders<User>.Update.AddToSet(x => x.Roles, role),
-                    new UpdateOptions { IsUpsert = true })) switch
+                    new UpdateOptions { IsUpsert = true }) switch
             {
                 { MatchedCount: 1, ModifiedCount: 0 } => false, // user was already in a role
                 _ => true
             };
 
         public async Task<bool> RemoveRole(string username, Role role) =>
-            (await _dbContext
+            await _dbContext
                 .Users
                 .UpdateOneAsync(
                     x => x.Username == username,
-                    Builders<User>.Update.Pull(x => x.Roles, role))) switch
+                    Builders<User>.Update.Pull(x => x.Roles, role)) switch
             {
                 { MatchedCount: 1, ModifiedCount: 0 } => false, // user was not in a role
                 _ => true
