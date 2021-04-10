@@ -1,9 +1,11 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging;
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.Exceptions.Authorization
 @using SelfServiceLibrary.BL.Exceptions.Business
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILogger<MainLayout> log
 
 <Layout>
     <Layout Sider="true">
@@ -131,7 +133,7 @@
     </Layout>
 </Layout>
 
-<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" DefaultInterval="4500"/>
+<SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" DefaultInterval="4500" />
 
 @code {
     private SnackbarStack snackbarStack = new SnackbarStack();
@@ -153,11 +155,13 @@
         }
         catch (AuthorizationException ex)
         {
+            log.LogWarning(ex, "An attempt to perform an unauthorized operation has occured.");
             await snackbarStack.PushAsync(ex.Message, title: "Unauthorized", color: SnackbarColor.Danger);
             return false;
         }
         catch (BusinessLayerException ex)
         {
+            log.LogError(ex, "Business Layer exception occured.");
             await snackbarStack.PushAsync(ex.Message, title: "Error", color: SnackbarColor.Danger);
             return false;
         }
