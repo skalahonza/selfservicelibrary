@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SelfServiceLibrary.BL.DTO.User
 {
-    public class UserInfoDTO
+    public class UserInfoDTO : IComparable, IComparable<UserInfoDTO>
     {
         /// <summary>
         /// Is empty for people outside CTU
@@ -41,6 +42,17 @@ namespace SelfServiceLibrary.BL.DTO.User
             return string.IsNullOrEmpty(Username)
                 ? text
                 : $"{text} ({Username})";
+        }
+
+        public int CompareTo(UserInfoDTO? other) =>
+            (ToString() ?? string.Empty).CompareTo(other?.ToString() ?? string.Empty);
+
+        public int CompareTo(object? obj)
+        {
+            if (obj is UserInfoDTO other)
+                return CompareTo(other);
+            else
+                return 0;
         }
     }
 }

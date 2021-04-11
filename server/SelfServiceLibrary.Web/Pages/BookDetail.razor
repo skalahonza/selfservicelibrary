@@ -532,10 +532,13 @@
                 <DataGrid RowSelectable=@(_ => false)
                           TItem="IssueListlDTO"
                           Data="@issues"
+                          Responsive="true"
                           ShowPager="true"
-                          PagerPosition="DataGridPagerPosition.Top"
+                          PagerPosition="DataGridPagerPosition.Bottom"
                           PageSize="10">
-                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="false" />
+                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedBy)" Caption="Issued by" Sortable="true" />
+                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnedBy)" Caption="Returned by" Sortable="true" />
                     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
                     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
                     <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />

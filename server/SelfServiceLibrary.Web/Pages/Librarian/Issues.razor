@@ -18,10 +18,10 @@
     {
         <Button Margin="Margin.Is2.OnY" Color="Color.Warning" Clicked="ClearFilter">Clear Filter</Button>
     }
-    <Divider />
 
     @if (filterVisible)
     {
+        <Divider />
         <IssueFilterAdvanced Filter="filter" FilterChanged="FilterChanged" />
         <Divider />
     }
@@ -34,7 +34,8 @@
               TotalItems="@totalIssues"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
-              ShowPageSizes="true">
+              ShowPageSizes="true"
+              Responsive="true">
         <LoadingTemplate>
             <Loading />
         </LoadingTemplate>

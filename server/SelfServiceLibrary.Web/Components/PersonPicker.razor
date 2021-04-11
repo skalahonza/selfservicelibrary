@@ -3,13 +3,17 @@
 <TextEdit TextChanged="SearchChanged"
           ChangeTextOnKeyPress="true"
           DelayTextOnKeyPress="true"
-          DelayTextOnKeyPressInterval="300"
+          DelayTextOnKeyPressInterval="600"
           Role="TextRole.Search"
           MinLength="2"
           Placeholder="Search...">
 </TextEdit>
 
-<DataGrid TItem="UserInfoDTO" Data="Suggestions" SelectedRow="Selected" SelectedRowChanged="SelectedChanged">
+<DataGrid TItem="UserInfoDTO"
+          ShowPager="@Suggestions.Any()"
+          Data="Suggestions" 
+          SelectedRow="Selected" 
+          SelectedRowChanged="SelectedChanged">
     <DataGridColumn TItem="UserInfoDTO" Field="@nameof(UserInfoDTO.FullName)" Caption="Name" >
         <DisplayTemplate>
             @context.ToString()

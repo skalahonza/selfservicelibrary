@@ -17,17 +17,19 @@
               Data="@issues"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
-              ShowPageSizes="true">
+              ShowPageSizes="true"
+              Responsive="true">
         <LoadingTemplate>
             <Loading />
         </LoadingTemplate>
         <DataGridColumns>
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
+            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Item" Sortable="true">
                 <DisplayTemplate>
-                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                    <!-- Full name specified due to https://github.com/dotnet/aspnetcore/issues/18685 -->
+                    <Blazorise.Link To="@($"/books/{context.DepartmentNumber}")">@context.BookName</Blazorise.Link>
+                    <div><Badge Color="Color.Secondary">@context.DepartmentNumber</Badge></div>
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
             <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
             <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
             <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
