@@ -59,7 +59,7 @@
                                 <BarItem>
                                     <BarLink To="/issues">
                                         <BarIcon IconName="IconName.Bookmark" />
-                                        All Issues
+                                        All Issues <Badge Color="Color.Light">@allIssuesCount</Badge>
                                     </BarLink>
                                 </BarItem>
                                 <BarItem>
@@ -144,6 +144,7 @@
     private Bar? sidebar;
     private string? pageTitle;
     private int myIssuesCount;
+    private int allIssuesCount;
 
     public void ChangeTitle(string value)
     {
@@ -153,6 +154,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        allIssuesCount = await issueService.Count(new IssuesFilter { IsReturned = false });
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         if (state.User.Identity != null)
         {
