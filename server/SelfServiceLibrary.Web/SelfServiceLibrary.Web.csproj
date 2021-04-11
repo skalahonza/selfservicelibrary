@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CVUT.Auth\CVUT.Auth.csproj" />
     <ProjectReference Include="..\CVUT.Usermap\CVUT.Usermap.csproj" />
+    <ProjectReference Include="..\Google.Books.API\Google.Books.API.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />

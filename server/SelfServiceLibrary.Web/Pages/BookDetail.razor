@@ -9,6 +9,7 @@
 @using SelfServiceLibrary.Web.Policies
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IBookService bookService
+@inject IBookLookupService bookLookupService
 @inject IBookStatusService bookStatusService
 @inject IIssueService issueService
 @inject IMapper mapper
@@ -355,11 +356,20 @@
                 <Validation>
                     <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is4.OnDesktop">
                         <FieldLabel>ISBN/ISSN</FieldLabel>
-                        <TextEdit @bind-Text="@editBook.ISBNorISSN" ReadOnly="isReadonly">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                        </TextEdit>
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit @bind-Text="@editBook.ISBNorISSN" ReadOnly="isReadonly">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <AuthorizeView Policy="@LibrarianPolicy.NAME">
+                                <Addon AddonType="AddonType.End">
+                                    <Button Color="Color.Primary" Clicked="Lookup" Disabled="isReadonly">Lookup</Button>
+                                </Addon>
+                            </AuthorizeView>
+                        </Addons>
                     </Field>
                 </Validation>
                 <Validation>
@@ -597,6 +607,22 @@
             statuses = await bookStatusService.GetAll();
         }
         Main?.ChangeTitle("Item detail");
+    }
+
+    private async Task Lookup()
+    {
+        if (book != null)
+        {
+            if (await bookLookupService.FillData(book))
+            {
+                editBook = mapper.Map<BookEditDTO>(book);
+                await snackbarStack.PushAsync("Data filled from Google Books.", color: SnackbarColor.Success, title: "Filled");
+            }
+            else
+            {
+                await snackbarStack.PushAsync("Unable to fill data from Google Books.", color: SnackbarColor.Danger, title: "Error");
+            }
+        }
     }
 
     private async Task Borrowed()

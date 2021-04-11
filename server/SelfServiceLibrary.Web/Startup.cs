@@ -33,6 +33,7 @@ using SelfServiceLibrary.BL.Validation;
 using SelfServiceLibrary.Web.Extensions;
 using SelfServiceLibrary.Web.Services;
 using SelfServiceLibrary.Web.Interfaces;
+using Google.Books.API;
 
 namespace SelfServiceLibrary.Web
 {
@@ -47,6 +48,9 @@ namespace SelfServiceLibrary.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Miscellaneous 
+            services.AddMemoryCache();
+
             // Blazor
             services.AddRazorPages()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<BookAddDTOValidator>());
@@ -128,6 +132,9 @@ namespace SelfServiceLibrary.Web
 
             // CSV
             services.AddScoped<ICsvService, CsvHelperAdapter>();
+
+            // Google maps
+            services.AddHttpClient<IBookLookupService, GoogleBooksApiAdapter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
