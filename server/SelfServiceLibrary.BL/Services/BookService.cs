@@ -313,11 +313,6 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task ExportCsv(Stream csv, IBooksFilter filter, bool leaveOpen = false)
         {
-            if (!await _authorizationContext.CanManageBooks())
-            {
-                throw new AuthorizationException("Insufficient permissions for exporting CSV with books.");
-            }
-
             var books = _dbContext
                 .Books
                 .AsQueryable()

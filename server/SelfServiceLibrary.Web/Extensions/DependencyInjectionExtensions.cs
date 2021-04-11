@@ -36,26 +36,26 @@ namespace SelfServiceLibrary.Web.Extensions
             var userService = services.GetRequiredService<IUserService>();
 
             var info = await zuul.CheckToken(accessToken);
-            var user = await usermap.Get(info.UserName, accessToken);
+            var user = await usermap.Get(info.UserName!, accessToken);
 
             // claims mapping
             var claims = user
                 .Roles
                 .Concat(user.TechnicalRoles)
                 .Select(role => new Claim(ClaimTypes.Role, role))
-                .Append(new Claim(ClaimTypes.Name, user.Username))
-                .Append(new Claim(ClaimTypes.Email, user.PreferredEmail))
-                .Append(new Claim(ClaimTypes.GivenName, user.FirstName))
-                .Append(new Claim(ClaimTypes.Surname, user.LastName))
+                .Append(new Claim(ClaimTypes.Name, user.Username!))
+                .Append(new Claim(ClaimTypes.Email, user.PreferredEmail ?? string.Empty))
+                .Append(new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty))
+                .Append(new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty))
                 .ToList();
 
-            if (adminOptions.CurrentValue.Admins.Contains(user.Username))
+            if (adminOptions.CurrentValue.Admins.Contains(user.Username!))
             {
                 claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
             }
 
             // get app roles
-            var roles = await userService.GetRoles(user.Username);
+            var roles = await userService.GetRoles(user.Username!);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
@@ -115,12 +115,12 @@ namespace SelfServiceLibrary.Web.Extensions
                             {
                                 // refresh tokens 
                                 var zuul = context.HttpContext.RequestServices.GetRequiredService<ZuulClient>();
-                                var response = await zuul.Refresh(refreshToken);
-                                context.Properties.UpdateTokenValue("access_token", response.AccessToken);
-                                context.Properties.UpdateTokenValue("refresh_token", response.RefreshToken);
+                                var response = await zuul.Refresh(refreshToken ?? string.Empty);
+                                context.Properties.UpdateTokenValue("access_token", response.AccessToken!);
+                                context.Properties.UpdateTokenValue("refresh_token", response.RefreshToken!);
 
                                 // refresh USERMAP roles
-                                var claims = await context.HttpContext.RequestServices.GetClaims(response.AccessToken);
+                                var claims = await context.HttpContext.RequestServices.GetClaims(response.AccessToken!);
 
                                 var claimsToRefresh = new HashSet<string>
                                     {
@@ -131,12 +131,15 @@ namespace SelfServiceLibrary.Web.Extensions
                                         ClaimTypes.Surname
                                     };
 
-                                var identity = context.Principal.Identities.FirstOrDefault(x => x.AuthenticationType == "CVUT" || x.AuthenticationType == "KIOSK");
-                                foreach (var claim in identity.Claims.Where(x => claimsToRefresh.Contains(x.Type)).ToArray())
+                                var identity = context.Principal?.Identities.FirstOrDefault(x => x.AuthenticationType == "CVUT" || x.AuthenticationType == "KIOSK");
+                                if (identity != null)
                                 {
-                                    identity.RemoveClaim(claim);
+                                    foreach (var claim in identity.Claims.Where(x => claimsToRefresh.Contains(x.Type)).ToArray())
+                                    {
+                                        identity.RemoveClaim(claim);
+                                    }
+                                    identity.AddClaims(claims);
                                 }
-                                identity.AddClaims(claims);
                                 context.ShouldRenew = true;
                             }
                             catch (ApiException)

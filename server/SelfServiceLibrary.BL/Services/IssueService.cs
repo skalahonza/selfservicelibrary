@@ -155,7 +155,7 @@ namespace SelfServiceLibrary.BL.Services
             if (result.ModifiedCount == 0)
             {
                 // handle book was already returned
-                throw new BookAlreadyReturnedException(issue.DepartmentNumber);
+                throw new BookAlreadyReturnedException(issue.DepartmentNumber ?? string.Empty);
             }
 
             // mark book as available again
@@ -163,8 +163,8 @@ namespace SelfServiceLibrary.BL.Services
                 x => x.DepartmentNumber == issue.DepartmentNumber && !x.IsAvailable,
                 Builders<Book>.Update
                 .Set(x => x.IsAvailable, true)
-                .Set(x => x.CurrentIssue.IsReturned, true)
-                .Set(x => x.CurrentIssue.ReturnDate, now));
+                .Set(x => x.CurrentIssue!.IsReturned, true)
+                .Set(x => x.CurrentIssue!.ReturnDate, now));
         }
 
         public async Task Return(string id)
