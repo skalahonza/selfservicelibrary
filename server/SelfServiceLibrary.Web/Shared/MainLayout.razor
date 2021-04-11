@@ -94,7 +94,8 @@
                         <BarEnd>
                             <AuthorizeView>
                                 <NotAuthorized>
-                                    <BarItem>
+                                    <!-- KIOSK hides login-button class for user's convenience, authorization is not affected-->
+                                    <BarItem Class="login-button">
                                         <a href="/login" class="b-bar-link login-button"><BarIcon IconName="IconName.User" /> Login</a>
                                     </BarItem>
                                 </NotAuthorized>
@@ -105,8 +106,8 @@
                                             Profile
                                         </BarLink>
                                     </BarItem>
-                                    <BarItem>
-                                        <a href="/logout" class="b-bar-link"><BarIcon IconName="IconName.Lock" /> Logout</a>
+                                    <BarItem Class="login-button">
+                                        <a href="/logout" class="b-bar-link login-button"><BarIcon IconName="IconName.Lock" /> Logout</a>
                                     </BarItem>
                                 </Authorized>
                             </AuthorizeView>
@@ -126,6 +127,13 @@
                         </BarItem>
                     </BarBrand>
                     <BarToggler Bar="@sidebar" Display="Display.InlineBlock.None.OnDesktop" />
+                    <AuthorizeView>
+                        <BarEnd>
+                            <div class="login-user">
+                                @context.User.Claims.GetUserBasicInfo().ToString()
+                            </div>
+                        </BarEnd>
+                    </AuthorizeView>
                 </Bar>
             </LayoutHeader>
             <LayoutContent>

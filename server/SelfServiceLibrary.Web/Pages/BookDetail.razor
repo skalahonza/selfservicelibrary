@@ -517,7 +517,7 @@
                     <Validation>
                         <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
                             <FieldLabel>NFC code</FieldLabel>
-                            <TextEdit @bind-Text="@editBook.NFCIdent" ReadOnly="isReadonly">
+                            <TextEdit @bind-Text="@editBook.NFCIdent" class="nfc-text" ReadOnly="isReadonly">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
