@@ -49,10 +49,17 @@
     [CascadingParameter]
     protected MainLayout Main { get; set; } = new MainLayout();
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         Main?.ChangeTitle("My issues");
-        return LoadData();
+        await LoadData();
+
+        // sort by returned desc and then by expiry date by default
+        issues.Sort((x, y) => x.IsReturned.CompareTo(y.IsReturned) switch
+        {
+            var ret when ret == 0 => x.ExpiryDate.CompareTo(y.ExpiryDate),
+            _ => x.IsReturned.CompareTo(y.IsReturned)
+        });
     }
 
     private async Task LoadData()

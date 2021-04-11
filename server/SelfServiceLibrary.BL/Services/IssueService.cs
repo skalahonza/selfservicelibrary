@@ -39,6 +39,14 @@ namespace SelfServiceLibrary.BL.Services
                 ? _dbContext.Issues.EstimatedDocumentCountAsync()
                 : _dbContext.Issues.CountDocumentsAsync(Builders<Issue>.Filter.Empty);
 
+        public Task<int> Count(IIssuesFilter filter) =>
+            _dbContext
+                .Issues
+                .AsQueryable()
+                .Filter(filter)
+                .AsMongoDbQueryable()
+                .CountAsync();
+
         public Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues

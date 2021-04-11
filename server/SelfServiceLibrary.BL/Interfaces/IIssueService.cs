@@ -31,6 +31,7 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
         Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber);
         Task<long> GetTotalCount(bool estimated = true);
+        Task<int> Count(IIssuesFilter filter);
         /// <summary>
         /// Return a previously borrowed book.
         /// </summary>

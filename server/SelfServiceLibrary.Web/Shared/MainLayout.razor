@@ -1,11 +1,15 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Extensions.Logging;
+@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.Web.Policies
 @using SelfServiceLibrary.BL.Exceptions.Authorization
 @using SelfServiceLibrary.BL.Exceptions.Business
+@using SelfServiceLibrary.BL.Interfaces
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ILogger<MainLayout> log
+@inject IIssueService issueService
 
 <Layout>
     <Layout Sider="true">
@@ -44,7 +48,7 @@
                                     <BarItem>
                                         <BarLink To="/my-issues">
                                             <BarIcon IconName="IconName.BookReader" />
-                                            My Issues
+                                            My Issues <Badge Color="Color.Light">@myIssuesCount</Badge>
                                         </BarLink>
                                     </BarItem>
                                 </Authorized>
@@ -139,11 +143,25 @@
     private SnackbarStack snackbarStack = new SnackbarStack();
     private Bar? sidebar;
     private string? pageTitle;
+    private int myIssuesCount;
 
     public void ChangeTitle(string value)
     {
         pageTitle = value;
         StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (state.User.Identity != null)
+        {
+            myIssuesCount = await issueService.Count(new IssuesFilter
+            {
+                IsReturned = false,
+                IssuedToInfo = state.User.Claims.GetUserBasicInfo()
+            });
+        }
     }
 
     public async Task<bool> ExecuteSafe(Func<Task> thunk)
