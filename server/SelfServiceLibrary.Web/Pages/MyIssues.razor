@@ -1,6 +1,8 @@
 ﻿@page "/my-issues"
 @attribute [Authorize]
 
+@using SelfServiceLibrary.Web.Extensions
+@using SelfServiceLibrary.Web.Filters
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.BL.DTO.Issue
 @using Microsoft.AspNetCore.Components.Authorization
@@ -8,39 +10,61 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <Container Fluid="true">
+    <IssueFilter Filter="filter" FilterChanged="FilterChanged" />
+
     <DataGrid RowSelectable=@(_ => false)
               TItem="IssueListlDTO"
               Data="@issues"
               ShowPager="true"
               PagerPosition="DataGridPagerPosition.Bottom"
               ShowPageSizes="true">
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
-            <DisplayTemplate>
-                <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
-        <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
-        <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
-        <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
-        <DataGridCheckColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IsReturned)" Caption="Reutrned" Sortable="true" Filterable="true">
-            <DisplayTemplate>
-                <Check TValue="bool" Checked="context.IsReturned" Disabled="true" ReadOnly="true" />
-            </DisplayTemplate>
-        </DataGridCheckColumn>
+        <LoadingTemplate>
+            <Loading />
+        </LoadingTemplate>
+        <DataGridColumns>
+            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.DepartmentNumber)" Caption="Ident" Sortable="false">
+                <DisplayTemplate>
+                    <a href="@($"books/{context.DepartmentNumber}")">@context.DepartmentNumber</a>
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Name" Sortable="true" Filterable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+            <DataGridCheckColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IsReturned)" Caption="Reutrned" Sortable="true" Filterable="true">
+                <DisplayTemplate>
+                    <Check TValue="bool" Checked="context.IsReturned" Disabled="true" ReadOnly="true" />
+                </DisplayTemplate>
+            </DataGridCheckColumn>
+        </DataGridColumns>
     </DataGrid>
 </Container>
 
 @code {
     private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+    private IssuesFilter filter = new IssuesFilter();
 
     [CascadingParameter]
     protected MainLayout Main { get; set; } = new MainLayout();
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
+    {
+        Main?.ChangeTitle("My issues");
+        return LoadData();
+    }
+
+    private async Task LoadData()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        issues = await issueService.GetAll(state.User.Identity!.Name!);
-        Main?.ChangeTitle("My issues");
+        if (state.User.Identity != null)
+        {
+            issues = await issueService.GetAll(filter with { IssuedToInfo = state.User.Claims.GetUserBasicInfo() });
+        }
+    }
+
+    private Task FilterChanged(IssuesFilter filter)
+    {
+        this.filter = filter;
+        return LoadData();
     }
 }

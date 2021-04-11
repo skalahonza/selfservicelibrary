@@ -1,0 +1,30 @@
+﻿@using SelfServiceLibrary.Web.Filters
+@using SelfServiceLibrary.BL.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject IMapper mapper
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
+
+<Buttons>
+    <Button Active="@(Filter.IsReturned == null)" Clicked="@(() => OnIsReturnedChanged(null))" Color="Color.Primary">All</Button>
+    <Button Active="@(Filter.IsReturned == false)" Clicked="@(() => OnIsReturnedChanged(false))" Color="Color.Warning">Not Returned</Button>
+    <Button Active="@(Filter.IsReturned == true)" Clicked="@(() => OnIsReturnedChanged(true))" Color="Color.Success">Returned</Button>
+</Buttons>
+
+@code {
+    [Parameter]
+    public IssuesFilter Filter { get; set; } = new IssuesFilter();
+
+    [Parameter]
+    public EventCallback<IssuesFilter> FilterChanged { get; set; }
+
+    private Task AnythingChanged() =>
+        FilterChanged.InvokeAsync(Filter);
+
+    private Task OnIsReturnedChanged(bool? value)
+    {
+        Filter.IsReturned = value;
+        return AnythingChanged();
+    }
+}

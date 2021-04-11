@@ -1,0 +1,95 @@
+﻿@using SelfServiceLibrary.Web.Filters
+@using SelfServiceLibrary.BL.DTO.User
+@using SelfServiceLibrary.BL.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject IMapper mapper
+@inject IBookService bookService
+@inject IBookStatusService bookStatusService
+
+<Fields>
+    <Field ColumnSize="ColumnSize.Is2.OnDesktop">
+        <FieldLabel>Book</FieldLabel>
+        <TextEdit Text="@Filter.Book" TextChanged="BookChanged" Role="TextRole.Search" />
+        <FieldHelp>Department number or name</FieldHelp>
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnDesktop">
+        <FieldLabel>Issued to</FieldLabel>
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Text="@Filter.IssuedToInfo?.ToString()" ReadOnly="true" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Clicked="@(() => issuedToPicker?.Show())">Select</Button>
+            </Addon>
+        </Addons>
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnDesktop">
+        <FieldLabel>Issued by</FieldLabel>
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Text="@Filter.IssuedByInfo?.ToString()" ReadOnly="true" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Clicked="@(() => issuedByPicker?.Show())">Select</Button>
+            </Addon>
+        </Addons>
+    </Field>
+
+    <Field ColumnSize="ColumnSize.Is3.OnDesktop">
+        <FieldLabel>Returned by</FieldLabel>
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Text="@Filter.ReturnedByInfo?.ToString()" ReadOnly="true" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Clicked="@(() => returnedByPicker?.Show())">Select</Button>
+            </Addon>
+        </Addons>
+    </Field>
+</Fields>
+
+<PersonPickerDialog @ref="issuedToPicker" Title="Issued to" PickedChanged="IssuedToChanged" />
+<PersonPickerDialog @ref="issuedByPicker" Title="Issued by" PickedChanged="IssuedByInfoChanged" CtuOnly="true"/>
+<PersonPickerDialog @ref="returnedByPicker" Title="Returned by" PickedChanged="ReturnedByInfoChanged" CtuOnly="true" />
+
+@code {
+    [Parameter]
+    public IssuesFilter Filter { get; set; } = new IssuesFilter();
+
+    [Parameter]
+    public EventCallback<IssuesFilter> FilterChanged { get; set; }
+
+    private PersonPickerDialog? issuedToPicker;
+    private PersonPickerDialog? issuedByPicker;
+    private PersonPickerDialog? returnedByPicker;
+
+    private Task AnythingChanged() =>
+        FilterChanged.InvokeAsync(Filter);
+
+    private Task BookChanged(string value)
+    {
+        Filter.Book = value;
+        return AnythingChanged();
+    }
+
+    private Task IssuedToChanged(UserInfoDTO info)
+    {
+        Filter.IssuedToInfo = info;
+        return AnythingChanged();
+    }
+
+    private Task IssuedByInfoChanged(UserInfoDTO info)
+    {
+        Filter.IssuedByInfo = info;
+        return AnythingChanged();
+    }
+
+    private Task ReturnedByInfoChanged(UserInfoDTO info)
+    {
+        Filter.ReturnedByInfo = info;
+        return AnythingChanged();
+    }
+}

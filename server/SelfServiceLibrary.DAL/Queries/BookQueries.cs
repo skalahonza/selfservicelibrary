@@ -25,12 +25,12 @@ namespace SelfServiceLibrary.DAL.Queries
 
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                query = query.Where(x => x.Name.ToLower().Contains(filter.Name));
+                query = query.Where(x => x.Name!.ToLower().Contains(filter.Name));
             }
 
             if (!string.IsNullOrEmpty(filter.Author))
             {
-                query = query.Where(x => x.Author.ToLower().Contains(filter.Author));
+                query = query.Where(x => x.Author!.ToLower().Contains(filter.Author));
             }
 
             if (filter.IsAvailable.HasValue)

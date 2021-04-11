@@ -6,9 +6,13 @@
     public class UserInfo
     {
         /// <summary>
-        /// Can be empty for people outside CTU
+        /// Is empty for people outside CTU
         /// </summary>
         public string? Username { get; set; }
+        /// <summary>
+        /// Is empty for people inside CTU. Not empty for guests.
+        /// </summary>
+        public string? GuestId { get; set; }
         public string? TitleBefore { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

@@ -6,14 +6,16 @@ namespace SelfServiceLibrary.BL.DTO.Issue
 {
     public class IssueListlDTO
     {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Items are not null in Issue entity
         public string Id { get; set; }
         public string DepartmentNumber { get; set; }
         public string BookName { get; set; }
         public UserInfoDTO IssuedTo { get; set; }
+        public UserInfoDTO IssuedBy { get; set; }
         public DateTime IssueDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Items are not null in Issue entity
+        public UserInfoDTO? ReturnedBy { get; set; }
         public DateTime? ReturnDate { get; set; }
         public bool IsReturned { get; set; }
     }

@@ -1,0 +1,104 @@
+﻿@using SelfServiceLibrary.BL.DTO.User
+@using SelfServiceLibrary.BL.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IBookService bookService
+@inject IIssueService issueService
+@inject IUserService userService
+@inject IGuestService guestService
+@inject IUserContextService userContextService
+@inject NavigationManager uriHelper
+
+<Modal @ref="modalRef">
+    <ModalContent IsCentered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader>
+            <ModalTitle>@Title</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Tabs @bind-SelectedTab="tab">
+                <Items>
+                    <Tab Name="ctu">CTU</Tab>
+                    @if (!CtuOnly)
+                    {
+                        <Tab Name="external">External</Tab>
+                    }
+                </Items>
+                <Content>
+                    <TabPanel Name="ctu" Padding="Padding.Is3">
+                        <FieldHelp>Search person inside CTU by their name</FieldHelp>
+                        <!-- USERMAP search https://rozvoj.fit.cvut.cz/Main/usermap-api -->
+                        <PersonPicker @bind-Selected="Picked" Suggestions="ctuSuggestions" SearchChanged="UpdateUsersSuggestions" />
+                    </TabPanel>
+                    @if (!CtuOnly)
+                    {
+                        <TabPanel Name="external" Padding="Padding.Is3">
+                            <FieldHelp>Search person outside CTU by their name</FieldHelp>
+                            <PersonPicker @bind-Selected="Picked" Suggestions="externalSuggestions" SearchChanged="UpdatePersonSuggestions" />
+                        </TabPanel>
+                    }
+                </Content>
+            </Tabs>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
+            <Button Disabled="@(Picked == null)" Color="Color.Success" Clicked="@OnPicked">Confirm</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private string tab = "ctu";
+    private Modal modalRef = new Modal();
+
+    private List<UserInfoDTO> ctuSuggestions = new List<UserInfoDTO>();
+    private List<UserInfoDTO> externalSuggestions = new List<UserInfoDTO>();
+
+    [Parameter]
+    public UserInfoDTO? Picked { get; set; }
+
+    [Parameter]
+    public EventCallback<UserInfoDTO> PickedChanged { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = "Person picker";
+
+    [Parameter]
+    public bool CtuOnly { get; set; }
+
+    private async Task UpdateUsersSuggestions(string? value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            ctuSuggestions = await userContextService.Suggest(value);
+        }
+        else
+        {
+            ctuSuggestions.Clear();
+        }
+    }
+
+    private async Task UpdatePersonSuggestions(string? value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            externalSuggestions = await guestService.Suggest(value ?? string.Empty);
+        }
+    }
+
+    private async Task OnPicked()
+    {
+        if (Picked != null)
+        {
+            await PickedChanged.InvokeAsync(Picked);
+            HideModal();
+        }
+    }
+
+    public void Show() =>
+        modalRef.Show();
+
+    private void HideModal() =>
+        modalRef.Hide();
+}

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.DAL.Filters;
 
 namespace SelfServiceLibrary.BL.Interfaces
 {
@@ -26,8 +27,8 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
         /// <returns></returns>
         Task<IssueDetailDTO> BorrowTo(IssueCreateDTO details, UserInfoDTO issuedTo);
-        Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
-        Task<List<IssueListlDTO>> GetAll(string username);
+        Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
+        Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
         Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber);
         Task<long> GetTotalCount(bool estimated = true);
         /// <summary>

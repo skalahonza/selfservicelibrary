@@ -34,7 +34,7 @@ namespace SelfServiceLibrary.DAL.Entities
         /// <summary>
         /// Kdo knihu vrátil, knihovník nebo sám uživatel
         /// </summary>
-        public UserInfo ReturnedBy { get; set; } = new UserInfo();
+        public UserInfo? ReturnedBy { get; set; }
 
         /// <summary>
         /// Datum zapůjčení

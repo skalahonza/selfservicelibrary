@@ -6,9 +6,13 @@ namespace SelfServiceLibrary.BL.DTO.User
     public class UserInfoDTO
     {
         /// <summary>
-        /// Can be empty for people outside CTU
+        /// Is empty for people outside CTU
         /// </summary>
         public string? Username { get; set; }
+        /// <summary>
+        /// Is empty for people inside CTU. Not empty for guests.
+        /// </summary>
+        public string? GuestId { get; set; }
         public string? TitleBefore { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -16,10 +20,10 @@ namespace SelfServiceLibrary.BL.DTO.User
         public string? TitleAfter { get; set; }
         public string? Email { get; set; }
         /// <summary>
-        /// Can be empty for people inside CTU
+        /// Is empty for people inside CTU
         /// </summary>
         public string? PhoneNumber { get; set; }
-        public bool IsGuest => string.IsNullOrEmpty(Username);
+        public bool IsGuest => !string.IsNullOrEmpty(GuestId);
 
         private IEnumerable<string?> NameFields()
         {

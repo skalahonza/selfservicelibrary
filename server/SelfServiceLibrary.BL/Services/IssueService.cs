@@ -10,6 +10,8 @@ using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;
 using SelfServiceLibrary.DAL.Entities;
+using SelfServiceLibrary.DAL.Filters;
+using SelfServiceLibrary.DAL.Queries;
 
 using System;
 using System.Collections.Generic;
@@ -37,23 +39,23 @@ namespace SelfServiceLibrary.BL.Services
                 ? _dbContext.Issues.EstimatedDocumentCountAsync()
                 : _dbContext.Issues.CountDocumentsAsync(Builders<Issue>.Filter.Empty);
 
-        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
+        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues
                 .AsQueryable()
+                .Filter(filter)
                 .Sort(sortings)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<List<IssueListlDTO>> GetAll(string username) =>
+        public Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues
                 .AsQueryable()
-                .Where(x => x.IssuedTo.Username == username)
-                .OrderBy(x => x.IsReturned)
-                .ThenBy(x => x.ExpiryDate)
+                .Filter(filter)
+                .Sort(sortings)
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
