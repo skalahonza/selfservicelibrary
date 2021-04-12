@@ -34,6 +34,7 @@
     <ProjectReference Include="..\Google.Books.API\Google.Books.API.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Email\SelfServiceLibrary.Email.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
     <ProjectReference Include="..\SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj" />
   </ItemGroup>

@@ -130,8 +130,8 @@
 
 @code{
     private bool duplicate;
-    private Modal addCardModal = new Modal();
-    private Modal deleteCardModal = new Modal();
+    private Modal? addCardModal;
+    private Modal? deleteCardModal;
     private Validations validations = new Validations();
 
     private AddCardDTO card = new AddCardDTO();
@@ -156,15 +156,18 @@
         }
     }
 
-    private void ShowModal(Modal modal)
+    private void ShowModal(Modal? modal)
     {
-        duplicate = false;
-        card = new AddCardDTO
+        if (modal != null)
         {
-            Number = CardNumber ?? string.Empty,
-            Name = "My Card"
-        };
-        modal.Show();
+            duplicate = false;
+            card = new AddCardDTO
+            {
+                Number = CardNumber ?? string.Empty,
+                Name = "My Card"
+            };
+            modal.Show();
+        }
     }
 
     private void HideModal(Modal modal)
@@ -184,7 +187,7 @@
                     Name = card.Name,
                     Number = card.Number
                 });
-                addCardModal.Hide();
+                addCardModal?.Hide();
                 NavigationManager.NavigateTo("/profile");
             }
             else
@@ -197,7 +200,7 @@
     private void RemoveCard(CardListDTO card)
     {
         cardToDelete = card;
-        deleteCardModal.Show();
+        deleteCardModal?.Show();
     }
 
     private async Task RemoveCardConfirmed(CardListDTO card)
@@ -205,7 +208,7 @@
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         await cardService.Remove(state.User.Identity!.Name!, card.Number!);
         cards.Remove(card);
-        deleteCardModal.Hide();
+        deleteCardModal?.Hide();
         cardToDelete = new CardListDTO();
         StateHasChanged();
     }

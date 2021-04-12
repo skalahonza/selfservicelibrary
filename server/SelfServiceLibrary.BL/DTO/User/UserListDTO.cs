@@ -8,5 +8,7 @@ namespace SelfServiceLibrary.BL.DTO.User
     {
         public string? Username { get; set; }
         public HashSet<Role> Roles { get; set; } = new HashSet<Role>();
+        public string? InfoEmail { get; set; }
+        public string? InfoFullName { get; set; }
     }
 }

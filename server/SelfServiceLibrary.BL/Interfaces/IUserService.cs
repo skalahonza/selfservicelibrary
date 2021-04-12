@@ -8,6 +8,7 @@ namespace SelfServiceLibrary.BL.Interfaces
 {
     public interface IUserService
     {
+        Task UpdateInfo(string username, UserInfoDTO info);
         Task<bool> AddRole(string username, Role role);
         Task<List<UserListDTO>> GetAll();
         Task<List<UserListDTO>> GetAll(Role role);

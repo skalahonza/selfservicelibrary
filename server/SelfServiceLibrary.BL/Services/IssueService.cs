@@ -185,6 +185,8 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.IsAvailable, true)
                 .Set(x => x.CurrentIssue!.IsReturned, true)
                 .Set(x => x.CurrentIssue!.ReturnDate, now));
+
+            // TODO notify watchdogs
         }
 
         public async Task Return(string id)

@@ -39,8 +39,13 @@ namespace SelfServiceLibrary.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) =>
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        {
             Configuration = configuration;
+            _env = env;
+        }
 
         public IConfiguration Configuration { get; }
 
@@ -135,6 +140,16 @@ namespace SelfServiceLibrary.Web
 
             // Google maps
             services.AddHttpClient<IBookLookupService, GoogleBooksApiAdapter>();
+
+            // Email
+            if (_env.IsDevelopment())
+            {
+                services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
+            }
+            else
+            {
+                services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

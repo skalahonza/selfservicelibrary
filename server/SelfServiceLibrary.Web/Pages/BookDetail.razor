@@ -1,6 +1,5 @@
 ﻿@page "/books/{departmentNumber}"
 @using SelfServiceLibrary.Web.Extensions
-@using SelfServiceLibrary.DAL.Enums
 @using SelfServiceLibrary.BL.DTO.Book
 @using SelfServiceLibrary.BL.DTO.BookStatus
 @using SelfServiceLibrary.BL.DTO.Issue
@@ -12,6 +11,8 @@
 @inject IBookLookupService bookLookupService
 @inject IBookStatusService bookStatusService
 @inject IIssueService issueService
+@inject INotificationService notificationService
+@inject IAuthorizationContext authorizationContext 
 @inject IMapper mapper
 
 <Container Fluid="true">
@@ -45,10 +46,17 @@
         <div class="clearfix d-none d-sm-block">
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
                 <Buttons class="float-left">
-                    <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
-                    <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
-                    <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
-                    <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                    @if (edit)
+                    {
+                        <Button Clicked="Update" Color="Color.Success">Save</Button>
+                        <Button Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+                    }
+                    else
+                    {
+                        <Button Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
+                        <Button Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                        <Button Clicked="SendNewsletter" Disabled="newsletterSent || sendingNewsletter" Loading="sendingNewsletter" Color="Color.Light">Send newsletter</Button>
+                    }
                 </Buttons>
             </AuthorizeView>
             <AuthorizeView>
@@ -67,20 +75,35 @@
             </AuthorizeView>
         </div>
 
-        <div class="clearfix d-block d-sm-none">
+        <div class="d-block d-sm-none">
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
                 <Buttons>
-                    <Button Disabled="@(edit)" Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
-                    <Button Disabled="@(!edit)" Clicked="Update" Color="Color.Success">Save</Button>
-                    <Button Disabled="@(!edit)" Clicked="Cancel" Color="Color.Dark">Cancel</Button>
-                    <Button Disabled="@(edit)" Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                    @if (edit)
+                    {
+                        <Button Clicked="Update" Color="Color.Success">Save</Button>
+                        <Button Clicked="Cancel" Color="Color.Dark">Cancel</Button>
+                    }
+                    else
+                    {
+                        <Button Clicked="@(() => edit = true)" Color="Color.Primary">Edit</Button>
+                        <Button Clicked="@(() => deleteBook.Show())" Color="Color.Danger">Delete</Button>
+                        <Button Clicked="SendNewsletter" Disabled="newsletterSent || sendingNewsletter" Loading="sendingNewsletter" Color="Color.Light">Send newsletter</Button>
+                    }
                 </Buttons>
             </AuthorizeView>
             <AuthorizeView>
                 <Divider />
                 <Buttons>
                     <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Color="Color.Success" Clicked="Borrow">Borrow</Button>
-                    <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                    <AuthorizeView Policy="@LibrarianPolicy.NAME" Context="none">
+                        <Authorized>
+                            <Button Disabled="@(!book.IsAvailable || !book.Status.CanBeBorrowed)" Clicked="@(() => borrowToDialog.Show())" Color="Color.Warning">Borrow to</Button>
+                            <Button Disabled="@(book.IsAvailable)" Clicked="Return" Color="Color.Primary">Return</Button>
+                        </Authorized>
+                        <NotAuthorized>
+                            <Button Disabled="@(book.IsAvailable || context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)" Color="Color.Primary" Clicked="Return">Return</Button>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 </Buttons>
             </AuthorizeView>
         </div>
@@ -605,6 +628,8 @@
     private int rating;
     private bool hasRead;
     private bool hasRated;
+    private bool sendingNewsletter;
+    private bool newsletterSent;
 
 #pragma warning disable CS8618 // URL Template match
     [Parameter]
@@ -635,6 +660,20 @@
             }
         }
         Main?.ChangeTitle("Item detail");
+    }
+
+    private async Task SendNewsletter()
+    {
+        if (book != null)
+        {
+
+            sendingNewsletter = true;
+            StateHasChanged();
+            await notificationService.SendNewsletter(book);
+            sendingNewsletter = false;
+            newsletterSent = true;
+            await snackbarStack.PushAsync("An email that the book is available was sent.", title: "Sent", color: SnackbarColor.Success);
+        }
     }
 
     private async Task Review(int value)

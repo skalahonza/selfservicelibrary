@@ -29,6 +29,17 @@ namespace SelfServiceLibrary.BL.Services
             _authorizationContext = authorizationContext;
         }
 
+        public Task UpdateInfo(string username, UserInfoDTO info)
+        {
+            var update = Builders<User>
+                .Update
+                .Set(x => x.Info, _mapper.Map<UserInfo>(info));
+
+            return _dbContext
+                .Users
+                .UpdateOneAsync(x => x.Username == username, update, new UpdateOptions { IsUpsert = true });
+        }
+
         public async Task<bool> AddRole(string username, Role role)
         {
             if (role == Role.Librarian && !await _authorizationContext.CanManageLibrarians())
@@ -96,11 +107,11 @@ namespace SelfServiceLibrary.BL.Services
                 .Find(x => x.Username == username && x.Roles.Contains(role))
                 .AnyAsync();
 
-        public Task<HashSet<Role>> GetRoles(string username) =>
-            _dbContext
+        public async Task<HashSet<Role>> GetRoles(string username) =>
+            (await _dbContext
                 .Users
                 .Find(x => x.Username == username)
                 .Project(x => x.Roles)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()) ?? new HashSet<Role>();
     }
 }

@@ -20,6 +20,7 @@ using Microsoft.Extensions.Options;
 
 using Pathoschild.Http.Client;
 
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL.Enums;
 using SelfServiceLibrary.Web.Options;
@@ -31,31 +32,50 @@ namespace SelfServiceLibrary.Web.Extensions
         private static async Task<List<Claim>> GetClaims(this IServiceProvider services, string accessToken)
         {
             var zuul = services.GetRequiredService<ZuulClient>();
+
+            var info = await zuul.CheckToken(accessToken);
+
+            // non user token
+            if (string.IsNullOrEmpty(info.UserName))
+            {
+                return new List<Claim>();
+            }
+
             var usermap = services.GetRequiredService<UsermapClient>();
             var adminOptions = services.GetRequiredService<IOptionsMonitor<AdminOptions>>();
             var userService = services.GetRequiredService<IUserService>();
+            var mapper = services.GetRequiredService<IMapper>();
 
-            var info = await zuul.CheckToken(accessToken);
-            var user = await usermap.Get(info.UserName!, accessToken);
+            var user = await usermap.Get(info.UserName, accessToken);
+
+            // update user info cache
+            await userService.UpdateInfo(info.UserName, mapper.Map<UserInfoDTO>(user));
+
+            // user probably not found in Usermap
+            if (string.IsNullOrEmpty(user.Username))
+            {
+                return new List<Claim>();
+            }
 
             // claims mapping
-            var claims = user
-                .Roles
-                .Concat(user.TechnicalRoles)
-                .Select(role => new Claim(ClaimTypes.Role, role))
-                .Append(new Claim(ClaimTypes.Name, user.Username!))
-                .Append(new Claim(ClaimTypes.Email, user.PreferredEmail ?? string.Empty))
-                .Append(new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty))
-                .Append(new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty))
-                .ToList();
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.PreferredEmail ?? string.Empty),
+                new Claim(ClaimTypes.GivenName, user.FirstName ?? string.Empty),
+                new Claim(ClaimTypes.Surname, user.LastName ?? string.Empty)
+            };
 
-            if (adminOptions.CurrentValue.Admins.Contains(user.Username!))
+            // TODO MAP USERMAP ROLES based on mapping table
+            var usermapRoles = user.Roles.Concat(user.TechnicalRoles);
+
+            if (adminOptions.CurrentValue.Admins.Contains(user.Username))
             {
                 claims.Add(new Claim(ClaimTypes.Role, nameof(Role.Admin)));
             }
 
             // get app roles
-            var roles = await userService.GetRoles(user.Username!);
+            var roles = await userService.GetRoles(user.Username);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.ToString()));

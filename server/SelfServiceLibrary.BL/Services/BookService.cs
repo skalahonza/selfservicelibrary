@@ -273,6 +273,7 @@ namespace SelfServiceLibrary.BL.Services
                     .SetOnInsert(book => book.Entered, DateTime.UtcNow)
                     .SetOnInsert(book => book.EnteredBy, enteredByEntity)
                     .SetOnInsert(book => book.IsAvailable, true)
+                    .SetOnInsert(book => book.Reviews, new List<BookReview>())
                     // update
                     .Set(book => book.Name, row.Name)
                     .Set(book => book.Author, row.Author)
