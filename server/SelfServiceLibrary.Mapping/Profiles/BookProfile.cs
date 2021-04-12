@@ -13,10 +13,15 @@ namespace SelfServiceLibrary.Mapping.Profiles
         public BookProfile()
         {
             CreateMap<BookAddDTO, Book>(MemberList.Source);
-            CreateMap<Book, BookListDTO>();
             CreateMap<Book, BookSearchDTO>();
-            CreateMap<Book, BookDetailDTO>();
             CreateMap<BookDetailDTO, BookEditDTO>();
+            CreateMap<Book, BookDetailDTO>()
+                .ForMember(x => x.ReviewsAvg, o => o.MapFrom(x => x.Reviews.Select(x => x.Value).Average()));
+            CreateMap<Book, BookListDTO>()
+                .ForMember(x => x.ReviewsAvg, o => o.MapFrom(x => x.Reviews.Select(x => x.Value).Average()));
+
+            // Review
+            CreateMap<BookReviewDTO, BookReview>();
 
             // CSV
             CreateMap<Book, BookCsvDTO>()

@@ -89,6 +89,25 @@
             <Divider />
         </AuthorizeView>
 
+        <Row>
+            <Column ColumnSize="ColumnSize.Is6.OnTablet">
+                <RatingCard Average="book.ReviewsAvg.GetValueOrDefault()" Total="book.ReviewsCount" />
+            </Column>
+            <Column ColumnSize="ColumnSize.Is6.OnTablet" Class="text-center">
+                @if (hasRead && !hasRated)
+                {
+                    <h2>Rate</h2>
+                    <Buttons>
+                        @foreach (var r in Enumerable.Range(1, 5))
+                        {
+                            <Button Active="@(rating == 2*r)" Clicked="@(() => Review(2*r))">@r <Icon Name="IconName.Star" /></Button>
+                        }
+                    </Buttons>
+                }
+            </Column>
+        </Row>
+        <Divider />
+
         <Validations @ref="validations" Mode="ValidationMode.Auto" ValidateOnLoad="false" Model="@editBook">
             <Fields>
                 <Validation>
@@ -583,6 +602,9 @@
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
     private List<string> bookTypes = new List<string>();
     private List<string> formTypes = new List<string>();
+    private int rating;
+    private bool hasRead;
+    private bool hasRated;
 
 #pragma warning disable CS8618 // URL Template match
     [Parameter]
@@ -605,8 +627,31 @@
             editBook = mapper.Map<BookEditDTO>(book);
             issues = await issueService.GetBookIssues(DepartmentNumber);
             statuses = await bookStatusService.GetAll();
+
+            if (state.User.Identity?.Name != null)
+            {
+                hasRead = await issueService.HasRead(DepartmentNumber, state.User.Identity.Name);
+                hasRated = await bookService.HasReviewed(DepartmentNumber, state.User.Identity.Name);
+            }
         }
         Main?.ChangeTitle("Item detail");
+    }
+
+    private async Task Review(int value)
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (state.User.Identity?.Name != null)
+        {
+            await bookService.AddOrUpdateReview(new BookReviewDTO
+            {
+                Username = state.User.Identity.Name,
+                DepartmentNumber = DepartmentNumber,
+                Value = value,
+            });
+            rating = value;
+            await snackbarStack.PushAsync("Book rated successfully.", title: "Rated", color: SnackbarColor.Success);
+            book = await bookService.GetDetail(DepartmentNumber);
+        }
     }
 
     private async Task Lookup()

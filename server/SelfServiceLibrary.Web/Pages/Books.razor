@@ -82,6 +82,10 @@
                         </div>
                     }
                     <div><Keywords Words="context.Keywords" /></div>
+                    @if (context.ReviewsCount > 0)
+                    {
+                        <RatingCard CompactView="true" Average="context.ReviewsAvg.GetValueOrDefault()" Total="context.ReviewsCount" />
+                    }
                     <AuthorizeView Context="Auth" Policy="@LibrarianPolicy.NAME">
                         @{
                             var numbers = new[] { ("Sys", context.SystemNumber), ("UK", context.FelNumber), ("ISBN", context.ISBNorISSN) };

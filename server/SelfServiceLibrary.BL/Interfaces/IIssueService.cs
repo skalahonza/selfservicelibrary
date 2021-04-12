@@ -30,6 +30,13 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
         Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
         Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber);
+        /// <summary>
+        /// Check if user has read a book
+        /// </summary>
+        /// <param name="departmentNumber">Book's department number</param>
+        /// <param name="username">User's name (login)</param>
+        /// <returns>True if the user has read the book</returns>
+        Task<bool> HasRead(string departmentNumber, string username);
         Task<long> GetTotalCount(bool estimated = true);
         Task<int> Count(IIssuesFilter filter);
         /// <summary>

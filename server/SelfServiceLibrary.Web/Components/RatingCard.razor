@@ -1,0 +1,25 @@
+﻿@if (CompactView)
+{
+    <div>Rating: @((Average/Max)*100)%, Total: @Total <Icon Name="IconName.User" /></div>
+}
+else
+{
+    <div class="text-center">
+        <h1>Rating: @((Average/Max)*100)%</h1>
+        <h2>Total: @Total <Icon Name="IconName.User" /></h2>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Max { get; set; } = 10;
+
+    [Parameter]
+    public double Average { get; set; }
+
+    [Parameter]
+    public int Total { get; set; }
+
+    [Parameter]
+    public bool CompactView { get; set; }
+}

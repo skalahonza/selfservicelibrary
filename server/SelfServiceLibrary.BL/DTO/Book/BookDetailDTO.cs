@@ -44,5 +44,8 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public DateTime? CurrentIssueExpiryDate { get; set; }
 
         public BookStatusListDTO Status { get; set; } = new BookStatusListDTO();
+
+        public int ReviewsCount { get; set; }
+        public double? ReviewsAvg { get; set; }
     }
 }

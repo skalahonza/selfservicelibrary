@@ -40,7 +40,15 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<Dictionary<string, int>> GetPublicationTypes(IBooksFilter filter);
         Task<Dictionary<string, int>> GetPublicationTypes(ISet<Role> userRoles);
         Task<int> GetTotalCount(IBooksFilter filter);
+        /// <summary>
+        /// Check if the user has already reviewed the book
+        /// </summary>
+        /// <param name="departmentNumber">Book's department number</param>
+        /// <param name="username">Reviewer's username</param>
+        /// <returns>True if the user already reviewed the book</returns>
+        Task<bool> HasReviewed(string departmentNumber, string username);
         Task ImportCsv(Stream csv, UserInfoDTO enteredBy);
         Task Update(string departmentNumber, BookEditDTO data);
+        Task AddOrUpdateReview(BookReviewDTO review);
     }
 }

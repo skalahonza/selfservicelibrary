@@ -23,5 +23,8 @@ namespace SelfServiceLibrary.BL.DTO.Book
         public bool StsLocal { get; set; }
         public bool StsUK { get; set; }
         public bool IsAvailable { get; set; }
+
+        public int ReviewsCount { get; set; }
+        public double? ReviewsAvg { get; set; }
     }
 }

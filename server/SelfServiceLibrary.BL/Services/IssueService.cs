@@ -76,6 +76,16 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Issue, IssueListlDTO>(_mapper)
                 .ToListAsync();
 
+        public Task<bool> HasRead(string departmentNumber, string username) =>
+            _dbContext
+                .Issues
+                .Find(x =>
+                        x.DepartmentNumber == departmentNumber &&
+                        x.IssuedTo.Username == username &&
+                        x.IsReturned
+                )
+                .AnyAsync();
+
         private async Task<IssueDetailDTO> Borrow(IssueCreateDTO details, UserInfoDTO issuedTo, UserInfoDTO issuedBy)
         {
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == details.DepartmentNumber).FirstOrDefaultAsync();
@@ -196,7 +206,7 @@ namespace SelfServiceLibrary.BL.Services
             // self return
             if (issue.IssuedTo.Username == actor.Username)
             {
-                if(!await _authorizationContext.CanBorrow())
+                if (!await _authorizationContext.CanBorrow())
                 {
                     throw new AuthorizationException($"User {actor.Username} is not allowed to return on it's own.");
                 }

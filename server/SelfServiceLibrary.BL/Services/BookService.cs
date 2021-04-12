@@ -157,6 +157,12 @@ namespace SelfServiceLibrary.BL.Services
             return _mapper.Map<List<BookSearchDTO>>(results);
         }
 
+        public Task<bool> HasReviewed(string departmentNumber, string username) =>
+            _dbContext
+                .Books
+                .Find(x => x.DepartmentNumber == departmentNumber && x.Reviews.Any(x => x.Username == username))
+                .AnyAsync();
+
         public async Task Create(BookAddDTO data)
         {
             if (!await _authorizationContext.CanManageBooks())
@@ -355,6 +361,29 @@ namespace SelfServiceLibrary.BL.Services
             }
 
             await _dbContext.Books.DeleteManyAsync(Builders<Book>.Filter.Where(x => x.IsAvailable));
+        }
+
+        public async Task AddOrUpdateReview(BookReviewDTO review)
+        {
+            // create review if not existed
+            var update = Builders<Book>
+                .Update
+                .Push(x => x.Reviews, _mapper.Map<BookReview>(review));
+
+            await _dbContext.Books.UpdateOneAsync(x =>
+                x.DepartmentNumber == review.DepartmentNumber && !x.Reviews.Any(x => x.Username == review.Username),
+                update);
+
+            // update existing review
+            var filter = Builders<Book>.Filter.Eq(x => x.DepartmentNumber, review.DepartmentNumber)
+                & Builders<Book>.Filter.ElemMatch(x => x.Reviews, x => x.Username == review.Username);
+
+            update = Builders<Book>
+                .Update
+                // [-1] is translated to .$ which means an array item that was found with the filter elem match
+                .Set(x => x.Reviews[-1].Value, review.Value);
+
+            await _dbContext.Books.UpdateOneAsync(filter, update);
         }
     }
 }

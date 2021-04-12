@@ -168,6 +168,7 @@ namespace SelfServiceLibrary.DAL.Entities
 
         #region Related entities
         public Issue? CurrentIssue { get; set; }
+        public List<BookReview> Reviews { get; set; } = new List<BookReview>();
         #endregion
     }
 }
