@@ -11,10 +11,29 @@
 @inject IBookService bookService
 
 <Container Fluid="true">
+    @if (string.IsNullOrEmpty(Query))
+    {
+        // initial state
+        <Jumbotron Background="Background.White" Margin="Margin.Is4.FromBottom">
+            <JumbotronTitle Size="JumbotronTitleSize.Is4">Full-text search</JumbotronTitle>
+            <JumbotronSubtitle>
+                Search the database using an arbitrary text. The search results are sorted by relevance.
+                Bellow are few examples of possible queries.
+            </JumbotronSubtitle>
+            <Divider />
+            <ul>
+                <li>Keywords search <code>Algebra genetics algorithm</code></li>
+                <li>Search for a term as a whole <code>"Linear algebra"</code></li>
+                <li>Keyword and author <code>tex Olšák</code></li>
+                <li>To exclude a word, you can prepend a "-" character <code>Linear -algebra</code></li>
+            </ul>
+        </Jumbotron>
+    }
+
     <Form @onsubmit=Fulltext Margin="Margin.Is4.OnY">
         <Addons>
             <Addon AddonType="AddonType.Body">
-                <TextEdit Placeholder="Algebra genetics algorithm"
+                <TextEdit Placeholder="Type here..."
                           Role="TextRole.Search"
                           Text="@Query" TextChanged="QueryChanged" />
             </Addon>
@@ -24,13 +43,13 @@
         </Addons>
     </Form>
 
-    <BadgedTabs Tabs="@tabs.ToList()"
-                TabCounts="@searchResults.ToDictionary(x => x.Key, x => x.Value.Count)"
-                SelectedTab="@SelectedTab"
-                SelectedTabChanged="OnSelectedTabChanged" />
-
-    @if (!string.IsNullOrEmpty(SelectedTab) && searchResults.ContainsKey(SelectedTab))
+    @if (!string.IsNullOrEmpty(Query) && !string.IsNullOrEmpty(SelectedTab) && searchResults.ContainsKey(SelectedTab))
     {
+        <BadgedTabs Tabs="@tabs.ToList()"
+                    TabCounts="@searchResults.ToDictionary(x => x.Key, x => x.Value.Count)"
+                    SelectedTab="@SelectedTab"
+                    SelectedTabChanged="OnSelectedTabChanged" />
+
         <DataGrid RowSelectable=@(_ => false)
                   TItem="BookSearchDTO"
                   Data="@searchResults[SelectedTab]"
@@ -41,7 +60,7 @@
                   CurrentPage="Page"
                   PageChanged="PageChanged"
                   PagerPosition="DataGridPagerPosition.Bottom">
-            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true" >
+            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true">
                 <DisplayTemplate>
                     <!-- Full name specified due to https://github.com/dotnet/aspnetcore/issues/18685 -->
                     <Blazorise.Link To="@($"/books/{context.DepartmentNumber}")">@context.Name</Blazorise.Link>
@@ -65,14 +84,6 @@
                 </DisplayTemplate>
             </DataGridCheckColumn>
         </DataGrid>
-    }
-    else if (false)
-    {
-        // Nothing found
-    }
-    else
-    {
-        // initial state
     }
 </Container>
 
@@ -163,8 +174,8 @@
     {
         // search in all categories
         var result = string.IsNullOrEmpty(Query)
-            ? new List<BookSearchDTO>()
-            : await bookService.Fulltext(Query);
+        ? new List<BookSearchDTO>()
+        : await bookService.Fulltext(Query);
 
         var previousTab = SelectedTab;
         SelectedTab = AllTab;
