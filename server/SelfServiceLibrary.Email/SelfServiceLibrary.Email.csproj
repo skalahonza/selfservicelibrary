@@ -13,5 +13,11 @@
   <ItemGroup>
     <ProjectReference Include="..\SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="Templates\Newsletter.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

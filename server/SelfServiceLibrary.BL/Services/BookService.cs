@@ -165,7 +165,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task Create(BookAddDTO data)
         {
-            if (!await _authorizationContext.CanManageBooks())
+            if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for adding a book.");
             }
@@ -185,7 +185,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task Update(string departmentNumber, BookEditDTO data)
         {
-            if (!await _authorizationContext.CanManageBooks())
+            if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for updating a book.");
             }
@@ -225,7 +225,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task ImportCsv(Stream csv, UserInfoDTO enteredBy)
         {
-            if (!await _authorizationContext.CanManageBooks())
+            if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for importing CSV with books.");
             }
@@ -332,7 +332,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task Delete(string departmentNumber)
         {
-            if (!await _authorizationContext.CanManageBooks())
+            if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for deleting a book.");
             }
@@ -356,7 +356,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task DeleteAll()
         {
-            if(!await _authorizationContext.CanManageBooks())
+            if(!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for deleting all books.");
             }

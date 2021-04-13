@@ -16,7 +16,7 @@ namespace SelfServiceLibrary.API.Services
         public Task<bool> CanGrantSelfService() =>
             Task.FromResult(false);
 
-        public Task<bool> CanManageBooks() =>
+        public Task<bool> CanManageContent() =>
             Task.FromResult(false);
 
         public Task<bool> CanManageLibrarians() => 

@@ -59,7 +59,7 @@ namespace SelfServiceLibrary.Web.Services
             return state.User.Claims.GetRoles().Contains(Role.Librarian);
         }
 
-        public async Task<bool> CanManageBooks()
+        public async Task<bool> CanManageContent()
         {
             var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
             return state.User.Claims.GetRoles().Contains(Role.Librarian);

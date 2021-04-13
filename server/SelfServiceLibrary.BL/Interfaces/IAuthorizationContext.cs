@@ -19,7 +19,7 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<bool> CanBorrow();
         Task<bool> CanBorrowTo();
         Task<bool> CanReturnFor();
-        Task<bool> CanManageBooks();
+        Task<bool> CanManageContent();
         Task<bool> CanGrantSelfService();
         Task<bool> CanManageLibrarians();
         Task<UserInfoDTO?> GetUserInfo();

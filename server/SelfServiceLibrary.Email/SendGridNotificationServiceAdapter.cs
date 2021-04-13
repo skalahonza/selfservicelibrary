@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
-using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Interfaces;
 
@@ -14,26 +13,29 @@ using SendGrid.Helpers.Mail;
 
 namespace SelfServiceLibrary.Email
 {
-    public class SendGridNotificationServiceAdapter : INotificationService
+    public class SendGridNotificationServiceAdapter : NotificationServiceBase
     {
         private readonly ISendGridClient _client;
-        private readonly IUserService _userService;
         private readonly ILogger<SendGridNotificationServiceAdapter> _log;
 
-        public SendGridNotificationServiceAdapter(ISendGridClient client, IUserService userService, ILogger<SendGridNotificationServiceAdapter> log)
+        public SendGridNotificationServiceAdapter(
+            IUserService userService,
+            IMapper mapper,
+            ISendGridClient client,
+            ILogger<SendGridNotificationServiceAdapter> log)
+            :base(userService, mapper)
         {
             _client = client;
-            _userService = userService;
             _log = log;
         }
 
-        private async Task Send(string title, string message, IEnumerable<UserListDTO> recipients)
+        protected override async Task Send(string title, string message, IEnumerable<UserListDTO> recipients)
         {
             var msg = new SendGridMessage
             {
                 From = new EmailAddress("test@example.com", "Self Service Library"),
                 Subject = title,
-                PlainTextContent = message
+                HtmlContent = message
             };
 
             var emails = recipients
@@ -46,7 +48,7 @@ namespace SelfServiceLibrary.Email
 
                 msg.AddTo(emails[0]);
 
-                if(emails.Count > 1)
+                if (emails.Count > 1)
                     msg.AddBccs(emails.Skip(1).ToList());
 
                 // Disable click tracking.
@@ -64,12 +66,6 @@ namespace SelfServiceLibrary.Email
                     _log.LogCritical(ex, "Error sending an email through SendGrid.");
                 }
             }
-        }
-
-        public async Task SendNewsletter(BookDetailDTO book)
-        {
-            var users = await _userService.GetAll();
-            await Send("New book in a library", $"New book called {book.Name} has been added to the library. Better check it out.", users);
         }
     }
 }
