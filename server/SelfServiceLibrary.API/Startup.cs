@@ -92,6 +92,7 @@ namespace SelfServiceLibrary.API
 
             // Business logic
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IIssueService, IssueService>();
 
             // CSV
             services.AddScoped<ICsvService, CsvHelperAdapter>();
@@ -117,6 +118,9 @@ namespace SelfServiceLibrary.API
 
             // Authorization
             services.AddScoped<IAuthorizationContext, AuthorizationContext>();
+
+            // No notifications
+            services.AddSingleton<INotificationService, NullNotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
