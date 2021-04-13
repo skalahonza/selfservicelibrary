@@ -20,16 +20,17 @@ namespace SelfServiceLibrary.Email
 
         public SendGridNotificationServiceAdapter(
             IUserService userService,
+            IBookService bookService,
             IMapper mapper,
             ISendGridClient client,
             ILogger<SendGridNotificationServiceAdapter> log)
-            :base(userService, mapper)
+            :base(userService, bookService, mapper)
         {
             _client = client;
             _log = log;
         }
 
-        protected override async Task Send(string title, string message, IEnumerable<UserListDTO> recipients)
+        protected override async Task Send(string title, string message, IEnumerable<(string email, string name)> recipients)
         {
             var msg = new SendGridMessage
             {
@@ -39,8 +40,8 @@ namespace SelfServiceLibrary.Email
             };
 
             var emails = recipients
-                .Where(x => !string.IsNullOrEmpty(x.InfoEmail))
-                .Select(x => new EmailAddress(x.InfoEmail, x.InfoFullName))
+                .Where(x => !string.IsNullOrEmpty(x.email))
+                .Select(x => new EmailAddress(x.email, x.name))
                 .ToList();
 
             if (emails.Any())

@@ -163,6 +163,55 @@ namespace SelfServiceLibrary.BL.Services
                 .Find(x => x.DepartmentNumber == departmentNumber && x.Reviews.Any(x => x.Username == username))
                 .AnyAsync();
 
+        public async Task<List<UserInfoDTO>> GetWatchdogs(string departmentNumber)
+        {
+            var watchdogs = (await _dbContext
+                .Books
+                .AsQueryable()
+                .Where(x => x.DepartmentNumber == departmentNumber)
+                .Select(x => x.Watchdogs)
+                .AsMongoDbQueryable()
+                .FirstOrDefaultAsync())
+                ?? new List<UserInfo>();
+
+            return _mapper.Map<List<UserInfoDTO>>(watchdogs);
+        }
+
+        public async Task RegisterWatchdog(string departmentNumber)
+        {
+            var actor = await _authorizationContext.GetUserInfo();
+
+            if (actor == null || string.IsNullOrEmpty(actor.Username))
+            {
+                throw new AuthorizationException("Cannot register a Watch Dog. Current user's name is empty.");
+            }
+
+            // add Watchdog if not present already
+            var update = Builders<Book>
+                .Update
+                .Push(x => x.Watchdogs, _mapper.Map<UserInfo>(actor));
+
+            await _dbContext.Books.UpdateOneAsync(x =>
+                x.DepartmentNumber == departmentNumber &&
+                !x.Watchdogs.Any(x => x.Username == actor.Username),
+                update);
+        }
+
+        public Task<bool> HasWatchdog(string departmentNumber, string username) =>
+             _dbContext
+                    .Books
+                    .Find(x => x.DepartmentNumber == departmentNumber && x.Watchdogs.Any(x => x.Username == username))
+                    .AnyAsync();
+
+        public Task ClearWatchdogs(string departmentNumber)
+        {
+            var update = Builders<Book>
+                .Update
+                .Set(x => x.Watchdogs, new List<UserInfo>());
+
+            return _dbContext.Books.UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
+        }
+
         public async Task Create(BookAddDTO data)
         {
             if (!await _authorizationContext.CanManageContent())
@@ -274,6 +323,7 @@ namespace SelfServiceLibrary.BL.Services
                     .SetOnInsert(book => book.EnteredBy, enteredByEntity)
                     .SetOnInsert(book => book.IsAvailable, true)
                     .SetOnInsert(book => book.Reviews, new List<BookReview>())
+                    .SetOnInsert(book => book.Watchdogs, new List<UserInfo>())
                     // update
                     .Set(book => book.Name, row.Name)
                     .Set(book => book.Author, row.Author)
@@ -356,7 +406,7 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task DeleteAll()
         {
-            if(!await _authorizationContext.CanManageContent())
+            if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for deleting all books.");
             }

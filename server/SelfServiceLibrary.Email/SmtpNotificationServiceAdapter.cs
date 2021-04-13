@@ -20,16 +20,17 @@ namespace SelfServiceLibrary.Email
 
         public SmtpNotificationServiceAdapter(
             IUserService userService,
+            IBookService bookService,
             IMapper mapper,
             IOptions<SmtpNotificationServiceOptions> options,
             ILogger<SmtpNotificationServiceAdapter> log)
-            : base(userService, mapper)
+            : base(userService, bookService, mapper)
         {
             _options = options;
             _log = log;
         }
 
-        protected override async Task Send(string title, string message, IEnumerable<UserListDTO> recipients)
+        protected override async Task Send(string title, string message, IEnumerable<(string email, string name)> recipients)
         {
             using var client = new SmtpClient(_options.Value.RelayAddress, 25);
 
@@ -40,8 +41,8 @@ namespace SelfServiceLibrary.Email
             emailMessage.Body = message;
 
             var emails = recipients
-               .Where(x => !string.IsNullOrEmpty(x.InfoEmail))
-               .Select(x => new MailAddress(x.InfoEmail, x.InfoFullName))
+               .Where(x => !string.IsNullOrEmpty(x.email))
+               .Select(x => new MailAddress(x.email, x.name))
                .ToList();
 
             if (emails.Any())

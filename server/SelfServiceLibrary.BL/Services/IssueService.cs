@@ -26,12 +26,14 @@ namespace SelfServiceLibrary.BL.Services
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IAuthorizationContext _authorizationContext;
+        private readonly INotificationService _notificationService;
 
-        public IssueService(MongoDbContext dbContext, IMapper mapper, IAuthorizationContext authorizationContext)
+        public IssueService(MongoDbContext dbContext, IMapper mapper, IAuthorizationContext authorizationContext, INotificationService notificationService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _authorizationContext = authorizationContext;
+            _notificationService = notificationService;
         }
 
         public Task<long> GetTotalCount(bool estimated = true) =>
@@ -186,7 +188,9 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.CurrentIssue!.IsReturned, true)
                 .Set(x => x.CurrentIssue!.ReturnDate, now));
 
-            // TODO notify watchdogs
+            // notify watchdogs
+            if(!string.IsNullOrEmpty(issue.DepartmentNumber))
+                await _notificationService.WatchdogNotify(issue.DepartmentNumber);
         }
 
         public async Task Return(string id)

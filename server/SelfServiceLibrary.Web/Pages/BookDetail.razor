@@ -12,7 +12,7 @@
 @inject IBookStatusService bookStatusService
 @inject IIssueService issueService
 @inject INotificationService notificationService
-@inject IAuthorizationContext authorizationContext 
+@inject IAuthorizationContext authorizationContext
 @inject IMapper mapper
 
 <Container Fluid="true">
@@ -43,7 +43,7 @@
             <Divider />
         </AuthorizeView>
 
-        <!-- Librarian panel wide screen-->
+        <!-- Buttons panel wide screen-->
         <div class="clearfix d-none d-sm-block">
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
                 <Buttons class="float-left">
@@ -76,7 +76,7 @@
             </AuthorizeView>
         </div>
 
-        <!-- Librarian panel mobile -->
+        <!-- Buttons panel mobile -->
         <div class="d-block d-sm-none">
             <AuthorizeView Policy="@LibrarianPolicy.NAME">
                 <Buttons>
@@ -111,6 +111,20 @@
         </div>
 
         <AuthorizeView>
+            @if (!watchdogRegistered && book != null && !book.IsAvailable && context.User.Identity?.Name != book.CurrentIssueIssuedTo?.Username)
+            {
+                <!-- Watchdog panel -->
+                <Divider />
+                <Card Margin="Margin.Is2.FromTop" Background="Background.Dark" WhiteText="true">
+                    <CardBody>
+                        <CardText>
+                            Interested in the book? Let the system notify you by email once the book becomes available again.
+                        </CardText>
+                        <Button Clicked="RegisterWatchDog" Color="Color.Primary">Notify me when the book becomes available</Button>
+                    </CardBody>
+                </Card>
+            }
+
             <Divider />
         </AuthorizeView>
 
@@ -632,6 +646,7 @@
     private bool hasRated;
     private bool sendingNewsletter;
     private bool newsletterSent;
+    private bool watchdogRegistered = true; // prevents flashing of the card
 
 #pragma warning disable CS8618 // URL Template match
     [Parameter]
@@ -659,16 +674,26 @@
             {
                 hasRead = await issueService.HasRead(DepartmentNumber, state.User.Identity.Name);
                 hasRated = await bookService.HasReviewed(DepartmentNumber, state.User.Identity.Name);
+                watchdogRegistered = await bookService.HasWatchdog(DepartmentNumber, state.User.Identity.Name);
             }
         }
         Main?.ChangeTitle("Item detail");
+    }
+
+    private async Task RegisterWatchDog()
+    {
+        if (book != null)
+        {
+            await bookService.RegisterWatchdog(DepartmentNumber);
+            watchdogRegistered = true;
+            await snackbarStack.PushAsync("An email will arrive into your mailbox once the book becomes available.", title: "Watchdog registered", color: SnackbarColor.Success);
+        }
     }
 
     private async Task SendNewsletter()
     {
         if (book != null)
         {
-
             sendingNewsletter = true;
             StateHasChanged();
             await notificationService.SendNewsletter(book);

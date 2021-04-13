@@ -27,18 +27,20 @@ namespace SelfServiceLibrary.Email
             }
         }
 
+        private readonly IBookService _bookService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        protected NotificationServiceBase(IUserService userService, IMapper mapper)
+        protected NotificationServiceBase(IUserService userService, IBookService bookService, IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;
+            _bookService = bookService;
         }
 
-        protected abstract Task Send(string title, string message, IEnumerable<UserListDTO> recipients);
+        protected abstract Task Send(string title, string message, IEnumerable<(string email, string name)> recipients);
 
-        protected Task Send(string title, string message, UserListDTO recipient) =>
+        private Task Send(string title, string message, (string email, string name) recipient) =>
             Send(title, message, new[] { recipient });
 
         private string GetMessage(string template, Dictionary<string, object> dictionary)
@@ -81,7 +83,17 @@ namespace SelfServiceLibrary.Email
             var users = await _userService.GetAll();
             var dictionary = _mapper.Map<Dictionary<string, object>>(book);
             var message = GetMessage("Newsletter", dictionary);
-            await Send("New book in a library", message, users);
+            await Send("New book in a library", message, users.Select(x => (x.InfoEmail, x.InfoFullName)));
+        }
+
+        public async Task WatchdogNotify(string departmentNumber)
+        {
+            var book = await _bookService.GetDetail(departmentNumber);
+            var users = await _bookService.GetWatchdogs(departmentNumber);
+            var dictionary = _mapper.Map<Dictionary<string, object>>(book);
+            var message = GetMessage("Watchdog", dictionary);
+            await Send("Book you were interested in is available again", message, users.Select(x => (x.Email, x.ToString())));
+            await _bookService.ClearWatchdogs(departmentNumber);
         }
     }
 }

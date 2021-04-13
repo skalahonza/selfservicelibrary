@@ -14,7 +14,7 @@ namespace SelfServiceLibrary.BL.Interfaces
     public interface IBookService
     {
         /// <summary>
-        /// 
+        /// Create a new book
         /// </summary>
         /// <param name="data"></param>
         /// <exception cref="Exceptions.Business.BookAlreadyExistsException">Thrown when a book with identical department number already exists.</exception>
@@ -50,5 +50,9 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task ImportCsv(Stream csv, UserInfoDTO enteredBy);
         Task Update(string departmentNumber, BookEditDTO data);
         Task AddOrUpdateReview(BookReviewDTO review);
+        Task<List<UserInfoDTO>> GetWatchdogs(string departmentNumber);
+        Task RegisterWatchdog(string departmentNumber);
+        Task<bool> HasWatchdog(string departmentNumber, string username);
+        Task ClearWatchdogs(string departmentNumber);
     }
 }
