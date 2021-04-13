@@ -12,6 +12,18 @@
 @inject IBookService bookService
 
 <Container Fluid="true">
+    <Form @onsubmit=Fulltext Margin="Margin.Is4.OnY">
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <TextEdit Placeholder="Type here..."
+                          Role="TextRole.Search"
+                          Text="@Query" TextChanged="QueryChanged" />
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Primary" Type="ButtonType.Submit"><Icon Name="IconName.Search" /></Button>
+            </Addon>
+        </Addons>
+    </Form>
     @if (string.IsNullOrEmpty(Query))
     {
         // initial state
@@ -30,21 +42,18 @@
             </ul>
         </Jumbotron>
     }
-
-    <Form @onsubmit=Fulltext Margin="Margin.Is4.OnY">
-        <Addons>
-            <Addon AddonType="AddonType.Body">
-                <TextEdit Placeholder="Type here..."
-                          Role="TextRole.Search"
-                          Text="@Query" TextChanged="QueryChanged" />
-            </Addon>
-            <Addon AddonType="AddonType.End">
-                <Button Color="Color.Primary" Type="ButtonType.Submit"><Icon Name="IconName.Search" /></Button>
-            </Addon>
-        </Addons>
-    </Form>
-
-    @if (!string.IsNullOrEmpty(Query) && !string.IsNullOrEmpty(SelectedTab) && searchResults.ContainsKey(SelectedTab))
+    else if (searchResults.Values.Sum(x => x.Count) == 0)
+    {
+        <Jumbotron Background="Background.White" Margin="Margin.Is4.FromBottom" class="text-center">
+            <JumbotronTitle Size="JumbotronTitleSize.Is4">Nothing found</JumbotronTitle>
+            <JumbotronSubtitle>
+                No records matched for your query. You can also try to search in Central Library of CTU.
+            </JumbotronSubtitle>
+            <Button Color="Color.Light" Type="ButtonType.Link" To="@SummonSearch" Target="Target.Blank">Search in Summon</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Link" To="@CentralLibrarySearch" Target="Target.Blank">Search in Central Library of CTU</Button>
+        </Jumbotron>
+    }
+    else if (!string.IsNullOrEmpty(Query) && !string.IsNullOrEmpty(SelectedTab) && searchResults.ContainsKey(SelectedTab))
     {
         <BadgedTabs Tabs="@tabs.ToList()"
                     TabCounts="@searchResults.ToDictionary(x => x.Key, x => x.Value.Count)"
@@ -61,16 +70,6 @@
                   CurrentPage="Page"
                   PageChanged="PageChanged"
                   PagerPosition="DataGridPagerPosition.Bottom">
-            <EmptyTemplate>
-                <Jumbotron Background="Background.White" Margin="Margin.Is4.FromBottom" class="text-center">
-                    <JumbotronTitle Size="JumbotronTitleSize.Is4">Nothing found</JumbotronTitle>
-                    <JumbotronSubtitle>
-                        No records matched for your query. You can also try to search in Central Library of CTU.
-                    </JumbotronSubtitle>                    
-                    <Button Color="Color.Light" Type="ButtonType.Link" To="@SummonSearch" Target="Target.Blank">Search in Summon</Button>
-                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@CentralLibrarySearch" Target="Target.Blank">Search in Central Library of CTU</Button>
-                </Jumbotron>
-            </EmptyTemplate>
             <DataGridColumns>
                 <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true">
                     <DisplayTemplate>
