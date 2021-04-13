@@ -1,4 +1,5 @@
 ﻿@page "/search"
+@using System.Web
 @using SelfServiceLibrary.Web.Attributes
 @using SelfServiceLibrary.Web.Extensions
 @using SelfServiceLibrary.Web.Filters
@@ -60,29 +61,41 @@
                   CurrentPage="Page"
                   PageChanged="PageChanged"
                   PagerPosition="DataGridPagerPosition.Bottom">
-            <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true">
-                <DisplayTemplate>
-                    <!-- Full name specified due to https://github.com/dotnet/aspnetcore/issues/18685 -->
-                    <Blazorise.Link To="@($"/books/{context.DepartmentNumber}")">@context.Name</Blazorise.Link>
-                    <div><Badge Color="Color.Secondary">@context.DepartmentNumber</Badge></div>
-                    <div><Keywords Words="context.Keywords" /></div>
-                    @if (context.CoAuthors.Prepend(context.Author).Any(x => !string.IsNullOrEmpty(x)))
-                    {
-                        <div>
-                            <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
-                        </div>
-                    }
-                </DisplayTemplate>
-            </DataGridColumn>
-            <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
-                <DisplayTemplate>
-                    <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
-                        <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
-                            @(context.IsAvailable ? "Yes" : "No")
-                        </div>
-                    </Check>
-                </DisplayTemplate>
-            </DataGridCheckColumn>
+            <EmptyTemplate>
+                <Jumbotron Background="Background.White" Margin="Margin.Is4.FromBottom" class="text-center">
+                    <JumbotronTitle Size="JumbotronTitleSize.Is4">Nothing found</JumbotronTitle>
+                    <JumbotronSubtitle>
+                        No records matched for your query. You can also try to search in Central Library of CTU.
+                    </JumbotronSubtitle>                    
+                    <Button Color="Color.Light" Type="ButtonType.Link" To="@SummonSearch" Target="Target.Blank">Search in Summon</Button>
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@CentralLibrarySearch" Target="Target.Blank">Search in Central Library of CTU</Button>
+                </Jumbotron>
+            </EmptyTemplate>
+            <DataGridColumns>
+                <DataGridColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.Name)" Caption="Name" Sortable="true">
+                    <DisplayTemplate>
+                        <!-- Full name specified due to https://github.com/dotnet/aspnetcore/issues/18685 -->
+                        <Blazorise.Link To="@($"/books/{context.DepartmentNumber}")">@context.Name</Blazorise.Link>
+                        <div><Badge Color="Color.Secondary">@context.DepartmentNumber</Badge></div>
+                        <div><Keywords Words="context.Keywords" /></div>
+                        @if (context.CoAuthors.Prepend(context.Author).Any(x => !string.IsNullOrEmpty(x)))
+                        {
+                            <div>
+                                <Icon Name="IconName.User" /> @string.Join(", ", context.CoAuthors.Prepend(context.Author))
+                            </div>
+                        }
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridCheckColumn TItem="BookSearchDTO" Field="@nameof(BookSearchDTO.IsAvailable)" Caption="Available" Sortable="true">
+                    <DisplayTemplate>
+                        <Check TValue="bool" Checked="context.IsAvailable" Disabled="true" ReadOnly="true">
+                            <div class="@(context.IsAvailable ? "text-success" : "text-danger")">
+                                @(context.IsAvailable ? "Yes" : "No")
+                            </div>
+                        </Check>
+                    </DisplayTemplate>
+                </DataGridCheckColumn>
+            </DataGridColumns>
         </DataGrid>
     }
 </Container>
@@ -97,12 +110,16 @@
 {
         {AllTab, new List<BookSearchDTO>()}
     };
+
     private IEnumerable<string> tabs => searchResults
         .Where(x => x.Key != AllTab)
         .OrderByDescending(x => x.Value.Count)
         .ThenBy(x => x.Key)
         .Select(x => x.Key)
         .Prepend(AllTab);
+
+    private string SummonSearch => $"https://cvut.summon.serialssolutions.com/?#!/search?q={HttpUtility.UrlEncode(Query)}";
+    private string CentralLibrarySearch => $"https://aleph.cvut.cz/F?func=find-b&find_code=WRD&local_base=DUPL&CON_LNG=CZE&request={HttpUtility.UrlEncode(Query)}";
 
     [CascadingParameter]
     protected MainLayout Main { get; set; } = new MainLayout();
