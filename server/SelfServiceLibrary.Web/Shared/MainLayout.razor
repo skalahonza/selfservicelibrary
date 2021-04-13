@@ -7,6 +7,7 @@
 @using SelfServiceLibrary.BL.Exceptions.Authorization
 @using SelfServiceLibrary.BL.Exceptions.Business
 @using SelfServiceLibrary.BL.Interfaces
+@inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ILogger<MainLayout> log
 @inject IIssueService issueService
@@ -96,7 +97,7 @@
                                 <NotAuthorized>
                                     <!-- KIOSK hides login-button class for user's convenience, authorization is not affected-->
                                     <BarItem Class="login-button">
-                                        <a href="/login" class="b-bar-link login-button"><BarIcon IconName="IconName.User" /> Login</a>
+                                        <a href="@($"/login?redirectUri={NavigationManager.Uri}")" class="b-bar-link login-button"><BarIcon IconName="IconName.User" /> Login</a>
                                     </BarItem>
                                 </NotAuthorized>
                                 <Authorized>
