@@ -34,14 +34,32 @@ namespace SelfServiceLibrary.DAL
         /// This method should only be called at application startup and is responsible for DB configuration (primary keys etc) and asserting that the indexes exist.
         /// </summary>
         /// <returns></returns>
-        public Task EnsureIndexesExist()
+        public async Task EnsureIndexesExist()
         {
-            // indexes
-            return Books
-                .Indexes
-                .CreateOneAsync(new CreateIndexModel<Book>(Builders<Book>
+            // Books
+            var fullTextSearchIndex = Builders<Book>
                     .IndexKeys
-                    .Text("$**")));
+                    .Text(x => x.Name)
+                    .Text(x => x.Author)
+                    .Text(x => x.CoAuthors)
+                    .Text(x => x.Publisher)
+                    .Text(x => x.CountryOfPublication)
+                    .Text(x => x.Conference)
+                    .Text(x => x.Keywords);
+            
+            await Books
+                .Indexes                
+                .CreateOneAsync(new CreateIndexModel<Book>(fullTextSearchIndex));
+
+            // Issues
+            var sortingIndex = Builders<Issue>
+                .IndexKeys
+                .Ascending(x => x.IsReturned)
+                .Ascending(x => x.ExpiryDate);
+
+            await Issues
+                .Indexes
+                .CreateOneAsync(new CreateIndexModel<Issue>(sortingIndex));
         }
     }
 }
