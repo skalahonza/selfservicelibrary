@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -19,6 +20,7 @@ namespace SelfServiceLibrary.BG
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(x => x.AddUserSecrets<Program>())
                 .ConfigureServices((hostContext, services) =>
                 {
                     var Configuration = hostContext.Configuration;
@@ -35,6 +37,9 @@ namespace SelfServiceLibrary.BG
                     services.AddAutoMapper(typeof(BookProfile));
                     services.AddScoped<IMapper, AutoMapperAdapter>();
 
+                    // CSV
+                    services.AddScoped<ICsvService, CsvHelperAdapter>();
+
                     // Email
                     if (hostContext.HostingEnvironment.IsDevelopment())
                     {
@@ -44,6 +49,10 @@ namespace SelfServiceLibrary.BG
                     {
                         services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
                     }
+
+                    // Business logic
+                    services.AddScoped<IBookService, BookService>();
+                    services.AddScoped<IUserService, UserService>();
                 });
     }
 }
