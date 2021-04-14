@@ -118,7 +118,7 @@
                 <Card Margin="Margin.Is2.FromTop" Background="Background.Dark" WhiteText="true">
                     <CardBody>
                         <CardText>
-                            Interested in the book? Let the system notify you by email once the book becomes available again.
+                            Someone else has borrowed the book. Interested in the book? Let the system notify you by email once the book becomes available again.
                         </CardText>
                         <Button Clicked="RegisterWatchDog" Color="Color.Primary">Notify me when the book becomes available</Button>
                     </CardBody>
@@ -598,18 +598,18 @@
                 <h3>History</h3>
 
                 <DataGrid RowSelectable=@(_ => false)
-                          TItem="IssueListlDTO"
+                          TItem="IssueListDTO"
                           Data="@issues"
                           Responsive="true"
                           ShowPager="true"
                           PagerPosition="DataGridPagerPosition.Bottom"
                           PageSize="10">
-                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
-                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedBy)" Caption="Issued by" Sortable="true" />
-                    <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnedBy)" Caption="Returned by" Sortable="true" />
-                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
-                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
-                    <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+                    <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+                    <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssuedBy)" Caption="Issued by" Sortable="true" />
+                    <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ReturnedBy)" Caption="Returned by" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+                    <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
                 </DataGrid>
             </AuthorizeView>
         </Validations>
@@ -637,7 +637,7 @@
     private bool isReadonly => !edit;
     private BookDetailDTO? book = new BookDetailDTO();
     private BookEditDTO editBook = new BookEditDTO();
-    private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+    private List<IssueListDTO> issues = new List<IssueListDTO>();
     private List<BookStatusListDTO> statuses = new List<BookStatusListDTO>();
     private List<string> bookTypes = new List<string>();
     private List<string> formTypes = new List<string>();

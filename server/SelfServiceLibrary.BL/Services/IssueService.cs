@@ -49,7 +49,7 @@ namespace SelfServiceLibrary.BL.Services
                 .AsMongoDbQueryable()
                 .CountAsync();
 
-        public Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
+        public Task<List<IssueListDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues
                 .AsQueryable()
@@ -57,25 +57,25 @@ namespace SelfServiceLibrary.BL.Services
                 .Sort(sortings)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ProjectTo<Issue, IssueListlDTO>(_mapper)
+                .ProjectTo<Issue, IssueListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
+        public Task<List<IssueListDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null) =>
             _dbContext
                 .Issues
                 .AsQueryable()
                 .Filter(filter)
                 .Sort(sortings)
-                .ProjectTo<Issue, IssueListlDTO>(_mapper)
+                .ProjectTo<Issue, IssueListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber) =>
+        public Task<List<IssueListDTO>> GetBookIssues(string departmentNumber) =>
             _dbContext
                 .Issues
                 .AsQueryable()
                 .Where(x => x.DepartmentNumber == departmentNumber)
                 .OrderByDescending(x => x.IssueDate)
-                .ProjectTo<Issue, IssueListlDTO>(_mapper)
+                .ProjectTo<Issue, IssueListDTO>(_mapper)
                 .ToListAsync();
 
         public Task<bool> HasRead(string departmentNumber, string username) =>

@@ -28,3 +28,6 @@ services:
     ports:
       - "54156:80"
       - "44302:443"
+  selfservicelibrary.bg:
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

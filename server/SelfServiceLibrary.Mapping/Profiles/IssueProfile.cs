@@ -11,7 +11,7 @@ namespace SelfServiceLibrary.Mapping.Profiles
         {
             CreateMap<IssueCreateDTO, Issue>(MemberList.Source);
             CreateMap<Issue, IssueDetailDTO>();
-            CreateMap<Issue, IssueListlDTO>();
+            CreateMap<Issue, IssueListDTO>();
 
             CreateMap<Book, Issue>()
                 .ForMember(x => x.BookName, x => x.MapFrom(y => y.Name))

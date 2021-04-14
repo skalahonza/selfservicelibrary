@@ -28,7 +28,7 @@
 
     <DataGrid @ref="grid"
               RowSelectable=@(_ => false)
-              TItem="IssueListlDTO"
+              TItem="IssueListDTO"
               Data="@issues"
               ReadData="@OnReadData"
               TotalItems="@totalIssues"
@@ -40,20 +40,20 @@
             <Loading />
         </LoadingTemplate>
         <DataGridColumns>
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.BookName)" Caption="Item" Sortable="true">
+            <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.BookName)" Caption="Item" Sortable="true">
                 <DisplayTemplate>
                     <!-- Full name specified due to https://github.com/dotnet/aspnetcore/issues/18685 -->
                     <Blazorise.Link To="@($"/books/{context.DepartmentNumber}")">@context.BookName</Blazorise.Link>
                     <div><Badge Color="Color.Secondary">@context.DepartmentNumber</Badge></div>
                 </DisplayTemplate>
             </DataGridColumn>
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssuedBy)" Caption="Issued by" Sortable="true" />
-            <DataGridColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnedBy)" Caption="Returned by" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
-            <DataGridDateColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
-            <DataGridCheckColumn TItem="IssueListlDTO" Field="@nameof(IssueListlDTO.IsReturned)" Caption="Reutrned" Sortable="true">
+            <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssuedTo)" Caption="Issued to" Sortable="true" />
+            <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssuedBy)" Caption="Issued by" Sortable="true" />
+            <DataGridColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ReturnedBy)" Caption="Returned by" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IssueDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Issue date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ExpiryDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Expiry date" Sortable="true" />
+            <DataGridDateColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.ReturnDate)" DisplayFormat="{0:dd.MM.yyyy}" Caption="Return date" Sortable="true" />
+            <DataGridCheckColumn TItem="IssueListDTO" Field="@nameof(IssueListDTO.IsReturned)" Caption="Reutrned" Sortable="true">
                 <DisplayTemplate>
                     <Check TValue="bool" Checked="context.IsReturned" Disabled="true" ReadOnly="true" />
                 </DisplayTemplate>
@@ -63,11 +63,11 @@
 </Container>
 
 @code {
-    private DataGrid<IssueListlDTO> grid = new DataGrid<IssueListlDTO>();
+    private DataGrid<IssueListDTO> grid = new DataGrid<IssueListDTO>();
 
     private bool filterVisible;
     private int? totalIssues;
-    private List<IssueListlDTO> issues = new List<IssueListlDTO>();
+    private List<IssueListDTO> issues = new List<IssueListDTO>();
     private IssuesFilter filter = new IssuesFilter();
 
     [CascadingParameter]
@@ -85,14 +85,14 @@
         await grid.Reload();
     }
 
-    private async Task OnReadData(DataGridReadDataEventArgs<IssueListlDTO> e)
+    private async Task OnReadData(DataGridReadDataEventArgs<IssueListDTO> e)
     {
         var sortings = e.GetSortingCriteria().ToList();
 
         if (sortings.Count == 0)
         {
-            sortings.Add((nameof(IssueListlDTO.IsReturned), ListSortDirection.Ascending));
-            sortings.Add((nameof(IssueListlDTO.ExpiryDate), ListSortDirection.Ascending));
+            sortings.Add((nameof(IssueListDTO.IsReturned), ListSortDirection.Ascending));
+            sortings.Add((nameof(IssueListDTO.ExpiryDate), ListSortDirection.Ascending));
         }
 
         issues = await issueService.GetAll(e.Page, e.PageSize, filter, sortings);

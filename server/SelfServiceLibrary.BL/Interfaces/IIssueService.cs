@@ -27,9 +27,9 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
         /// <returns></returns>
         Task<IssueDetailDTO> BorrowTo(IssueCreateDTO details, UserInfoDTO issuedTo);
-        Task<List<IssueListlDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
-        Task<List<IssueListlDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
-        Task<List<IssueListlDTO>> GetBookIssues(string departmentNumber);
+        Task<List<IssueListDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
+        Task<List<IssueListDTO>> GetAll(IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
+        Task<List<IssueListDTO>> GetBookIssues(string departmentNumber);
         /// <summary>
         /// Check if user has read a book
         /// </summary>

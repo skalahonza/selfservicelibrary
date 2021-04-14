@@ -32,5 +32,14 @@ services:
       context: .
       dockerfile: SelfServiceLibrary.Web/Dockerfile
 
+  selfservicelibrary.bg:
+    image: skalahonza/self-service-library-bg:latest
+    environment:
+      - MongoDb__ConnectionString=mongodb://root:rootpassword@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
+    build:
+      context: .
+      dockerfile: SelfServiceLibrary.BG/Dockerfile
+
 volumes:
   mongodb_data_container:

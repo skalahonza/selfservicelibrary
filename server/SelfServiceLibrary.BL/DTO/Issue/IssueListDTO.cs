@@ -4,7 +4,7 @@ using SelfServiceLibrary.BL.DTO.User;
 
 namespace SelfServiceLibrary.BL.DTO.Issue
 {
-    public class IssueListlDTO
+    public class IssueListDTO
     {
 #pragma warning disable CS8618 // Items are not null in Issue entity
         public string Id { get; set; }
