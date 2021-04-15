@@ -60,6 +60,7 @@ namespace SelfServiceLibrary.BG
                     if (issue.ExpiryDate < DateTime.Today)
                     {
                         _logger.LogInformation("Issue has expired");
+                        await notificationService.IssueExpiredNotify(issue);
                     }
 
                     // issue is about to expire

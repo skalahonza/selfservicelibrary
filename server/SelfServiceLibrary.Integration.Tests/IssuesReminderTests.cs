@@ -71,11 +71,43 @@ namespace SelfServiceLibrary.Integration.Tests
 
             // Assert
             mock.Verify(x => x.IssueExpiresSoonNotify(It.IsAny<IssueListDTO>()), Times.Once);
+            mock.Verify(x => x.IssueExpiredNotify(It.IsAny<IssueListDTO>()), Times.Never);
         }
 
+        [Fact]
         public async Task ShouldNotifyExpiredIssues()
         {
             // Arrange
+            var tokenSource = new CancellationTokenSource();
+            var mock = new Mock<INotificationService>();
+            mock.Setup(x => x.IssueExpiredNotify(It.IsAny<IssueListDTO>()))
+                .Returns((IssueListDTO issue) =>
+                {
+                    issue.Should().NotBeNull();
+                    issue.DepartmentNumber.Should().Be("GL-00047");
+                    tokenSource.Cancel();
+                    return Task.CompletedTask;
+                });
+
+            Services.Replace(s => mock.Object, ServiceLifetime.Singleton);
+
+            var di = Services.BuildServiceProvider();
+            var worker = di.GetRequiredService<IssuesReminder>();
+
+            var issueService = di.GetRequiredService<IIssueService>();
+            await issueService.Borrow(new IssueCreateDTO
+            {
+                DepartmentNumber = "GL-00047",
+                ExpiryDate = DateTime.Today.AddDays(-10)
+            });
+
+            // Act
+            await worker.StartAsync(tokenSource.Token);
+            await Task.Delay(TimeSpan.FromSeconds(10));
+
+            // Assert
+            mock.Verify(x => x.IssueExpiredNotify(It.IsAny<IssueListDTO>()), Times.Once);
+            mock.Verify(x => x.IssueExpiresSoonNotify(It.IsAny<IssueListDTO>()), Times.Never);
         }
     }
 }

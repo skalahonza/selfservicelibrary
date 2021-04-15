@@ -15,6 +15,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Update="Templates\IssueExpiredNotify.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\IssueExpiresSoonNotify.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

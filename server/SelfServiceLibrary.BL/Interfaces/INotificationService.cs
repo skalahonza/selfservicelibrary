@@ -27,5 +27,12 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// <param name="issue"></param>
         /// <returns></returns>
         Task IssueExpiresSoonNotify(IssueListDTO issue);
+
+        /// <summary>
+        /// Notify a person who has borrowed the book included in the issue that, the issue expired.
+        /// </summary>
+        /// <param name="issue"></param>
+        /// <returns></returns>
+        Task IssueExpiredNotify(IssueListDTO issue);
     }
 }

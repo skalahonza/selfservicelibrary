@@ -103,5 +103,13 @@ namespace SelfServiceLibrary.Email
             var message = GetMessage("IssueExpiresSoonNotify", dictionary);
             await Send("Issue is about to expire", message, (issue.IssuedTo.Email, issue.IssuedTo.ToString()));
         }
+
+        public async Task IssueExpiredNotify(IssueListDTO issue)
+        {
+            var book = await _bookService.GetDetail(issue.DepartmentNumber);
+            var dictionary = _mapper.Map<Dictionary<string, object>>(book);
+            var message = GetMessage("IssueExpiredNotify", dictionary);
+            await Send("Issue expired", message, (issue.IssuedTo.Email, issue.IssuedTo.ToString()));
+        }
     }
 }
