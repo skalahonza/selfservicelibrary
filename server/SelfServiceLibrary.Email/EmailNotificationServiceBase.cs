@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using SelfServiceLibrary.BL.DTO.Book;
-using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.Interfaces;
 
 namespace SelfServiceLibrary.Email
 {
-    public abstract class NotificationServiceBase : INotificationService
+    public abstract class EmailNotificationServiceBase : INotificationService
     {
         private static readonly ConcurrentDictionary<string, string> Templates = new ConcurrentDictionary<string, string>();
 
-        static NotificationServiceBase()
+        static EmailNotificationServiceBase()
         {
             // initialize notification message HTML templates
             foreach (var file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates")))
@@ -31,7 +31,7 @@ namespace SelfServiceLibrary.Email
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        protected NotificationServiceBase(IUserService userService, IBookService bookService, IMapper mapper)
+        protected EmailNotificationServiceBase(IUserService userService, IBookService bookService, IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;
@@ -94,6 +94,14 @@ namespace SelfServiceLibrary.Email
             var message = GetMessage("Watchdog", dictionary);
             await Send("Book you were interested in is available again", message, users.Select(x => (x.Email, x.ToString())));
             await _bookService.ClearWatchdogs(departmentNumber);
+        }
+
+        public async Task IssueExpiresSoonNotify(IssueListDTO issue)
+        {
+            var book = await _bookService.GetDetail(issue.DepartmentNumber);
+            var dictionary = _mapper.Map<Dictionary<string, object>>(book);            
+            var message = GetMessage("IssueExpiresSoonNotify", dictionary);
+            await Send("Issue is about to expire", message, (issue.IssuedTo.Email, issue.IssuedTo.ToString()));
         }
     }
 }

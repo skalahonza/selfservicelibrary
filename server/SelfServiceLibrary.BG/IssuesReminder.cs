@@ -19,12 +19,15 @@ using SelfServiceLibrary.DAL.Queries;
 
 namespace SelfServiceLibrary.BG
 {
-    public class Worker : BackgroundService
+    /// <summary>
+    /// Background service responsible for reminding users that they forgot to return a book or that the issue is about to expire.
+    /// </summary>
+    public class IssuesReminder : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<IssuesReminder> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
+        public IssuesReminder(ILogger<IssuesReminder> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
@@ -51,10 +54,23 @@ namespace SelfServiceLibrary.BG
 
                 await foreach(var issue in issues)
                 {
-                    Console.WriteLine($"{issue.BookName} {issue.IssuedTo.Email}");
+                    _logger.LogInformation($"{issue.BookName} {issue.IssuedTo.Email}");
+
+                    // issue expired
+                    if (issue.ExpiryDate < DateTime.Today)
+                    {
+                        _logger.LogInformation("Issue has expired");
+                    }
+
+                    // issue is about to expire
+                    else if(issue.ExpiryDate < DateTime.Today.AddDays(7))
+                    {
+                        _logger.LogInformation("Issue is about to expire");
+                        await notificationService.IssueExpiresSoonNotify(issue);
+                    }
                 }
 
-                await Task.Delay(10000, stoppingToken);
+                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
             }
         }
     }

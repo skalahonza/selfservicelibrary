@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.BL.DTO.Issue;
 
 namespace SelfServiceLibrary.BL.Interfaces
 {
@@ -19,5 +20,12 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// <param name="departmentNumber">Department number of the book that has been just returned</param>
         /// <returns></returns>
         Task WatchdogNotify(string departmentNumber);
+
+        /// <summary>
+        /// Notify a person who has borrowed the book included in the issue that, the issue is about to expire.
+        /// </summary>
+        /// <param name="issue"></param>
+        /// <returns></returns>
+        Task IssueExpiresSoonNotify(IssueListDTO issue);
     }
 }

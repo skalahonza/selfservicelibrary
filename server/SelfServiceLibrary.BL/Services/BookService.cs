@@ -272,11 +272,18 @@ namespace SelfServiceLibrary.BL.Services
                 .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
         }
 
-        public async Task ImportCsv(Stream csv, UserInfoDTO enteredBy)
+        public async Task ImportCsv(Stream csv)
         {
             if (!await _authorizationContext.CanManageContent())
             {
                 throw new AuthorizationException("Insufficient permissions for importing CSV with books.");
+            }
+
+            var enteredBy = await _authorizationContext.GetUserInfo();
+
+            if(enteredBy == null)
+            {
+                throw new AuthorizationException("Current user is name is empty.");
             }
 
             var statuses = (await _dbContext.BookStatuses.AsQueryable()

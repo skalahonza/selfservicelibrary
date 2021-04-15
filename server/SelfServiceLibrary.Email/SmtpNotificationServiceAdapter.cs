@@ -13,7 +13,7 @@ using SelfServiceLibrary.Email.Options;
 
 namespace SelfServiceLibrary.Email
 {
-    public class SmtpNotificationServiceAdapter : NotificationServiceBase
+    public class SmtpNotificationServiceAdapter : EmailNotificationServiceBase
     {
         private readonly IOptions<SmtpNotificationServiceOptions> _options;
         private readonly ILogger<SmtpNotificationServiceAdapter> _log;

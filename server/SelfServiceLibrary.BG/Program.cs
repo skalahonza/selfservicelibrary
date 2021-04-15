@@ -21,38 +21,38 @@ namespace SelfServiceLibrary.BG
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(x => x.AddUserSecrets<Program>())
-                .ConfigureServices((hostContext, services) =>
-                {
-                    var Configuration = hostContext.Configuration;
+                .ConfigureServices((hostContext, services) => ConfigureServices(services, hostContext.Configuration, hostContext.HostingEnvironment));
 
-                    services.AddHostedService<Worker>();
+        public static void ConfigureServices(IServiceCollection services, IConfiguration Configuration, IHostEnvironment environment)
+        {
+            services.AddHostedService<IssuesReminder>();
 
-                    // Authorization
-                    services.AddSingleton<IAuthorizationContext, AuthorizationContext>();
+            // Authorization
+            services.AddSingleton<IAuthorizationContext, AuthorizationContext>();
 
-                    // Persistence, MongoDB
-                    services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
+            // Persistence, MongoDB
+            services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
 
-                    // Mapping
-                    services.AddAutoMapper(typeof(BookProfile));
-                    services.AddScoped<IMapper, AutoMapperAdapter>();
+            // Mapping
+            services.AddAutoMapper(typeof(BookProfile));
+            services.AddScoped<IMapper, AutoMapperAdapter>();
 
-                    // CSV
-                    services.AddScoped<ICsvService, CsvHelperAdapter>();
+            // CSV
+            services.AddScoped<ICsvService, CsvHelperAdapter>();
 
-                    // Email
-                    if (hostContext.HostingEnvironment.IsDevelopment())
-                    {
-                        services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
-                    }
-                    else
-                    {
-                        services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
-                    }
+            // Email
+            if (environment.IsDevelopment())
+            {
+                services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
+            }
+            else
+            {
+                services.AddSendGridEmailClient(Configuration.GetSection("SendGrid"));
+            }
 
-                    // Business logic
-                    services.AddScoped<IBookService, BookService>();
-                    services.AddScoped<IUserService, UserService>();
-                });
+            // Business logic
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IUserService, UserService>();
+        }
     }
 }

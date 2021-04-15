@@ -20,4 +20,8 @@
     <ProjectReference Include="..\SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Options\" />
+  </ItemGroup>
+
 </Project>

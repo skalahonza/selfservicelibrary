@@ -47,7 +47,7 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// <param name="username">Reviewer's username</param>
         /// <returns>True if the user already reviewed the book</returns>
         Task<bool> HasReviewed(string departmentNumber, string username);
-        Task ImportCsv(Stream csv, UserInfoDTO enteredBy);
+        Task ImportCsv(Stream csv);
         Task Update(string departmentNumber, BookEditDTO data);
         Task AddOrUpdateReview(BookReviewDTO review);
         Task<List<UserInfoDTO>> GetWatchdogs(string departmentNumber);

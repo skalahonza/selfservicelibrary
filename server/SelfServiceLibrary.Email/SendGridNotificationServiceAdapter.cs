@@ -13,7 +13,7 @@ using SendGrid.Helpers.Mail;
 
 namespace SelfServiceLibrary.Email
 {
-    public class SendGridNotificationServiceAdapter : NotificationServiceBase
+    public class SendGridNotificationServiceAdapter : EmailNotificationServiceBase
     {
         private readonly ISendGridClient _client;
         private readonly ILogger<SendGridNotificationServiceAdapter> _log;

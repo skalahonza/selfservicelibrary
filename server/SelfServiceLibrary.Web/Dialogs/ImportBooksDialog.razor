@@ -38,15 +38,13 @@
 
     private async Task Import()
     {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         isUploading = true;
-        var info = state.User.Claims.GetUserBasicInfo();
         // 5 Megabytes = 5242880 Bytes
         foreach (var file in files)
         {
             try
             {
-                await bookService.ImportCsv(file.OpenReadStream(5242880), info);
+                await bookService.ImportCsv(file.OpenReadStream(5242880));
                 await snackbarStack.PushAsync($"File {file.Name} imported.", SnackbarColor.Success);
             }
             catch (Exception ex)

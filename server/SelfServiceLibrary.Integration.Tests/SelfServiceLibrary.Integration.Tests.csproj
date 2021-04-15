@@ -4,10 +4,21 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <UserSecretsId>48be3ec8-3fb7-45e5-9ef1-86e9f12f7f9b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,6 +28,28 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CVUT.Auth\CVUT.Auth.csproj" />
+    <ProjectReference Include="..\CVUT.Usermap\CVUT.Usermap.csproj" />
+    <ProjectReference Include="..\Google.Books.API\Google.Books.API.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.BG\SelfServiceLibrary.BG.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.BL\SelfServiceLibrary.BL.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Card.Authentication\SelfServiceLibrary.Card.Authentication.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.CSV\SelfServiceLibrary.CSV.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.DAL\SelfServiceLibrary.DAL.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Email\SelfServiceLibrary.Email.csproj" />
+    <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\51-OstatniGL.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
