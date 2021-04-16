@@ -23,9 +23,12 @@
                         @error.FileName
                         <CloseButton />
                     </Heading>
-                    <Paragraph>
-                        @error.Message
-                    </Paragraph>
+                    @foreach (var line in error.Message.Split(Environment.NewLine))
+                    {
+                        <Paragraph>
+                            @line
+                        </Paragraph>
+                    }
                 </Alert>
             }
         </ModalBody>
