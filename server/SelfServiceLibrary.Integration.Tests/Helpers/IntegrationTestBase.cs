@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
@@ -14,7 +13,7 @@ using SelfServiceLibrary.Mapping.Profiles;
 
 namespace SelfServiceLibrary.Integration.Tests.Helpers
 {
-    public class IntegrationTestBase
+    public abstract class IntegrationTestBase
     {
         protected IConfiguration Configuration;
 
@@ -42,7 +41,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
 
             // Mapping
             Services.AddAutoMapper(typeof(BookProfile));
-            Services.AddScoped<BL.Interfaces.IMapper, AutoMapperAdapter>();
+            Services.AddScoped<IMapper, AutoMapperAdapter>();
 
             // Persistence, MongoDB
             Services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
@@ -55,19 +54,15 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
 
             // Business logic
             Services.AddScoped<IBookService, BookService>();
+            Services.AddScoped<IIssueService, IssueService>();
+
+            // Notifications
+            Services.AddSingleton<INotificationService, NullNotificationService>();
 
             Seed().Wait();
         }
 
-        private async Task Seed()
-        {
-            var di = Services.BuildServiceProvider();
-            var bookService = di.GetRequiredService<IBookService>();
-
-            var csv = File.OpenRead("Data/51-OstatniGL.csv");
-            await bookService.ImportCsv(csv);
-
-            csv.Dispose();
-        }
+        private Task Seed() =>
+            Fixture.Seed(Services);
     }
 }

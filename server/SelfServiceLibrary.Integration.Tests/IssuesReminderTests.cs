@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using FluentAssertions;
-using FluentAssertions.Common;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -14,8 +13,12 @@ using Moq;
 
 using SelfServiceLibrary.BG;
 using SelfServiceLibrary.BL.DTO.Issue;
+using SelfServiceLibrary.BL.DTO.User;
+using SelfServiceLibrary.BL.Exceptions.Authorization;
+using SelfServiceLibrary.BL.Exceptions.Business;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.Services;
+using SelfServiceLibrary.DAL.Entities;
 using SelfServiceLibrary.Integration.Tests.Extensions;
 using SelfServiceLibrary.Integration.Tests.Helpers;
 
@@ -33,8 +36,6 @@ namespace SelfServiceLibrary.Integration.Tests
 
             // Authorization
             Services.Replace<IAuthorizationContext, PermissiveContext>(ServiceLifetime.Singleton);
-
-            Services.AddScoped<IIssueService, IssueService>();
             Services.AddSingleton<IssuesReminder>();
         }
 
@@ -71,7 +72,6 @@ namespace SelfServiceLibrary.Integration.Tests
 
             // Assert
             mock.Verify(x => x.IssueExpiresSoonNotify(It.IsAny<IssueListDTO>()), Times.Once);
-            mock.Verify(x => x.IssueExpiredNotify(It.IsAny<IssueListDTO>()), Times.Never);
         }
 
         [Fact]
@@ -107,7 +107,50 @@ namespace SelfServiceLibrary.Integration.Tests
 
             // Assert
             mock.Verify(x => x.IssueExpiredNotify(It.IsAny<IssueListDTO>()), Times.Once);
-            mock.Verify(x => x.IssueExpiresSoonNotify(It.IsAny<IssueListDTO>()), Times.Never);
+        }
+    }
+
+    public class IssueServiceTests : IntegrationTestBase, IClassFixture<DbFixture>
+    {
+        public IssueServiceTests(DbFixture fixture) : base(fixture)
+        {            
+        }
+
+        [Theory]
+        [InlineData("GL-00001", true, null)]
+        [InlineData("GL-00002", true, typeof(BookIsBorrowedException))]
+        [InlineData("GL-error", true, typeof(EntityNotFoundException<Book>))]
+        [InlineData("GL-00003", false, typeof(AuthorizationException))]
+        public async Task Borrow(string departmentNumber, bool canBorrow, Type exception)
+        {
+            // Arrange
+            var mock = new Mock<IAuthorizationContext>();
+            mock.Setup(x => x.CanBorrow()).ReturnsAsync(canBorrow);
+            mock.Setup(x => x.GetUserInfo()).Returns(new PermissiveContext().GetUserInfo());
+            Services.Replace(s => mock.Object, ServiceLifetime.Singleton);
+
+            var di = Services.BuildServiceProvider();
+            var issueService = di.GetRequiredService<IIssueService>();
+
+            // Act
+            Func<Task<IssueDetailDTO>> act = () => issueService.Borrow(new IssueCreateDTO
+            {
+                DepartmentNumber = departmentNumber,
+                ExpiryDate = DateTime.Now.AddDays(7)
+            });
+
+            // Assert
+            if(exception == null)
+            {
+                var issue = await act();
+                issue.DepartmentNumber.Should().Be(departmentNumber);
+                issue.IsReturned.Should().BeFalse();
+                issue.IssuedTo.Should().BeEquivalentTo(await new PermissiveContext().GetUserInfo());
+            }
+            else
+            {
+                await Assert.ThrowsAsync(exception, act);
+            }
         }
     }
 }

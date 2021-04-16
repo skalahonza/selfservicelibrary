@@ -20,7 +20,7 @@ using SelfServiceLibrary.DAL.Queries;
 namespace SelfServiceLibrary.BG
 {
     /// <summary>
-    /// Background service responsible for reminding users that they forgot to return a book or that the issue is about to expire.
+    /// Background service responsible for reminding users that they forgot to return a book or that the issue is about to expire. Runs every day.
     /// </summary>
     public class IssuesReminder : BackgroundService
     {
@@ -38,37 +38,39 @@ namespace SelfServiceLibrary.BG
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                using var scope = _serviceScopeFactory.CreateScope();
-                var provider = scope.ServiceProvider;
-
-                var mapper = provider.GetRequiredService<IMapper>();
-                var dbContext = provider.GetRequiredService<MongoDbContext>();
-                var notificationService = provider.GetRequiredService<INotificationService>();
-
-                var issues = dbContext
-                    .Issues
-                    .AsQueryable()
-                    .Filter(new NotReturnedIssues())
-                    .ProjectTo<Issue, IssueListDTO>(mapper)
-                    .AsAsyncEnumerable();
-
-                await foreach(var issue in issues)
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    _logger.LogInformation($"{issue.BookName} {issue.IssuedTo.Email}");
+                    var provider = scope.ServiceProvider;
 
-                    // issue expired
-                    if (issue.ExpiryDate < DateTime.Today)
-                    {
-                        _logger.LogInformation("Issue has expired");
-                        await notificationService.IssueExpiredNotify(issue);
-                    }
+                    var mapper = provider.GetRequiredService<IMapper>();
+                    var dbContext = provider.GetRequiredService<MongoDbContext>();
+                    var notificationService = provider.GetRequiredService<INotificationService>();
 
-                    // issue is about to expire
-                    else if(issue.ExpiryDate < DateTime.Today.AddDays(7))
+                    var issues = dbContext
+                        .Issues
+                        .AsQueryable()
+                        .Filter(new NotReturnedIssues())
+                        .ProjectTo<Issue, IssueListDTO>(mapper)
+                        .AsAsyncEnumerable();
+
+                    await foreach (var issue in issues)
                     {
-                        _logger.LogInformation("Issue is about to expire");
-                        await notificationService.IssueExpiresSoonNotify(issue);
-                    }
+                        _logger.LogInformation($"{issue.BookName} {issue.IssuedTo.Email}");
+
+                        // issue expired
+                        if (issue.ExpiryDate < DateTime.Today)
+                        {
+                            _logger.LogInformation("Issue has expired");
+                            await notificationService.IssueExpiredNotify(issue);
+                        }
+
+                        // issue is about to expire
+                        else if (issue.ExpiryDate < DateTime.Today.AddDays(7))
+                        {
+                            _logger.LogInformation("Issue is about to expire");
+                            await notificationService.IssueExpiresSoonNotify(issue);
+                        }
+                    } 
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);

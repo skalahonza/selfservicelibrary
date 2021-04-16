@@ -4,7 +4,7 @@ using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.Interfaces;
 
-namespace SelfServiceLibrary.API.Services
+namespace SelfServiceLibrary.Integration.Tests.Helpers
 {
     public class NullNotificationService : INotificationService
     {
