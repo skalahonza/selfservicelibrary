@@ -672,7 +672,7 @@
 
             if (state.User.Identity?.Name != null)
             {
-                hasRead = await issueService.HasRead(DepartmentNumber, state.User.Identity.Name);
+                hasRead = await bookService.HasRead(DepartmentNumber, state.User.Identity.Name);
                 hasRated = await bookService.HasReviewed(DepartmentNumber, state.User.Identity.Name);
                 watchdogRegistered = await bookService.HasWatchdog(DepartmentNumber, state.User.Identity.Name);
             }

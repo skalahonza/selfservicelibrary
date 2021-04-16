@@ -163,6 +163,16 @@ namespace SelfServiceLibrary.BL.Services
                 .Find(x => x.DepartmentNumber == departmentNumber && x.Reviews.Any(x => x.Username == username))
                 .AnyAsync();
 
+        public Task<bool> HasRead(string departmentNumber, string username) =>
+            _dbContext
+                .Issues
+                .Find(x =>
+                        x.DepartmentNumber == departmentNumber &&
+                        x.IssuedTo.Username == username &&
+                        x.IsReturned
+                )
+                .AnyAsync();
+
         public async Task<List<UserInfoDTO>> GetWatchdogs(string departmentNumber)
         {
             var watchdogs = (await _dbContext

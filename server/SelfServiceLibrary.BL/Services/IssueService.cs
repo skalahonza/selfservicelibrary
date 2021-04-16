@@ -78,16 +78,6 @@ namespace SelfServiceLibrary.BL.Services
                 .ProjectTo<Issue, IssueListDTO>(_mapper)
                 .ToListAsync();
 
-        public Task<bool> HasRead(string departmentNumber, string username) =>
-            _dbContext
-                .Issues
-                .Find(x =>
-                        x.DepartmentNumber == departmentNumber &&
-                        x.IssuedTo.Username == username &&
-                        x.IsReturned
-                )
-                .AnyAsync();
-
         private async Task<IssueDetailDTO> Borrow(IssueCreateDTO details, UserInfoDTO issuedTo, UserInfoDTO issuedBy)
         {
             var book = await _dbContext.Books.Find(x => x.DepartmentNumber == details.DepartmentNumber).FirstOrDefaultAsync();

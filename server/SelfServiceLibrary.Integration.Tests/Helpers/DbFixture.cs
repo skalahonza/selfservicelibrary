@@ -19,6 +19,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
         public const string DB = "mongodb://root:rootpassword@localhost:27017";
 
         private bool seeded;
+        public string DbName { get; } = $"test_db_{Guid.NewGuid()}";
 
         public Task InitializeAsync() =>
             Task.CompletedTask;
@@ -72,7 +73,5 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             });
             await issueService.Return(issue.Id);
         }
-
-        public string DbName { get; } = $"test_db_{Guid.NewGuid()}";
     }
 }

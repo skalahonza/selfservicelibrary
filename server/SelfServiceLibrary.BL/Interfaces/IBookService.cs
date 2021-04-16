@@ -41,6 +41,13 @@ namespace SelfServiceLibrary.BL.Interfaces
         Task<Dictionary<string, int>> GetPublicationTypes(ISet<Role> userRoles);
         Task<int> GetTotalCount(IBooksFilter filter);
         /// <summary>
+        /// Check if user has read a book
+        /// </summary>
+        /// <param name="departmentNumber">Book's department number</param>
+        /// <param name="username">User's name (login)</param>
+        /// <returns>True if the user has read the book</returns>
+        Task<bool> HasRead(string departmentNumber, string username);
+        /// <summary>
         /// Check if the user has already reviewed the book
         /// </summary>
         /// <param name="departmentNumber">Book's department number</param>
