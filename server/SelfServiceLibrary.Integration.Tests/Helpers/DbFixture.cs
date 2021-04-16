@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
 using SelfServiceLibrary.BL.DTO.Issue;
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Interfaces;
 
 using Xunit;
@@ -32,7 +31,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
 
         public async Task Seed(IServiceCollection services)
         {
-            if (seeded) 
+            if (seeded)
                 return;
 
             seeded = true;
@@ -45,7 +44,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             await bookService.ImportCsv(csv);
             csv.Dispose();
 
-            // borrowed book
+            // borrowed books
             await issueService.Borrow(new IssueCreateDTO
             {
                 DepartmentNumber = "GL-00002",
@@ -57,6 +56,19 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             {
                 DepartmentNumber = "GL-00011",
                 ExpiryDate = DateTime.Now.AddDays(365)
+            });
+            await issueService.Return(issue.Id);
+
+            issue = await issueService.BorrowTo(new IssueCreateDTO
+            {
+                DepartmentNumber = "GL-00040",
+                ExpiryDate = DateTime.Now.AddDays(365)
+            }, new UserInfoDTO
+            {
+                Email = "skalaja7@fel.cvut.cz",
+                Username = "skalaja7",
+                FirstName = "Jan",
+                LastName = "Skála",
             });
             await issueService.Return(issue.Id);
         }
