@@ -20,6 +20,7 @@ $WebClient = New-Object System.Net.WebClient
 foreach ($file in $csvs) {    
     $source = Join-UriParts $Downloadurl $file
     $destination = Join-Path $DownloadToFolder $file
+    $destination = $destination.Replace("%20"," ")
     Write-Host "Downloading $source to $destination"
     $WebClient.DownloadFile($source, (Resolve-Path $destination))
 }
