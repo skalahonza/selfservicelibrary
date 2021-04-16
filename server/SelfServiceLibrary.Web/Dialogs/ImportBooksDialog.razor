@@ -1,4 +1,5 @@
-﻿@using SelfServiceLibrary.DAL.Entities
+﻿@using System.Text
+@using SelfServiceLibrary.DAL.Entities
 @using SelfServiceLibrary.BL.Interfaces
 @using SelfServiceLibrary.Web.Extensions
 @using Microsoft.AspNetCore.Components.Authorization
@@ -15,6 +16,18 @@
         </ModalHeader>
         <ModalBody>
             <FileEdit Filter=".csv, .txt" Changed="@OnChanged" Multiple="true" />
+            @foreach (var error in errors)
+            {
+                <Alert Color="Color.Danger" Visible="true">
+                    <Heading Size="HeadingSize.Is4">
+                        @error.FileName
+                        <CloseButton />
+                    </Heading>
+                    <Paragraph>
+                        @error.Message
+                    </Paragraph>
+                </Alert>
+            }
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Secondary" Clicked="@HideModal">Close</Button>
@@ -26,10 +39,13 @@
 <SnackbarStack @ref="snackbarStack" Location="SnackbarStackLocation.Center" />
 
 @code {
+    public record CsvError(string FileName, string Message);
+
     private SnackbarStack snackbarStack = new SnackbarStack();
     private Modal? modalRef;
     private IFileEntry[] files = Array.Empty<IFileEntry>();
     private bool isUploading;
+    private List<CsvError> errors = new List<CsvError>();
 
     private void OnChanged(FileChangedEventArgs e)
     {
@@ -38,6 +54,7 @@
 
     private async Task Import()
     {
+        errors.Clear();
         isUploading = true;
         // 5 Megabytes = 5242880 Bytes
         foreach (var file in files)
@@ -47,13 +64,27 @@
                 await bookService.ImportCsv(file.OpenReadStream(5242880));
                 await snackbarStack.PushAsync($"File {file.Name} imported.", SnackbarColor.Success);
             }
+            catch (CsvHelper.TypeConversion.TypeConverterException ex)
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine($"Error on row: {ex.Context.Parser.Row}");
+                builder.AppendLine(ex.Context.Parser.RawRecord);
+                var fields = ex.MemberMapData.Names;
+                builder.AppendLine($"Invalid value {ex.Text} in fields {string.Join(" ", fields)}.");
+                var message = builder.ToString();
+                errors.Add(new CsvError(file.Name, message));
+            }
             catch (Exception ex)
             {
-                await snackbarStack.PushAsync($"Importing file {file.Name} failed: {ex.Message}", SnackbarColor.Danger);
+                errors.Add(new CsvError(file.Name, ex.Message));
             }
         }
         isUploading = false;
-        HideModal();
+
+        if (errors.Any())
+            StateHasChanged();
+        else
+            HideModal();
     }
 
     public void Show() =>
