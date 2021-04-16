@@ -45,11 +45,20 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             await bookService.ImportCsv(csv);
             csv.Dispose();
 
+            // borrowed book
             await issueService.Borrow(new IssueCreateDTO
             {
                 DepartmentNumber = "GL-00002",
                 ExpiryDate = DateTime.Now.AddDays(365)
             });
+
+            // returned book
+            var issue = await issueService.Borrow(new IssueCreateDTO
+            {
+                DepartmentNumber = "GL-00011",
+                ExpiryDate = DateTime.Now.AddDays(365)
+            });
+            await issueService.Return(issue.Id);
         }
 
         public string DbName { get; } = $"test_db_{Guid.NewGuid()}";
