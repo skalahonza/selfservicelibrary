@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
 using SelfServiceLibrary.BL.DTO.Book;
-using SelfServiceLibrary.BL.Exceptions.Authorization;
+using SelfServiceLibrary.BL.Exceptions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Integration.Tests.Extensions;
 using SelfServiceLibrary.Integration.Tests.Helpers;

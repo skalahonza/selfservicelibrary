@@ -4,8 +4,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.User;
-using SelfServiceLibrary.BL.Exceptions.Authorization;
-using SelfServiceLibrary.BL.Exceptions.Business;
+using SelfServiceLibrary.BL.Exceptions;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.BL.ViewModels;
@@ -106,6 +105,7 @@ namespace SelfServiceLibrary.BL.Services
                     Type = x.Key,
                     Count = x.Count()
                 }).ToListAsync();
+
             return types
                 .Where(x => !string.IsNullOrEmpty(x.Type))
                 .ToDictionary(x => x.Type!, x => x.Count);

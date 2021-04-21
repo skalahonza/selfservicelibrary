@@ -11,7 +11,7 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Creates a new book status
         /// </summary>
         /// <param name="bookStatus"></param>
-        /// <exception cref="Exceptions.Business.StatusAlreadyExistsException">Thrown when status with the same name already exists.</exception>
+        /// <exception cref="Exceptions.StatusAlreadyExistsException">Thrown when status with the same name already exists.</exception>
         /// <returns></returns>
         Task Create(BookStatusCreateDTO bookStatus);
         Task<List<BookStatusListDTO>> GetAll();

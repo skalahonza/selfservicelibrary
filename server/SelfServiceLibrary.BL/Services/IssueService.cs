@@ -4,8 +4,7 @@ using MongoDB.Driver.Linq;
 
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
-using SelfServiceLibrary.BL.Exceptions.Authorization;
-using SelfServiceLibrary.BL.Exceptions.Business;
+using SelfServiceLibrary.BL.Exceptions;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;

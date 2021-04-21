@@ -14,8 +14,8 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Borrow an existing book in self service mode.
         /// </summary>
         /// <param name="details"></param>
-        /// <exception cref="Exceptions.Business.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
-        /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
+        /// <exception cref="Exceptions.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
+        /// <exception cref="Exceptions.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
         /// <returns></returns>
         Task<IssueDetailDTO> Borrow(IssueCreateDTO details);
         /// <summary>
@@ -23,8 +23,8 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// </summary>
         /// <param name="details"></param>
         /// <param name="issuedTo">To whom will the book be borrowed</param>
-        /// <exception cref="Exceptions.Business.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
-        /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
+        /// <exception cref="Exceptions.EntityNotFoundException{Book}">Thrown when the book is not found.</exception>
+        /// <exception cref="Exceptions.BookIsBorrowedException">Thrown when the book is currently borrowed.</exception>
         /// <returns></returns>
         Task<IssueDetailDTO> BorrowTo(IssueCreateDTO details, UserInfoDTO issuedTo);
         Task<List<IssueListDTO>> GetAll(int page, int pageSize, IIssuesFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null);
@@ -36,8 +36,8 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Return a previously borrowed book.
         /// </summary>
         /// <param name="id">Issue document id</param>
-        /// <exception cref="Exceptions.Business.EntityNotFoundException{Issue}">Thrown when the issue is not found.</exception>
-        /// <exception cref="Exceptions.Business.BookAlreadyReturnedException">Thrown when the book has already been returned.</exception>
+        /// <exception cref="Exceptions.EntityNotFoundException{Issue}">Thrown when the issue is not found.</exception>
+        /// <exception cref="Exceptions.BookAlreadyReturnedException">Thrown when the book has already been returned.</exception>
         /// <returns></returns>
         Task Return(string id);
     }

@@ -17,7 +17,7 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Create a new book
         /// </summary>
         /// <param name="data"></param>
-        /// <exception cref="Exceptions.Business.BookAlreadyExistsException">Thrown when a book with identical department number already exists.</exception>
+        /// <exception cref="Exceptions.BookAlreadyExistsException">Thrown when a book with identical department number already exists.</exception>
         /// <exception cref="System.ArgumentException">Thrown when department number is null or empty.</exception>
         /// <returns></returns>
         Task Create(BookAddDTO data);
@@ -25,8 +25,8 @@ namespace SelfServiceLibrary.BL.Interfaces
         /// Deletes an existing book
         /// </summary>
         /// <param name="departmentNumber">Book department number</param>
-        /// <exception cref="Exceptions.Business.EntityNotFoundException{Book}">Thrown when book not found</exception>
-        /// <exception cref="Exceptions.Business.BookIsBorrowedException">Thrown when book is borrowed</exception>
+        /// <exception cref="Exceptions.EntityNotFoundException{Book}">Thrown when book not found</exception>
+        /// <exception cref="Exceptions.BookIsBorrowedException">Thrown when book is borrowed</exception>
         /// <returns></returns>
         Task Delete(string departmentNumber);
         Task DeleteAll();

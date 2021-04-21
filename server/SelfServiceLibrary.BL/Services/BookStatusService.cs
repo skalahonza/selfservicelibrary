@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 
 using SelfServiceLibrary.BL.DTO.BookStatus;
-using SelfServiceLibrary.BL.Exceptions.Business;
+using SelfServiceLibrary.BL.Exceptions;
 using SelfServiceLibrary.BL.Extensions;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL;

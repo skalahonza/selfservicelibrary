@@ -1,4 +1,4 @@
-﻿namespace SelfServiceLibrary.BL.Exceptions.Business
+﻿namespace SelfServiceLibrary.BL.Exceptions
 {
     public class BookAlreadyReturnedException : BusinessLayerException
     {

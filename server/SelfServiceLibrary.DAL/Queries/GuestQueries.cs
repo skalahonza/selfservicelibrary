@@ -8,8 +8,8 @@ namespace SelfServiceLibrary.DAL.Queries
     {
         public static IQueryable<Guest> Search(this IQueryable<Guest> query, string term) =>
             query.Where(guest =>
-                guest.FirstName.ToLower().Contains(term) ||
-                guest.LastName.ToLower().Contains(term)
+                guest.FirstName!.ToLower().Contains(term) ||
+                guest.LastName!.ToLower().Contains(term)
             );
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SelfServiceLibrary.BL.Exceptions.Authorization
+namespace SelfServiceLibrary.BL.Exceptions
 {
     public class AuthorizationException : Exception
     {
