@@ -6,16 +6,6 @@ namespace SelfServiceLibrary.BL.Interfaces
 {
     public interface IAuthorizationContext
     {
-        /*
-        Půjčit si / vrátit na KIOSKu
-        Půjčit / vrátit si online
-
-        Půjčit / vrátit někomu
-        Editovat / přidávat / mazat záznamy
-        Umožnit samooblužný provoz
-        Spravovat knihovníky
-         * */
-
         Task<bool> CanBorrow();
         Task<bool> CanBorrowTo();
         Task<bool> CanReturnFor();
