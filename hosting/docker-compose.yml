@@ -1,0 +1,60 @@
+version: "3.3"
+
+services:
+  books.db:
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_DATABASE: BooksDb
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    expose:
+      - "27017"
+    volumes:
+      - mongodb_data_container:/data/db
+
+  traefik:
+    image: "traefik:v2.4"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  web: 
+    image: "registry.gitlab.fel.cvut.cz:443/skalaja7/self-service-library/web:latest"
+    container_name: "web"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SendGrid__ApiKey=${SENDGRID_APIKEY}
+      - MongoDb__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
+      - Identity__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
+      - oAuth2__ClientId=${CLIENTID}
+      - oAuth2__ClientSecret=${CLIENTSECRET}
+      - oAuth2__RedirectUri=${REDIRECT}
+      - Admins__0=skalaja7
+      - Admins__1=novakpe
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=PathPrefix(`/`)"
+
+  api: 
+    image: "registry.gitlab.fel.cvut.cz:443/skalaja7/self-service-library/api:latest"
+    container_name: "api"
+    environment:
+      - MongoDb__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
+      - Identity__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
+      - MongoDb__DatabaseName=BooksDb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=PathPrefix(`/api/`)"
+
+volumes:
+  mongodb_data_container:
