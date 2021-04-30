@@ -77,9 +77,9 @@ namespace SelfServiceLibrary.Integration.Tests
             var di = Services.BuildServiceProvider();
             var service = di.GetRequiredService<ICardService>();
             var authenticator = di.GetRequiredService<ICardAuthenticator>();
+            bool result = await InsertCard(service, "1234567");
 
             // Act
-            bool result = await InsertCard(service, "1234567");
             var wrong = await authenticator.Authenticate("1234567", "4321");
             var username = await authenticator.Authenticate("1234567", "1234");
 
@@ -96,9 +96,9 @@ namespace SelfServiceLibrary.Integration.Tests
             var di = Services.BuildServiceProvider();
             var service = di.GetRequiredService<ICardService>();
             var authenticator = di.GetRequiredService<ICardAuthenticator>();
+            bool result = await InsertCard(service, "1337");
 
             // Act
-            bool result = await InsertCard(service, "1337");
             var wrong = await authenticator.GetToken("1337", "4321");
             var token = await authenticator.GetToken("1337", "1234");
 
@@ -114,7 +114,21 @@ namespace SelfServiceLibrary.Integration.Tests
         [Fact]
         public async Task Locking()
         {
+            // Arrange
+            var di = Services.BuildServiceProvider();
+            var service = di.GetRequiredService<ICardService>();
+            var authenticator = di.GetRequiredService<ICardAuthenticator>();
+            bool result = await InsertCard(service, "3713");
 
+            // Act
+            for (int i = 0; i < 5; i++)
+            {
+                var wrong = await authenticator.Authenticate("3713", "4321");
+                wrong.Should().BeNullOrEmpty(because: $"The attempt #{i + 1} uses incorrect pin.");
+            }
+
+            var username = await authenticator.Authenticate("3713", "1234");
+            username.Should().BeNullOrEmpty(because: "The access card should be locked.");
         }
     }
 }
