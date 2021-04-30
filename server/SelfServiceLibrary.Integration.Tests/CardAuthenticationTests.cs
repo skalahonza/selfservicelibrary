@@ -54,11 +54,20 @@ namespace SelfServiceLibrary.Integration.Tests
             cards.Should().ContainSingle(card => card.Number == "12345");
         }
 
-        
-
+        [Fact]
         public async Task AddDuplicateCard()
         {
+            // arrange
+            var di = Services.BuildServiceProvider();
+            var service = di.GetRequiredService<ICardService>();
 
+            // Act
+            bool result1 = await InsertCard(service, "123456");
+            bool result2 = await InsertCard(service, "123456");
+
+            // Assert
+            result1.Should().BeTrue();
+            result2.Should().BeFalse();
         }
 
         public async Task Authenticate()
