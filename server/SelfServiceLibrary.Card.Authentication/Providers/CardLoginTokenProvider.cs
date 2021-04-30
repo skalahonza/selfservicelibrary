@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using SelfServiceLibrary.Card.Authentication.Options;
 
 namespace SelfServiceLibrary.Card.Authentication.Providers
 {
@@ -19,12 +20,13 @@ namespace SelfServiceLibrary.Card.Authentication.Providers
         public CardLoginTokenProvider(
             IDataProtectionProvider dataProtectionProvider,
             IOptions<DataProtectionTokenProviderOptions> options,
+            IOptions<MongoDbDatabaseOptions> dbOptions,
             ILogger<DataProtectorTokenProvider<IdCard>> logger,
             IMongoClient client)
             : base(dataProtectionProvider, options, logger)
         {
-            var database = client.GetDatabase("default");
-            _cards = database.GetCollection<IdCard>("cards");
+            var database = client.GetDatabase(dbOptions.Value.DatabaseName);
+            _cards = database.GetCollection<IdCard>(dbOptions.Value.CollectionName);
         }
 
         public override Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<IdCard> manager, IdCard user) =>

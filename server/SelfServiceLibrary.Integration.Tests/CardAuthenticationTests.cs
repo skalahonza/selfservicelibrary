@@ -41,7 +41,7 @@ namespace SelfServiceLibrary.Integration.Tests
         [Fact]
         public async Task AddCard()
         {
-            // arrange
+            // Arrange
             var di = Services.BuildServiceProvider();
             var service = di.GetRequiredService<ICardService>();
 
@@ -57,7 +57,7 @@ namespace SelfServiceLibrary.Integration.Tests
         [Fact]
         public async Task AddDuplicateCard()
         {
-            // arrange
+            // Arrange
             var di = Services.BuildServiceProvider();
             var service = di.GetRequiredService<ICardService>();
 
@@ -70,16 +70,48 @@ namespace SelfServiceLibrary.Integration.Tests
             result2.Should().BeFalse();
         }
 
+        [Fact]
         public async Task Authenticate()
         {
+            // Arrange
+            var di = Services.BuildServiceProvider();
+            var service = di.GetRequiredService<ICardService>();
+            var authenticator = di.GetRequiredService<ICardAuthenticator>();
 
+            // Act
+            bool result = await InsertCard(service, "1234567");
+            var wrong = await authenticator.Authenticate("1234567", "4321");
+            var username = await authenticator.Authenticate("1234567", "1234");
+
+            // Assert
+            result.Should().BeTrue();
+            wrong.Should().BeNullOrEmpty();
+            username.Should().Be("skalaja7");
         }
 
+        [Fact]
         public async Task AuthenticateWithToken()
         {
+            // Arrange
+            var di = Services.BuildServiceProvider();
+            var service = di.GetRequiredService<ICardService>();
+            var authenticator = di.GetRequiredService<ICardAuthenticator>();
 
+            // Act
+            bool result = await InsertCard(service, "1337");
+            var wrong = await authenticator.GetToken("1337", "4321");
+            var token = await authenticator.GetToken("1337", "1234");
+
+            // Assert
+            result.Should().BeTrue();
+            wrong.Should().BeNullOrEmpty();
+            token.Should().NotBeNullOrEmpty();
+
+            var username = await authenticator.AuthenticateWithToken("1337", token);
+            username.Should().Be("skalaja7");
         }
 
+        [Fact]
         public async Task Locking()
         {
 
