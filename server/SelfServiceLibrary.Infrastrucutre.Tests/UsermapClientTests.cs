@@ -1,14 +1,12 @@
 ﻿using System.Threading.Tasks;
 
 using CVUT.Auth;
-using CVUT.Auth.Options;
 using CVUT.Usermap;
 
 using FluentAssertions;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Mapping;
