@@ -31,7 +31,8 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
                 .AddEnvironmentVariables()
                 .AddInMemoryCollection(new[] {
                     new KeyValuePair<string,string>("MongoDb:ConnectionString", DbFixture.DB),
-                    new KeyValuePair<string,string>("Identity:ConnectionString", $"DbFixture.DB/{fixture.DbName}"),
+                    new KeyValuePair<string,string>("Identity:ConnectionString", $"{DbFixture.DB}/{fixture.DbName}?authSource=admin"),
+                    //new KeyValuePair<string,string>("Identity:ConnectionString", DbFixture.DB),
                     new KeyValuePair<string,string>("MongoDb:DatabaseName", fixture.DbName),
                 })
                 .Build();
@@ -55,6 +56,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             // Business logic
             Services.AddScoped<IBookService, BookService>();
             Services.AddScoped<IIssueService, IssueService>();
+            Services.AddScoped<IUserService, UserService>();
 
             // Notifications
             Services.AddSingleton<INotificationService, NullNotificationService>();

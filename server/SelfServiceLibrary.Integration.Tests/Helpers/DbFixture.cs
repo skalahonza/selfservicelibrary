@@ -40,10 +40,19 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             var di = services.BuildServiceProvider();
             var bookService = di.GetRequiredService<IBookService>();
             var issueService = di.GetRequiredService<IIssueService>();
+            var userService = di.GetRequiredService<IUserService>();
 
             var csv = File.OpenRead("Data/51-OstatniGL.csv");
             await bookService.ImportCsv(csv);
             csv.Dispose();
+
+            // user
+            await userService.UpdateInfo("skalaja7", new UserInfoDTO
+            {
+                Email = "skalaja7@fel.cvut.cz",
+                FirstName = "Jan",
+                LastName = "Skála",
+            });
 
             // borrowed books
             await issueService.Borrow(new IssueCreateDTO
