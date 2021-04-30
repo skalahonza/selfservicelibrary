@@ -41,4 +41,13 @@
     <ProjectReference Include="..\SelfServiceLibrary.Mapping\SelfServiceLibrary.Mapping.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="CSV\export.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CSV\import.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -8,6 +8,7 @@ using Google.Books.API;
 using Microsoft.Extensions.DependencyInjection;
 
 using SelfServiceLibrary.BL.DTO.Book;
+using SelfServiceLibrary.CSV;
 
 using Xunit;
 
