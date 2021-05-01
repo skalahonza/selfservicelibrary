@@ -45,6 +45,25 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
             },
         };
 
+        private readonly List<UserInfoDTO> Watchdogs = new()
+        {
+            new()
+            {
+                Email = "skalaja7@fel.cvut.cz",
+                FullName = "Jan Skála"
+            },
+            new()
+            {
+                Email = "novakpe@fel.cvut.cz",
+                FullName = "Petr Novák"
+            },
+            new()
+            {
+                Email = "doejohn@fel.cvut.cz",
+                FullName = "John Doe"
+            },
+        };
+
         public EmailNotificationServiceTests()
         {
             var services = new ServiceCollection();
@@ -65,6 +84,7 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
         {
             var mock = new Mock<IBookService>();
             mock.Setup(x => x.GetDetail(It.IsAny<string>())).ReturnsAsync(Book);
+            mock.Setup(x => x.GetWatchdogs(It.IsAny<string>())).ReturnsAsync(Watchdogs);
             return mock.Object;
         }
 
@@ -157,7 +177,25 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
         [Fact]
         public async Task WatchdogNotify()
         {
-            throw new System.NotImplementedException();
+            // Arrange
+            var service = new MockNotificationService(MockUserService(), MockBookService(), _mapper)
+            {
+                // Assert
+                Act = (string title, string message, IEnumerable<(string email, string name)> recipients) =>
+                {
+                    title.Should().Be("Book you were interested in is available again");
+
+                    message.Should().Contain(Book.Name);
+                    message.Should().Contain(Book.Author);
+                    message.Should().ContainAll(Book.CoAuthors);
+
+                    var expectedRecipients = Watchdogs.Select(x => (x.Email, x.FullName));
+                    recipients.Should().BeEquivalentTo(expectedRecipients);
+                }
+            };
+
+            // Act
+            await service.WatchdogNotify(Book.DepartmentNumber);
         }
     }
 }
