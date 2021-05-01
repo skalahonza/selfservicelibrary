@@ -10,6 +10,7 @@ using Moq;
 
 using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
+using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
@@ -30,6 +31,20 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
             CoAuthors = new() { "Author1", "Author2" }
         };
 
+        private readonly List<UserListDTO> Users = new()
+        {
+            new()
+            {
+                InfoEmail = "skalaja7@fel.cvut.cz",
+                InfoFullName = "Jan Skála"
+            },
+            new()
+            {
+                InfoEmail = "novakpe@fel.cvut.cz",
+                InfoFullName = "Petr Novák"
+            },
+        };
+
         public EmailNotificationServiceTests()
         {
             var services = new ServiceCollection();
@@ -42,6 +57,7 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
         private IUserService MockUserService()
         {
             var mock = new Mock<IUserService>();
+            mock.Setup(x => x.GetAll()).ReturnsAsync(Users);
             return mock.Object;
         }
 
@@ -51,7 +67,6 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
             mock.Setup(x => x.GetDetail(It.IsAny<string>())).ReturnsAsync(Book);
             return mock.Object;
         }
-
 
         [Fact]
         public async Task IssueExpiredNotify()
@@ -64,6 +79,8 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
                 // Assert
                 Act = (string title, string message, IEnumerable<(string email, string name)> recipients) =>
                 {
+                    title.Should().Be("Issue expired");
+
                     message.Should().Contain(Book.Name);
                     message.Should().Contain(Book.DepartmentNumber);
                     message.Should().Contain(Book.Author);
@@ -83,19 +100,62 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
         }
 
         [Fact]
-        public Task IssueExpiresSoonNotify()
+        public async Task IssueExpiresSoonNotify()
         {
-            throw new System.NotImplementedException();
+            // Arrange
+            var issuedToEmail = "skalaja7@fel.cvut.cz";
+            var issuedToName = "skalaja7@fel.cvut.cz";
+            var service = new MockNotificationService(MockUserService(), MockBookService(), _mapper)
+            {
+                // Assert
+                Act = (string title, string message, IEnumerable<(string email, string name)> recipients) =>
+                {
+                    title.Should().Be("Issue is about to expire");
+
+                    message.Should().Contain(Book.Name);
+                    message.Should().Contain(Book.DepartmentNumber);
+                    message.Should().Contain(Book.Author);
+                    message.Should().ContainAll(Book.CoAuthors);
+
+                    recipients.Should().HaveCount(1);
+                    recipients.First().email.Should().Be(issuedToEmail);
+                    recipients.First().name.Should().Be(issuedToName);
+                }
+            };
+
+            // Act
+            await service.IssueExpiresSoonNotify(new()
+            {
+                IssuedTo = new() { Email = issuedToEmail, FullName = issuedToName }
+            });
         }
 
         [Fact]
-        public Task SendNewsletter()
+        public async Task SendNewsletter()
         {
-            throw new System.NotImplementedException();
+            // Arrange
+            var service = new MockNotificationService(MockUserService(), MockBookService(), _mapper)
+            {
+                // Assert
+                Act = (string title, string message, IEnumerable<(string email, string name)> recipients) =>
+                {
+                    title.Should().Be("New book in a library");
+
+                    message.Should().Contain(Book.Name);
+                    message.Should().Contain(Book.Author);
+                    message.Should().ContainAll(Book.CoAuthors);
+
+                    var expectedRecipients = Users.Select(x => (x.InfoEmail, x.InfoFullName));
+                    recipients.Should().BeEquivalentTo(expectedRecipients);
+                }
+            };
+
+            // Act
+            await service.SendNewsletter(Book);
         }
 
         [Fact]
-        public Task WatchdogNotify()
+        public async Task WatchdogNotify()
         {
             throw new System.NotImplementedException();
         }
