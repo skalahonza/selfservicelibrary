@@ -11,9 +11,11 @@ using SelfServiceLibrary.DAL.Extensions;
 using SelfServiceLibrary.Mapping;
 using SelfServiceLibrary.Mapping.Profiles;
 
+using Xunit;
+
 namespace SelfServiceLibrary.Integration.Tests.Helpers
 {
-    public abstract class IntegrationTestBase
+    public abstract class IntegrationTestBase : IAsyncLifetime
     {
         protected IConfiguration Configuration;
 
@@ -32,8 +34,8 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
                 .AddInMemoryCollection(new[] {
                     new KeyValuePair<string,string>("MongoDb:ConnectionString", DbFixture.DB),
                     new KeyValuePair<string,string>("Identity:ConnectionString", $"{DbFixture.DB}/{fixture.DbName}?authSource=admin"),
-                    //new KeyValuePair<string,string>("Identity:ConnectionString", DbFixture.DB),
                     new KeyValuePair<string,string>("MongoDb:DatabaseName", fixture.DbName),
+                    new KeyValuePair<string,string>("SendGrid:ApiKey", "apikey"),
                 })
                 .Build();
 
@@ -60,11 +62,16 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
 
             // Notifications
             Services.AddSingleton<INotificationService, NullNotificationService>();
-
-            Seed().Wait();
         }
 
-        private Task Seed() =>
-            Fixture.Seed(Services);
+        public Task InitializeAsync()
+        {
+            return Fixture.Seed(Services);
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }
