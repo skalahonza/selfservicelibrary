@@ -87,6 +87,8 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
                 LastName = "Skála",
             });
             await issueService.Return(issue.Id);
+
+            // book statuses
         }
     }
 }

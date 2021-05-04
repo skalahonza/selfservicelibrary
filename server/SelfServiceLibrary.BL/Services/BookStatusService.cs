@@ -46,6 +46,7 @@ namespace SelfServiceLibrary.BL.Services
         public async Task Update(string name, BookStatusUpdateDTO bookStatus)
         {
             var entity = _mapper.Map<BookStatus>(bookStatus);
+            entity.Name = name;
             await _dbContext.BookStatuses.ReplaceOneAsync(x => x.Name == name, entity, new ReplaceOptions { IsUpsert = true });
             await _dbContext.Books.UpdateManyAsync(x => x.Status.Name == name, Builders<Book>.Update.Set(x => x.Status, entity));
         }

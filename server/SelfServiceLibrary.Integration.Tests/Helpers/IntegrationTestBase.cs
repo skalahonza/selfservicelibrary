@@ -64,12 +64,12 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             Services.AddSingleton<INotificationService, NullNotificationService>();
         }
 
-        public Task InitializeAsync()
+        public virtual Task InitializeAsync()
         {
             return Fixture.Seed(Services);
         }
 
-        public Task DisposeAsync()
+        public virtual Task DisposeAsync()
         {
             return Task.CompletedTask;
         }
