@@ -249,7 +249,7 @@ namespace SelfServiceLibrary.BL.Services
                 throw new AuthorizationException("Insufficient permissions for updating a book.");
             }
 
-            var update = Builders<Book>.Update
+            var bookUpdate = Builders<Book>.Update
                 .Set(x => x.Name, data.Name)
                 .Set(x => x.Author, data.Author)
                 .Set(x => x.CoAuthors, data.CoAuthors)
@@ -277,9 +277,16 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.StsUK, data.StsUK)
                 .Set(x => x.Status, await _dbContext.BookStatuses.Find(x => x.Name == data.StatusName).FirstOrDefaultAsync());
 
+            var issueUpdate = Builders<Issue>.Update
+                .Set(x => x.BookName, data.Name);
+
             await _dbContext
                 .Books
-                .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, update);
+                .UpdateOneAsync(x => x.DepartmentNumber == departmentNumber, bookUpdate);
+
+            await _dbContext
+                .Issues
+                .UpdateManyAsync(x => x.DepartmentNumber == departmentNumber, issueUpdate);
         }
 
         public async Task ImportCsv(Stream csv)
