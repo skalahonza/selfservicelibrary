@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MongoDB.Driver;
 
+using SelfServiceLibrary.BL.DTO.Guest;
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.DTO.User;
 using SelfServiceLibrary.BL.Interfaces;
@@ -41,6 +42,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             var bookService = di.GetRequiredService<IBookService>();
             var issueService = di.GetRequiredService<IIssueService>();
             var userService = di.GetRequiredService<IUserService>();
+            var guestService = di.GetRequiredService<IGuestService>();
 
             var csv = File.OpenRead("Data/51-OstatniGL.csv");
             await bookService.ImportCsv(csv);
@@ -53,6 +55,22 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
                 FirstName = "Jan",
                 LastName = "Skála",
             });
+
+            // geusts
+            var guest1 = new GuestDTO
+            {
+                FirstName = "Jan",
+                LastName = "Skála",
+            };
+            await guestService.Add(guest1);
+            var guest2 = new GuestDTO
+            {
+                TitleBefore = "Ing.",
+                FirstName = "Petr",
+                LastName = "Novák",
+                TitleAfter = "Ph. D.",
+            };
+            await guestService.Add(guest2);
 
             // borrowed books
             await issueService.Borrow(new IssueCreateDTO

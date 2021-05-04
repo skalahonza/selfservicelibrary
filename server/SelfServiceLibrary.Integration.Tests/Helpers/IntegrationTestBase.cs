@@ -59,6 +59,7 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
             Services.AddScoped<IBookService, BookService>();
             Services.AddScoped<IIssueService, IssueService>();
             Services.AddScoped<IUserService, UserService>();
+            Services.AddScoped<IGuestService, GuestService>();
 
             // Notifications
             Services.AddSingleton<INotificationService, NullNotificationService>();
