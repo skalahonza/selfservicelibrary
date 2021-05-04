@@ -61,6 +61,12 @@ namespace SelfServiceLibrary.Integration.Tests.Helpers
                 ExpiryDate = DateTime.Now.AddDays(365)
             });
 
+            await issueService.Borrow(new IssueCreateDTO
+            {
+                DepartmentNumber = "GL-00184",
+                ExpiryDate = DateTime.Now.AddDays(365)
+            });
+
             // returned book
             var issue = await issueService.Borrow(new IssueCreateDTO
             {
