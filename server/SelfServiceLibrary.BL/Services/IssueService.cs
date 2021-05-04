@@ -86,16 +86,6 @@ namespace SelfServiceLibrary.BL.Services
                 throw new EntityNotFoundException<Book>(details.DepartmentNumber);
             }
 
-            // try to mark the book as borrowed
-            var result = await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == details.DepartmentNumber && x.IsAvailable,
-                Builders<Book>.Update.Set(x => x.IsAvailable, false));
-            if (result.ModifiedCount == 0)
-            {
-                // handle book was already taken
-                throw new BookIsBorrowedException(details.DepartmentNumber);
-            }
-
             // create issue document
             var issue = new Issue
             {
@@ -106,13 +96,23 @@ namespace SelfServiceLibrary.BL.Services
             };
             issue = _mapper.Map(details, issue);
             issue = _mapper.Map(book, issue);
-            await _dbContext.Issues.InsertOneAsync(issue);
 
-            // link issue to a book
-            await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == details.DepartmentNumber,
+            // try to borrow a book
+            var result = await _dbContext.Books.UpdateOneAsync(
+                x => x.DepartmentNumber == details.DepartmentNumber && x.IsAvailable,
                 Builders<Book>.Update
-                .Set(x => x.CurrentIssue, issue));
+                .Set(x => x.IsAvailable, false) // try to mark the book as borrowed
+                .Set(x => x.CurrentIssue, issue) // link issue to a book
+                );
+
+            if (result.ModifiedCount == 0)
+            {
+                // handle book was already taken
+                throw new BookIsBorrowedException(details.DepartmentNumber);
+            }
+
+            // save issue document
+            await _dbContext.Issues.InsertOneAsync(issue);
 
             return _mapper.Map<IssueDetailDTO>(issue);
         }
@@ -154,14 +154,16 @@ namespace SelfServiceLibrary.BL.Services
         private async Task Return(Issue issue, UserInfoDTO returnedBy)
         {
             var now = DateTime.UtcNow;
+            var returnedByInfo = _mapper.Map<UserInfo>(returnedBy);
 
-            var result = await _dbContext.Issues.UpdateOneAsync(
-                x => x.Id == issue.Id && !x.IsReturned,
-                Builders<Issue>
-                    .Update
-                    .Set(x => x.IsReturned, true)
-                    .Set(x => x.ReturnedBy, _mapper.Map<UserInfo>(returnedBy))
-                    .Set(x => x.ReturnDate, now));
+            // mark book as available again
+            var result = await _dbContext.Books.UpdateOneAsync(
+                x => x.DepartmentNumber == issue.DepartmentNumber && !x.IsAvailable,
+                    Builders<Book>.Update
+                        .Set(x => x.IsAvailable, true)
+                        .Set(x => x.CurrentIssue!.IsReturned, true)
+                        .Set(x => x.CurrentIssue!.ReturnedBy, returnedByInfo)
+                        .Set(x => x.CurrentIssue!.ReturnDate, now));
 
             if (result.ModifiedCount == 0)
             {
@@ -169,16 +171,17 @@ namespace SelfServiceLibrary.BL.Services
                 throw new BookAlreadyReturnedException(issue.DepartmentNumber ?? string.Empty);
             }
 
-            // mark book as available again
-            await _dbContext.Books.UpdateOneAsync(
-                x => x.DepartmentNumber == issue.DepartmentNumber && !x.IsAvailable,
-                Builders<Book>.Update
-                .Set(x => x.IsAvailable, true)
-                .Set(x => x.CurrentIssue!.IsReturned, true)
-                .Set(x => x.CurrentIssue!.ReturnDate, now));
+            // update issue document in issues collection
+            await _dbContext.Issues.UpdateOneAsync(
+                x => x.Id == issue.Id && !x.IsReturned,
+                    Builders<Issue>
+                        .Update
+                        .Set(x => x.IsReturned, true)
+                        .Set(x => x.ReturnedBy, returnedByInfo)
+                        .Set(x => x.ReturnDate, now));
 
             // notify watchdogs
-            if(!string.IsNullOrEmpty(issue.DepartmentNumber))
+            if (!string.IsNullOrEmpty(issue.DepartmentNumber))
                 await _notificationService.WatchdogNotify(issue.DepartmentNumber);
         }
 
