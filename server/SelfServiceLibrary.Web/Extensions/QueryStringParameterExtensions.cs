@@ -91,14 +91,6 @@ namespace SelfServiceLibrary.Web.Extensions
 #pragma warning restore CS8625 // JavaScript method invocation
         }
 
-        // Apply the values from the component to the query string
-        public static void UpdateQueryString<T>(this T component, NavigationManager navigationManager)
-            where T : ComponentBase
-        {
-            var newUri = BuildNewUri(component, navigationManager);
-            navigationManager.NavigateTo(newUri);
-        }
-
         private static object ConvertValue(StringValues value, Type type) =>
             Convert.ChangeType(value[0], type, CultureInfo.InvariantCulture);
 
