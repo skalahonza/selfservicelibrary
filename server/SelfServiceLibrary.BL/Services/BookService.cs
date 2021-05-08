@@ -271,7 +271,6 @@ namespace SelfServiceLibrary.BL.Services
                 .Set(x => x.MagazineYear, data.MagazineYear)
                 .Set(x => x.ISBNorISSN, data.ISBNorISSN)
                 .Set(x => x.NFCIdent, data.NFCIdent)
-                .Set(x => x.QRIdent, data.QRIdent)
                 .Set(x => x.BarCode, data.BarCode)
                 .Set(x => x.StsLocal, data.StsLocal)
                 .Set(x => x.StsUK, data.StsUK)
@@ -373,8 +372,7 @@ namespace SelfServiceLibrary.BL.Services
                     .Set(book => book.FormType, row.FormType)
                     .Set(book => book.StsLocal, row.StsLocal)
                     .Set(book => book.StsUK, row.StsUK)
-                    .Set(book => book.NFCIdent, row.NFCIdent)
-                    .Set(book => book.QRIdent, row.QRIdent);
+                    .Set(book => book.NFCIdent, row.NFCIdent);
                     return new UpdateOneModel<Book>(filter, update) { IsUpsert = true };
                 });
 

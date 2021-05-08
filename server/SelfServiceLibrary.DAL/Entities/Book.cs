@@ -156,11 +156,6 @@ namespace SelfServiceLibrary.DAL.Entities
         public string? NFCIdent { get; set; }
 
         /// <summary>
-        /// Číslo uvedené na QR kódu (?)
-        /// </summary>
-        public string? QRIdent { get; set; }
-
-        /// <summary>
         /// Full text search match score
         /// </summary>
         [BsonIgnoreIfNull]

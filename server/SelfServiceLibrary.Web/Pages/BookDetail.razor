@@ -573,19 +573,9 @@
                 </Fields>
                 <Fields>
                     <Validation>
-                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
+                        <Field >
                             <FieldLabel>NFC code</FieldLabel>
                             <TextEdit @bind-Text="@editBook.NFCIdent" class="nfc-text" ReadOnly="isReadonly">
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
-                    <Validation>
-                        <Field ColumnSize="ColumnSize.IsFull.OnTablet.Is6.OnDesktop">
-                            <FieldLabel>QR code</FieldLabel>
-                            <TextEdit @bind-Text="@editBook.QRIdent" ReadOnly="isReadonly">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
