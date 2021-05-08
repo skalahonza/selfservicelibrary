@@ -11,3 +11,4 @@ test:
     stage: test
     script:
         - "dotnet test SelfServiceLibrary.Mapping.Tests/SelfServiceLibrary.Mapping.Tests.csproj"
+        - "dotnet test SelfServiceLibrary.Unit.Tests/SelfServiceLibrary.Unit.Tests.csproj"
