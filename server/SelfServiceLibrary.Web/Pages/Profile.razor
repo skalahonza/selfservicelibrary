@@ -111,27 +111,13 @@
     </Modal>
 
     <!-- Delete card modal -->
-    <Modal @ref="@deleteCardModal">
-        <ModalContent IsCentered="true">
-            <ModalHeader>
-                <ModalTitle>Delete card</ModalTitle>
-                <CloseButton Clicked="() => HideModal(deleteCardModal)" />
-            </ModalHeader>
-            <ModalBody>
-                Are you sure you want to delete this card?
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary" Clicked="() => HideModal(deleteCardModal)">Close</Button>
-                <Button Color="Color.Danger" Clicked="() => RemoveCardConfirmed(cardToDelete)">Delete!</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
+    <DeleteDialog @ref="deleteDialog" Confirmed="() => RemoveCardConfirmed(cardToDelete)" Title="Delete card" Text="Are you sure you want to delete this card?" />
 </Container>
 
 @code{
     private bool duplicate;
     private Modal? addCardModal;
-    private Modal? deleteCardModal;
+    private DeleteDialog? deleteDialog;
     private Validations validations = new Validations();
 
     private AddCardDTO card = new AddCardDTO();
@@ -185,7 +171,8 @@
                 cards.Add(new CardListDTO
                 {
                     Name = card.Name,
-                    Number = card.Number
+                    Number = card.Number,
+                    HasPin = !string.IsNullOrEmpty(card.Pin)
                 });
                 addCardModal?.Hide();
                 NavigationManager.NavigateTo("/profile");
@@ -200,7 +187,7 @@
     private void RemoveCard(CardListDTO card)
     {
         cardToDelete = card;
-        deleteCardModal?.Show();
+        deleteDialog?.Show();
     }
 
     private async Task RemoveCardConfirmed(CardListDTO card)
@@ -208,7 +195,7 @@
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         await cardService.Remove(state.User.Identity!.Name!, card.Number!);
         cards.Remove(card);
-        deleteCardModal?.Hide();
+        deleteDialog?.Hide();
         cardToDelete = new CardListDTO();
         StateHasChanged();
     }
