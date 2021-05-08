@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SelfServiceLibrary.DAL.Entities
 {
+    [BsonIgnoreExtraElements]
     public class Book
     {
         /// <summary>
