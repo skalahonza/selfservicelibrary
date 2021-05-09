@@ -79,11 +79,12 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
             return mock.Object;
         }
 
-        private IBookService MockBookService()
+        private IBookService MockBookService(List<UserInfoDTO> watchdogs = null)
         {
+            watchdogs ??= Watchdogs;
             var mock = new Mock<IBookService>();
             mock.Setup(x => x.GetDetail(It.IsAny<string>())).ReturnsAsync(Book);
-            mock.Setup(x => x.GetWatchdogs(It.IsAny<string>())).ReturnsAsync(Watchdogs);
+            mock.Setup(x => x.GetWatchdogs(It.IsAny<string>())).ReturnsAsync(watchdogs);
             return mock.Object;
         }
 
@@ -195,6 +196,27 @@ namespace SelfServiceLibrary.Infrastrucutre.Tests
 
             // Act
             await service.WatchdogNotify(Book.DepartmentNumber);
+        }
+
+        [Fact]
+        public async Task NoWatchdogsNotify()
+        {
+            // Arrange
+            var called = false;
+            var service = new MockNotificationService(MockUserService(), MockBookService(new List<UserInfoDTO>()), _mapper)
+            {
+                // Assert
+                Act = (string title, string message, IEnumerable<(string email, string name)> recipients) =>
+                {
+                    called = true;
+                }
+            };
+
+            // Act
+            await service.WatchdogNotify(Book.DepartmentNumber);
+
+            // Assert
+            called.Should().BeFalse();
         }
     }
 }

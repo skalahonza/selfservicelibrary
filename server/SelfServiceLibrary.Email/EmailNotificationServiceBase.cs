@@ -88,12 +88,15 @@ namespace SelfServiceLibrary.Email
 
         public async Task WatchdogNotify(string departmentNumber)
         {
-            var book = await _bookService.GetDetail(departmentNumber);
             var users = await _bookService.GetWatchdogs(departmentNumber);
-            var dictionary = _mapper.Map<Dictionary<string, object>>(book);
-            var message = GetMessage("Watchdog", dictionary);
-            await Send("Book you were interested in is available again", message, users.Select(x => (x.Email, x.ToString())));
-            await _bookService.ClearWatchdogs(departmentNumber);
+            if (users.Count > 0)
+            {
+                var book = await _bookService.GetDetail(departmentNumber);
+                var dictionary = _mapper.Map<Dictionary<string, object>>(book);
+                var message = GetMessage("Watchdog", dictionary);
+                await Send("Book you were interested in is available again", message, users.Select(x => (x.Email, x.ToString())));
+                await _bookService.ClearWatchdogs(departmentNumber); 
+            }
         }
 
         public async Task IssueExpiresSoonNotify(IssueListDTO issue)
