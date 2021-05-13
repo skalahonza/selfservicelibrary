@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using System.Web;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SelfServiceLibrary.BL.Interfaces;
-using SelfServiceLibrary.BL.Services;
 
 namespace SelfServiceLibrary.API.Controllers
 {
@@ -37,7 +35,6 @@ namespace SelfServiceLibrary.API.Controllers
         [HttpGet("{serNumNFC}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        [AllowAnonymous]
         public async Task<ActionResult<DiscoveryResponse>> Get(string serNumNFC)
         {
             // try to find a book

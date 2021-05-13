@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace SelfServiceLibrary.API.Options
 {
-    public class CvutAuthOptions : AuthenticationSchemeOptions
+    public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
     {
-        public const string DefaultScheme = "Basic";
+        public const string DefaultScheme = "API Key";
         public string Scheme => DefaultScheme;
         public string AuthenticationType = DefaultScheme;
+
+        public string[]? ApiKeys { get; set; }
     }
 }

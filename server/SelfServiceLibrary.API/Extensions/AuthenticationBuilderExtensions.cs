@@ -9,7 +9,10 @@ namespace SelfServiceLibrary.API.Extensions
 {
     public static class AuthenticationBuilderExtensions
     {
-        public static AuthenticationBuilder AddCVUT(this AuthenticationBuilder authenticationBuilder, Action<CvutAuthOptions> options) =>
-            authenticationBuilder.AddScheme<CvutAuthOptions, CvutAuthHandler>(CvutAuthOptions.DefaultScheme, options);
+        public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder) =>
+            authenticationBuilder.AddApiKeySupport(_ => { });
+
+        public static AuthenticationBuilder AddApiKeySupport(this AuthenticationBuilder authenticationBuilder, Action<ApiKeyAuthenticationOptions> options) =>
+            authenticationBuilder.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme, options);
     }
 }
