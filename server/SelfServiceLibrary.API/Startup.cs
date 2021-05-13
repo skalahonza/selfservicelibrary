@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
 using SelfServiceLibrary.API.Extensions;
+using SelfServiceLibrary.API.Handlers;
 using SelfServiceLibrary.API.Options;
 using SelfServiceLibrary.API.Services;
 using SelfServiceLibrary.BL.DTO.Book;
@@ -50,24 +51,27 @@ namespace SelfServiceLibrary.API
                     Description = "Self service library for university departments.",
                 });
 
-                var securitySchema = new OpenApiSecurityScheme
+                c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
                 {
-                    Description = "Please enter your card number and pin.",
-                    Type = SecuritySchemeType.Http,
+                    Type = SecuritySchemeType.ApiKey,
                     In = ParameterLocation.Header,
-                    Scheme = "basic",
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Basic"
-                    }
-                };
-                c.AddSecurityDefinition("Basic", securitySchema);
-                var securityRequirement = new OpenApiSecurityRequirement
+                    Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName,
+                    Description = "Kiosk API key.",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    { securitySchema, new[] { "Basic" } }
-                };
-                c.AddSecurityRequirement(securityRequirement);
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "ApiKey"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
 
                 var assemblies = new[] { Assembly.GetExecutingAssembly(), typeof(BookListDTO).Assembly };
                 foreach (var assembly in assemblies)
@@ -105,16 +109,16 @@ namespace SelfServiceLibrary.API
             services.AddMongoDbPersistence(Configuration.GetSection("MongoDb"));
 
             // Id cards
-            services.AddCardAuthentication(Configuration.GetSection("Identity"));            
+            services.AddCardAuthentication(Configuration.GetSection("Identity"));
 
             // Authentication
-            services.AddOptions<CvutAuthOptions>().Bind(Configuration).ValidateDataAnnotations();
+            services.AddOptions<ApiKeyAuthenticationOptions>().Bind(Configuration).ValidateDataAnnotations();
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = CvutAuthOptions.DefaultScheme;
-                options.DefaultChallengeScheme = CvutAuthOptions.DefaultScheme;
+                options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
             })
-           .AddCVUT(_ => { });
+            .AddApiKeySupport();
 
             // Authorization
             services.AddScoped<IAuthorizationContext, AuthorizationContext>();
