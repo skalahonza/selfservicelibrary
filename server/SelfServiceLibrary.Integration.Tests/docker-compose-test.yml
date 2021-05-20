@@ -1,0 +1,11 @@
+﻿version: '3.4'
+
+services:
+  books.db:
+    image: mongo:4.4
+    environment:
+      MONGO_INITDB_DATABASE: BooksDb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"

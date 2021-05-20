@@ -104,3 +104,15 @@ Volitelně lze nastavit API klíče, které budou vyžadovány při každém po�
 ```
 12. Označte Docker Compose projekt jako startup project
 13. Stiskněte F5
+
+# Testování
+Aplikace obsahuje i testy, které lze spouštět lokálně. Ale některé potřebují pro správnou činnost konfiguraci. Konfigurace testů se provádí pomocí [Dotnet User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=linux).
+
+## Integrační testy (SelfServiceLibrary.Integration.Tests)
+Integrační testy používají při testech skutečnou databázi MongoDB. Pro spuštění testů je zapotřebí nejprve spustit soubor **docker-compose-test.yml**. Po skončení testů je možné vytvořený kontejner opět smazat.
+
+## Testy infrastruktury (SelfServiceLibrary.Infrastrucutre.Tests)
+| Název                | Význam                                                  |
+|----------------------|---------------------------------------------------------|
+| usermap:ClientId     | Client ID do USERMAP                                    |
+| usermap:ClientSecret | Client Secret do USERMAP                                |
