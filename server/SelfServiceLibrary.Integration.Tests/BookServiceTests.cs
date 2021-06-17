@@ -12,6 +12,7 @@ using SelfServiceLibrary.BL.DTO.Book;
 using SelfServiceLibrary.BL.DTO.Issue;
 using SelfServiceLibrary.BL.Exceptions;
 using SelfServiceLibrary.BL.Interfaces;
+using SelfServiceLibrary.BL.Services;
 using SelfServiceLibrary.Integration.Tests.Extensions;
 using SelfServiceLibrary.Integration.Tests.Helpers;
 
@@ -31,6 +32,22 @@ namespace SelfServiceLibrary.Integration.Tests
             mock.Setup(x => x.CanManageContent()).ReturnsAsync(canManageContent);
             mock.Setup(x => x.GetUserInfo()).Returns(new PermissiveContext().GetUserInfo());
             Services.Replace(s => mock.Object, ServiceLifetime.Singleton);
+        }
+
+        [Theory]
+        [InlineData(5000)]
+
+        public async Task PageSizeShouldNotBeUnlimited(int pageSize)
+        {
+            // Arrange
+            var di = Services.BuildServiceProvider();
+            var bookService = di.GetRequiredService<IBookService>();
+
+            // Act
+            var books = await bookService.GetAll(1, pageSize, new BookFilter());
+
+            // Assert
+            books.Data.Count.Should().BeLessOrEqualTo(BookService.MAX_PAGESIZE);
         }
 
         [Theory]

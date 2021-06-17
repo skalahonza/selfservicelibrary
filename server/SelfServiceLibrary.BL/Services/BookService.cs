@@ -25,6 +25,8 @@ namespace SelfServiceLibrary.BL.Services
 {
     public class BookService : IBookService
     {
+        public const int MAX_PAGESIZE = 250;
+
         private readonly MongoDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ICsvService _csv;
@@ -40,6 +42,8 @@ namespace SelfServiceLibrary.BL.Services
 
         public async Task<PaginatedVM<BookListDTO>> GetAll(int page, int pageSize, IBooksFilter filter, IEnumerable<(string column, ListSortDirection direction)>? sortings = null)
         {
+            pageSize = Math.Min(MAX_PAGESIZE, pageSize);
+
             var query = _dbContext
                 .Books
                 .AsQueryable()

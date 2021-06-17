@@ -254,6 +254,9 @@
             sortings.Add((nameof(BookListDTO.DepartmentNumber), ListSortDirection.Ascending));
         }
 
+        // upper bound for page size
+        PageSize = Math.Min(250, PageSize);
+
         // display all publication types when AllTab selected
         var vm = await bookService.GetAll(e.Page, e.PageSize, filter with
         {
