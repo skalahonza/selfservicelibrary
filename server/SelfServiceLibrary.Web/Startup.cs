@@ -168,6 +168,12 @@ namespace SelfServiceLibrary.Web
             }
 
             app.UseForwardedHeaders();
+
+            var basePath = Configuration["ASPNETCORE_BASEPATH"];
+
+            if(!string.IsNullOrEmpty(basePath))
+                app.UsePathBase(basePath);
+
             app.UseStaticFiles();
             app.UseRouting();
 

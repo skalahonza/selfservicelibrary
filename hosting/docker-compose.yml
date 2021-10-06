@@ -32,10 +32,13 @@ services:
     container_name: "web"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_BASEPATH=/library
       - SendGrid__ApiKey=${SENDGRID_APIKEY}
       - MongoDb__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
       - Identity__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
       - MongoDb__DatabaseName=BooksDb
+      - usermap__ClientId=${USERMAP_CLIENTID}
+      - usermap__ClientSecret=${USERMAP_CLIENTSECRET}
       - oAuth2__ClientId=${CLIENTID}
       - oAuth2__ClientSecret=${CLIENTSECRET}
       - oAuth2__RedirectUri=${REDIRECT}

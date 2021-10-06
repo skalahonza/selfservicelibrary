@@ -23,7 +23,7 @@
                      ThemeContrast="ThemeContrast.Dark">
                     <BarBrand>
                         <BarItem>
-                            <BarLink To="/">
+                            <BarLink To="">
                                 <BarIcon IconName="IconName.Dashboard" />
                                 Self Service Library
                             </BarLink>
@@ -32,13 +32,13 @@
                     <BarMenu>
                         <BarStart>
                             <BarItem>
-                                <BarLink To="/search">
+                                <BarLink To="search">
                                     <BarIcon IconName="IconName.Search" />
                                     Search
                                 </BarLink>
                             </BarItem>
                             <BarItem>
-                                <BarLink To="/books">
+                                <BarLink To="books">
                                     <BarIcon IconName="IconName.Book" />
                                     Books
                                 </BarLink>
@@ -46,7 +46,7 @@
                             <AuthorizeView>
                                 <Authorized>
                                     <BarItem>
-                                        <BarLink To="/my-issues">
+                                        <BarLink To="my-issues">
                                             <BarIcon IconName="IconName.BookReader" />
                                             My Issues <Badge Color="Color.Light">@myIssuesCount</Badge>
                                         </BarLink>
@@ -57,25 +57,25 @@
                             <AuthorizeView Policy="@LibrarianPolicy.NAME">
                                 <Divider />
                                 <BarItem>
-                                    <BarLink To="/issues">
+                                    <BarLink To="issues">
                                         <BarIcon IconName="IconName.Bookmark" />
                                         All Issues <Badge Color="Color.Light">@allIssuesCount</Badge>
                                     </BarLink>
                                 </BarItem>
                                 <BarItem>
-                                    <BarLink To="/guests">
+                                    <BarLink To="guests">
                                         <BarIcon IconName="IconName.Users" />
                                         Guests
                                     </BarLink>
                                 </BarItem>
                                 <BarItem>
-                                    <BarLink To="/permissions">
+                                    <BarLink To="permissions">
                                         <BarIcon IconName="IconName.Ban" />
                                         Permissions
                                     </BarLink>
                                 </BarItem>
                                 <BarItem>
-                                    <BarLink To="/settings">
+                                    <BarLink To="settings">
                                         <BarIcon IconName="IconName.Edit" />
                                         Settings
                                     </BarLink>
@@ -84,7 +84,7 @@
                             <AuthorizeView Policy="@AdminPolicy.NAME">
                                 <Divider />
                                 <BarItem>
-                                    <BarLink To="/librarians">
+                                    <BarLink To="librarians">
                                         <BarIcon IconName="IconName.Users" />
                                         Librarians
                                     </BarLink>
@@ -96,18 +96,18 @@
                                 <NotAuthorized>
                                     <!-- KIOSK hides login-button class for user's convenience, authorization is not affected-->
                                     <BarItem Class="login-button">
-                                        <a href="@($"/login?redirectUri={NavigationManager.Uri}")" class="b-bar-link login-button"><BarIcon IconName="IconName.User" /> Login</a>
+                                        <a href="@($"login?redirectUri={NavigationManager.Uri}")" class="b-bar-link login-button"><BarIcon IconName="IconName.User" /> Login</a>
                                     </BarItem>
                                 </NotAuthorized>
                                 <Authorized>
                                     <BarItem>
-                                        <BarLink To="/profile">
+                                        <BarLink To="profile">
                                             <BarIcon IconName="IconName.User" />
                                             Profile
                                         </BarLink>
                                     </BarItem>
                                     <BarItem Class="login-button">
-                                        <a href="/logout" class="b-bar-link login-button"><BarIcon IconName="IconName.Lock" /> Logout</a>
+                                        <a href="logout" class="b-bar-link login-button"><BarIcon IconName="IconName.Lock" /> Logout</a>
                                     </BarItem>
                                 </Authorized>
                             </AuthorizeView>
