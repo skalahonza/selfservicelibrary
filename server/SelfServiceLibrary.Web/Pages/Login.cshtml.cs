@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 using SelfServiceLibrary.BL.Interfaces;
 using SelfServiceLibrary.DAL.Enums;
+using SelfServiceLibrary.Web.Extensions;
 using SelfServiceLibrary.Web.Options;
 
 namespace SelfServiceLibrary.Web.Pages
@@ -24,13 +26,15 @@ namespace SelfServiceLibrary.Web.Pages
         private readonly UsermapClient _usermap;
         private readonly IOptionsMonitor<AdminOptions> _adminOptions;
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public LoginModel(ICardAuthenticator authenticator, UsermapClient usermap, IOptionsMonitor<AdminOptions> options, IUserService userService)
+        public LoginModel(ICardAuthenticator authenticator, UsermapClient usermap, IOptionsMonitor<AdminOptions> options, IUserService userService, IConfiguration configuration)
         {
             _authenticator = authenticator;
             _usermap = usermap;
             _adminOptions = options;
             _userService = userService;
+            _configuration = configuration;
         }
 
         public async Task OnGet([FromQuery] string redirectUri, [FromQuery] string card, [FromQuery] string token)
@@ -38,6 +42,10 @@ namespace SelfServiceLibrary.Web.Pages
             if (string.IsNullOrEmpty(redirectUri))
             {
                 redirectUri = "/";
+                if (!string.IsNullOrEmpty(_configuration.GetBasePath()))
+                {
+                    redirectUri = _configuration.GetBasePath();
+                }
             }
 
             // Card authentication

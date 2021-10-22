@@ -86,7 +86,7 @@
 
             <BookFilter Filter="filter" FilterChanged="FilerChagned" />
             <Text>Total items: @totalItems</Text>
-            <Button Color="Color.Primary" Type="ButtonType.Link" To="@($"/csv/books{CsvQueryFilter()}")" Target="Target.Blank">Export CSV</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Link" To="@($"csv/books{CsvQueryFilter()}")" Target="Target.Blank">Export CSV</Button>
             <Divider />
             <Dropdown Disabled="!delete">
                 <DropdownToggle Color="Color.Danger" ToggleIconVisible="false">

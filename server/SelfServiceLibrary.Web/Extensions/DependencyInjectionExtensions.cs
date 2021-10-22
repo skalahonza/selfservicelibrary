@@ -101,6 +101,20 @@ namespace SelfServiceLibrary.Web.Extensions
             options.SaveTokens = true;
         }
 
+        /// <summary>
+        /// Combines path with base path if provided in configuration.
+        /// </summary>
+        /// <param name="configuration">App configuration</param>
+        /// <param name="path">Relative url with leading /</param>
+        /// <returns></returns>
+        private static string MakeCallbackPath(IConfiguration configuration, string path)
+        {
+            var basePath = configuration["ASPNETCORE_BASEPATH"];
+            return string.IsNullOrEmpty(basePath)
+                ? path
+                : $"{basePath}{path}";
+        }
+
         public static AuthenticationBuilder AddAuthenticationCVUT(this AuthenticationBuilder builder, IConfiguration Configuration)
         {
             // Cookie authentication - the authentication ticket is inside a cookie
@@ -178,6 +192,7 @@ namespace SelfServiceLibrary.Web.Extensions
             {
                 options.ConfigureOptions(Configuration);
                 options.CallbackPath = "/sign-in";
+                options.CallbackPath = MakeCallbackPath(Configuration, "/sign-in");
 
                 // fetch user context
                 options.Events = new OAuthEvents
@@ -200,6 +215,7 @@ namespace SelfServiceLibrary.Web.Extensions
             {
                 options.ConfigureOptions(Configuration);
                 options.CallbackPath = "/sign-in-kiosk";
+                options.CallbackPath = MakeCallbackPath(Configuration, "/sign-in-kiosk");
 
                 // fetch user context
                 options.Events = new OAuthEvents

@@ -21,6 +21,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entryPoints.web.forwardedHeaders.insecure"
     ports:
       - "80:80"
       - "8080:8080"
@@ -32,10 +33,13 @@ services:
     container_name: "web"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_BASEPATH=/library
       - SendGrid__ApiKey=${SENDGRID_APIKEY}
       - MongoDb__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
       - Identity__ConnectionString=mongodb://${DB_USER}:${DB_PASSWORD}@books.db:27017
       - MongoDb__DatabaseName=BooksDb
+      - usermap__ClientId=${USERMAP_CLIENTID}
+      - usermap__ClientSecret=${USERMAP_CLIENTSECRET}
       - oAuth2__ClientId=${CLIENTID}
       - oAuth2__ClientSecret=${CLIENTSECRET}
       - oAuth2__RedirectUri=${REDIRECT}
@@ -44,6 +48,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.web.rule=PathPrefix(`/`)"
+      - "traefik.http.middlewares.testHeader.headers.customrequestheaders.X-Forwarded-Proto=https"
 
   api: 
     image: "registry.gitlab.fel.cvut.cz:443/skalaja7/self-service-library/api:latest"

@@ -168,6 +168,27 @@ namespace SelfServiceLibrary.Web
             }
 
             app.UseForwardedHeaders();
+
+            var basePath = Configuration["ASPNETCORE_BASEPATH"];
+
+            if (!string.IsNullOrEmpty(basePath))
+            {
+                // server sub folder auth middleware rewrites
+                app.Use(async (context, next) =>
+                {
+                    var url = context.Request.Path.Value ?? string.Empty;
+
+                    // Rewrite to subfolder
+                    if (url.Contains("/sign-in"))
+                    {
+                        // rewrite and continue processing
+                        context.Request.Path = basePath + context.Request.Path;
+                    }
+
+                    await next();
+                });
+            }
+
             app.UseStaticFiles();
             app.UseRouting();
 
